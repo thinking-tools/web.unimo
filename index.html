@@ -1,9 +1,110 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>⌘⎵ CMDSPC.com</title>
-  </head>
-  <body>
-    <p>Welcome!</p>
-  </body>
+    <head>
+        <title>⌘⎵ CMDSPC.com</title>
+        <meta name="color-scheme" content="dark light" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <style>
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                -webkit-box-sizing: border-box;
+            }
+            html,
+            body,
+            div,
+            span,
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6,
+            p,
+            blockquote,
+            pre,
+            a,
+            sup,
+            samp,
+            small,
+            strong,
+            caption,
+            footer,
+            header,
+            nav,
+            section {
+                margin: 0;
+                padding: 0;
+                border: 0;
+                font-size: 100%;
+                font: inherit;
+                vertical-align: baseline;
+            }
+            article,
+            aside,
+            details,
+            figcaption,
+            figure,
+            footer,
+            header,
+            hgroup,
+            menu,
+            nav,
+            section {
+                display: block;
+            }
+            :root {
+                color-scheme: light dark;
+                --c-font: #ffffff;
+                --c-bg: #151515;
+            }
+
+            @media (prefers-color-scheme: light) {
+                :root {
+                    --c-font: #1c1c1c;
+                    --c-bg: #e4e4e4;
+                }
+            }
+            body {
+                font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                    sans-serif !important;
+                font-size: 15px;
+                line-height: 1;
+                background-color: var(--c-bg);
+                color: var(--c-font);
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                text-rendering: geometricPrecision;
+            }
+            main {
+                max-width: 620px;
+                margin-left: 60px;
+                padding: 100px 0;
+                display: flex;
+                flex-direction: column;
+                gap: 48px;
+                z-index: 0;
+            }
+            h2 {
+                font-size: 50px;
+                padding: 0 40px 0 0;
+                line-height: 137%;
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+            <header>
+                <div>
+                    <img
+                        src="data:image/svg+xml;PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMTQ3MnB4IiBoZWlnaHQ9IjgwMHB4IiB2aWV3Qm94PSIwIDAgMTQ3MiA4MDAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8dGl0bGU+R3JvdXA8L3RpdGxlPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPGcgaWQ9Ikdyb3VwIiBmaWxsPSIjMDAwMDAwIiBmaWxsLXJ1bGU9Im5vbnplcm8iPgogICAgICAgICAgICA8ZyBpZD0iY29tbWFuZC1zeW1ib2wtc3ZncmVwby1jb20iPgogICAgICAgICAgICAgICAgPHBhdGggZD0iTTY0MCw0ODAgTDY0MCw0ODAgTDU2MCw0ODAgTDU2MCwzMjAgTDY0MCwzMjAgQzcyOC4zNiwzMjAgODAwLDI0OC4zNiA4MDAsMTYwIEM4MDAsNzEuNjQgNzI4LjM2LDAgNjQwLDAgQzU1MS42MywwIDQ4MCw3MS42NCA0ODAsMTYwIEw0ODAsMjQwIEwzMjAsMjQwIEwzMjAsMTYwIEMzMjAsNzEuNjQgMjQ4LjM2LDAgMTYwLDAgQzcxLjY0LDAgMCw3MS42NCAwLDE2MCBDMCwyNDguMzYgNzEuNjQsMzIwIDE2MCwzMjAgTDI0MCwzMjAgTDI0MCw0ODAgTDE2MCw0ODAgTDE2MCw0ODAgTDE2MCw0ODAgQzcxLjY0LDQ4MCAwLDU1MS42NCAwLDY0MCBDMCw3MjguMzYgNzEuNjQsODAwIDE2MCw4MDAgQzI0OC4zNyw4MDAgMzIwLDcyOC4zNiAzMjAsNjQwIEwzMjAsNjQwIEwzMjAsNTYwIEw0ODAsNTYwIEw0ODAsNjM5LjggQzQ4MCw2MzkuODggNDc5Ljk5LDYzOS45NCA0NzkuOTksNjQwIEM0NzkuOTksNzI4LjM2IDU1MS42Myw4MDAgNjM5Ljk5LDgwMCBDNzI4LjM1LDgwMCA3OTkuOTksNzI4LjM2IDc5OS45OSw2NDAgQzc5OS45OSw1NTEuNjQgNzI4LjM2LDQ4MC4wMiA2NDAsNDgwIFogTTY0MCw4MCBDNjg0LjE4LDgwIDcyMCwxMTUuODIgNzIwLDE2MCBDNzIwLDIwNC4xOCA2ODQuMTgsMjQwIDY0MCwyNDAgTDU2MCwyNDAgTDU2MCwxNjAgQzU2MCwxMTUuODIgNTk1LjgyLDgwIDY0MCw4MCBaIE04MCwxNjAgQzgwLDExNS44MiAxMTUuODIsODAgMTYwLDgwIEMyMDQuMTgsODAgMjQwLDExNS44MiAyNDAsMTYwIEwyNDAsMjQwIEwxNjAsMjQwIEMxMTUuODIsMjQwIDgwLDIwNC4xNyA4MCwxNjAgWiBNMTYwLDcyMCBDMTE1LjgyLDcyMCA4MCw2ODQuMTggODAsNjQwIEM4MCw1OTUuODIgMTE1LjgyLDU2MCAxNjAsNTYwIEwxNjAsNTYwIEwyNDAsNTYwIEwyNDAsNjQwIEMyNDAsNjg0LjE4IDIwNC4xOCw3MjAgMTYwLDcyMCBaIE0zMjAsNDgwIEwzMjAsMzIwIEw0ODAsMzIwIEw0ODAsNDgwIEwzMjAsNDgwIFogTTY0MCw3MjAgQzU5NS44Miw3MjAgNTYwLDY4NC4xOCA1NjAsNjQwIEw1NjAsNjQwIEw1NjAsNTYwIEw2MzkuOTksNTYwIEM2ODQuMTcsNTYwIDcxOS45OSw1OTUuODIgNzE5Ljk5LDY0MCBDNzE5Ljk5LDY4NC4xOCA2ODQuMTgsNzIwIDY0MCw3MjAgWiIgaWQ9IlNoYXBlIj48L3BhdGg+CiAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgPGcgaWQ9InNwYWNlLXNwYWNlYmFyLXNwYWNpbmctdGV4dC1hbGlnbm1lbnQtdHlwZS1zdmdyZXBvLWNvbSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoODcyLjAwMDAwMCwgNjAwLjAwMDAwMCkiPgogICAgICAgICAgICAgICAgPHBhdGggZD0iTTYwMCwzMy4zMzMzMzMzIEM2MDAsMTMuMzMzMzMzMyA1ODYuNjY2NjY3LDAgNTY2LjY2NjY2NywwIEM1NDYuNjY2NjY3LDAgNTMzLjMzMzMzMywxMy4zMzMzMzMzIDUzMy4zMzMzMzMsMzMuMzMzMzMzMyBMNTMzLjMzMzMzMywxMDAgQzUzMy4zMzMzMzMsMTIwIDUyMCwxMzMuMzMzMzMzIDUwMCwxMzMuMzMzMzMzIEwxMDAsMTMzLjMzMzMzMyBDODAsMTMzLjMzMzMzMyA2Ni42NjY2NjY3LDEyMCA2Ni42NjY2NjY3LDEwMCBMNjYuNjY2NjY2NywzMy4zMzMzMzMzIEM2Ni42NjY2NjY3LDEzLjMzMzMzMzMgNTMuMzMzMzMzMywwIDMzLjMzMzMzMzMsMCBDMTMuMzMzMzMzMywwIDAsMTMuMzMzMzMzMyAwLDMzLjMzMzMzMzMgTDAsMTAwIEMwLDE1Ni42NjY2NjcgNDMuMzMzMzMzMywyMDAgMTAwLDIwMCBMNTAwLDIwMCBDNTU2LjY2NjY2NywyMDAgNjAwLDE1Ni42NjY2NjcgNjAwLDEwMCBMNjAwLDMzLjMzMzMzMzMgWiIgaWQ9IlBhdGgiPjwvcGF0aD4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"
+                    />
+                </div>
+                <h1>Command Space</h1>
+                <h2>The 21st-century interface we all dreamed about.</h2>
+            </header>
+        </main>
+    </body>
 </html>
