@@ -118,30 +118,22 @@ export default function Home() {
                 <div className={styles.grid}>
                     <div className={styles.card}>
                         <h2 className={inter.className}>Synced</h2>
-                        <p className={inter.className}>
-                            Privacy and freedom come first without dopamine traps and dark patterns. No ads, no tracking, zero knowledge.
-                        </p>
+                        <p className={inter.className}>Stay in sync with your devices with your data up-to-date.</p>
                     </div>
 
                     <div className={styles.card}>
                         <h2 className={inter.className}>Shared</h2>
-                        <p className={inter.className}>
-                            Providing real values in simple ways. No more clutter. Making computers finally bearable and fun.
-                        </p>
+                        <p className={inter.className}>Share your experience with your friends and family. No more silos.</p>
                     </div>
 
                     <div className={styles.card}>
                         <h2 className={inter.className}>Private</h2>
-                        <p className={inter.className}>
-                            Privacy and freedom come first without dopamine traps and dark patterns. No ads, no tracking, zero knowledge.
-                        </p>
+                        <p className={inter.className}>Privacy and freedom come first without dopamine traps. Keep your data yours.</p>
                     </div>
 
                     <div className={styles.card}>
                         <h2 className={inter.className}>Everywhere</h2>
-                        <p className={inter.className}>
-                            For every platform and device you own. One seamless experience. Always accessible.
-                        </p>
+                        <p className={inter.className}>Everywhere you go, always with you. Make the magic work for you.</p>
                     </div>
                 </div>
             </main>
