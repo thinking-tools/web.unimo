@@ -1,6 +1,10 @@
-const nextTranslate = require('next-translate-plugin');
+// const nextTranslate = require('next-translate-plugin');
 
-module.exports = nextTranslate({
+module.exports = {
     reactStrictMode: true,
     output: 'export',
-});
+    images: {
+        loader: 'akamai',
+        path: '',
+    },
+};
