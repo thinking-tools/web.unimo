@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { Inter } from '@next/font/google';
 import styles from '@/styles/Home.module.css';
 
@@ -48,33 +48,50 @@ class Star {
 }
 
 export default function Home() {
-    useEffect(() => {
-        const requestAnimationFrame =
+    let c = null;
+    let canvas = null;
+    let stars = [];
+    let reqAnimFrame = null;
+    let animate = true;
+
+    const draw = () => {
+        //create rectangle
+        c.fillRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+        for (let s of stars) {
+            s.update();
+            s.show();
+        }
+        if (animate) reqAnimFrame(draw);
+    };
+
+    const onVisibilityChange = () => {
+        if (document.visibilityState === 'visible') {
+            animate = true;
+            console.warn('visible');
+        } else {
+            animate = false;
+            console.warn('hidden');
+        }
+    };
+
+    useLayoutEffect(() => {
+        reqAnimFrame =
             window.requestAnimationFrame ||
             window.mozRequestAnimationFrame ||
             window.webkitRequestAnimationFrame ||
             window.msRequestAnimationFrame;
-
-        const canvas = document.getElementById('starField');
-        const c = canvas.getContext('2d');
+        canvas = document.getElementById('starField');
+        c = canvas.getContext('2d');
         canvas.width = window.innerWidth; //screen width
         canvas.height = window.innerHeight; //screem height
-        let speed = 0.006;
-        let stars = [];
-        for (let i = 0; i < 180; i++) stars.push(new Star(canvas, c, speed));
+        let speed = 0.004;
+        for (let i = 0; i < 120; i++) stars.push(new Star(canvas, c, speed));
         c.fillStyle = 'rgba(0, 0, 0, 0.1)';
         c.strokeStyle = '#cfaeef';
         c.translate(canvas.width / 2, canvas.height / 2);
-        function draw() {
-            //create rectangle
-            c.fillRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
-            for (let s of stars) {
-                s.update();
-                s.show();
-            }
-            requestAnimationFrame(draw);
-        }
+        document.addEventListener('visibilitychange', onVisibilityChange);
         draw();
+        return () => document.removeEventListener('visibilitychange', onVisibilityChange);
     }, []);
 
     return (
