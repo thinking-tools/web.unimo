@@ -122,9 +122,9 @@ export default function Home() {
                         One magic experience.
                     </h1>
                 </div>
-                <div className={styles.subline + ' ' + inter.className}>
+                {/* <div className={styles.subline + ' ' + inter.className}>
                     <p>Follow us on Twitter, Github or subscribe to be the first.</p>
-                </div>
+                </div> */}
 
                 <div className={styles.grid}>
                     <div className={styles.card}>
@@ -148,6 +148,7 @@ export default function Home() {
                     </div>
                 </div>
             </main>
+            {/* <footer>Made by Radicals © 2023</footer> */}
         </>
     );
 }
