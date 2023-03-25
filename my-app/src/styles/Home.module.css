@@ -51,7 +51,18 @@
     text-align: center;
     line-height: 127%;
     font-size: 60px;
+    margin-bottom: -50px;
     text-shadow: 0px 0px 2px #b393d3, 0px 0px 5px #b393d3, 0px 0px 5px #b393d3, 0px 0px 10px #b393d3;
+}
+.subline {
+    padding-bottom: 3rem;
+}
+.subline p {
+    position: relative;
+    text-align: center;
+    line-height: 127%;
+    font-size: 1.3rem;
+    opacity: 0.7;
 }
 
 .code {
@@ -81,9 +92,17 @@
 
 .card h2 {
     position: relative;
-    color: #cfaeef;
+    color: #f778ba;
     font-weight: 600;
     margin-bottom: 0.7rem;
+    font-size: 1.1rem;
+    -webkit-text-fill-color: rgba(0, 0, 0, 0);
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    background: linear-gradient(140deg, #d2a8ff 12.09%, #f778ba 42.58%, #ff7b72 84.96%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    opacity: 0.9;
 }
 
 .card p {
@@ -99,7 +118,7 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    padding: 4rem 0;
+    padding: 4rem 0 0rem 0;
 }
 
 .center::before {
@@ -122,6 +141,7 @@
     content: '';
     left: 50%;
     position: absolute;
+    -webkit-filter: blur(45px);
     filter: blur(45px);
     transform: translateZ(0);
 }
@@ -144,6 +164,10 @@
         text-align: center;
         line-height: 127%;
         font-size: 29px;
+        margin-bottom: -10px;
+    }
+    .subline p {
+        font-size: 1rem;
     }
 
     .grid {
@@ -162,7 +186,7 @@
     }
 
     .center {
-        padding: 8rem 0 6rem;
+        padding: 8rem 0 3rem 0;
     }
 
     .center::before {
@@ -195,6 +219,7 @@
         border-bottom: 1px solid rgba(var(--callout-border-rgb), 0.25);
         background: linear-gradient(to bottom, rgba(var(--background-start-rgb), 1), rgba(var(--callout-rgb), 0.5));
         background-clip: padding-box;
+        -webkit-backdrop-filter: blur(24px);
         backdrop-filter: blur(24px);
     }
 
@@ -214,14 +239,14 @@
     .grid {
         grid-template-columns: repeat(2, 50%);
     }
+    .headline {
+        margin-bottom: 0px;
+    }
 }
 
 @media (prefers-color-scheme: dark) {
-    .vercelLogo {
-        filter: invert(1);
-    }
-
     .logo {
+        -webkit-filter: invert(1) drop-shadow(0 0 0.3rem #ffffff70);
         filter: invert(1) drop-shadow(0 0 0.3rem #ffffff70);
     }
 }
