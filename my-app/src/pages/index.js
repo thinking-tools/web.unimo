@@ -140,8 +140,10 @@ export default function Home() {
                         </div>
 
                         <div className={styles.card}>
-                            <h2 className={inter.className}>Synced</h2>
-                            <p className={inter.className}>Stay in sync with your devices with your data up-to-date.</p>
+                            <h2 className={inter.className}>Real-time sync</h2>
+                            <p className={inter.className}>
+                                Effortlessly stay in sync across all your devices and keep your workflow on track.
+                            </p>
                         </div>
 
                         <div className={styles.card}>
