@@ -5,6 +5,6 @@ module.exports = {
     output: 'standalone',
     images: {
         loader: 'akamai',
-        path: '',
+        path: 'https://unimo.app/',
     },
 };
