@@ -70,7 +70,7 @@ export default function Home() {
 
     const onVisibilityChange = () => {
         if (document.visibilityState === 'visible') {
-            animate = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            animate = true;
             draw();
         } else {
             animate = false;
@@ -87,7 +87,7 @@ export default function Home() {
         c = canvas.getContext('2d');
         canvas.width = window.innerWidth; //screen width
         canvas.height = window.innerHeight; //screem height
-        animate = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        animate = true;
         let speed = 0.004;
         for (let i = 0; i < 120; i++) stars.push(new Star(canvas, c, speed));
         c.fillStyle = 'rgba(0, 0, 0, 0.1)';
