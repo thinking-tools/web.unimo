@@ -94,7 +94,11 @@ export default function Home() {
         c.translate(canvas.width / 2, canvas.height / 2);
         document.addEventListener('visibilitychange', onVisibilityChange);
         draw();
-        (async () => {})();
+        (async () => {
+            setTimeout(() => {
+                Android.showToast('toast from web');
+            }, 3000);
+        })();
         return () => document.removeEventListener('visibilitychange', onVisibilityChange);
     }, []);
 
@@ -105,6 +109,10 @@ export default function Home() {
                 <meta name='description' content='unimo.app | Experience that sparks joy.' />
                 <meta name='viewport' content='width=device-width, initial-scale=1' />
                 <link rel='icon' href='/favicon.ico' />
+                <link rel='apple-touch-icon' sizes='180x180' href='./apple-touch-icon.png' />
+                <link rel='icon' type='image/png' sizes='32x32' href='./favicon-32x32.png' />
+                <link rel='icon' type='image/png' sizes='16x16' href='./favicon-16x16.png' />
+                <link rel='manifest' href='./site.webmanifest'></link>
             </Head>
             <canvas id={'starField'} className={styles.starField}></canvas>
             <div className={styles.gradientOverlay}></div>
