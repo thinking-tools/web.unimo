@@ -94,11 +94,7 @@ export default function Home() {
         c.translate(canvas.width / 2, canvas.height / 2);
         document.addEventListener('visibilitychange', onVisibilityChange);
         draw();
-        (async () => {
-            setTimeout(() => {
-                Android.showToast('toast from web');
-            }, 3000);
-        })();
+
         return () => document.removeEventListener('visibilitychange', onVisibilityChange);
     }, []);
 
