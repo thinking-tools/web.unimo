@@ -36,6 +36,7 @@ export default function Android() {
     const init = async () => {
         if (run) return;
         run = true;
+        // todo remove later
         window.addEntry = addEntry;
         window.wipe = wipe;
         // fix this as for some reason useEffect (re-render) is called twice
