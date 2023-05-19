@@ -7,9 +7,8 @@ export let crypto = global.window?.crypto;
 export default function Android() {
     const userIdPath = 'synapse.nas.s4fu.com';
     const baseUrl = 'https://synapse.nas.s4fu.com';
-    const roomAlias = '#test1:synapse.nas.s4fu.com';
-
-    const store = syncedStore({ counters: [] });
+    const roomAlias = '#test_public_plain:synapse.nas.s4fu.com';
+    const store = syncedStore({ data: [] });
     const doc = getYjsDoc(store);
     if (!crypto) {
         try {
@@ -18,16 +17,27 @@ export default function Android() {
             logger.error('Failed to load webcrypto', e);
         }
     }
-    let provider;
+    let provider, device;
     let login = false;
     let accessToken = false;
 
     let matrixClient = null;
-    let run = 0;
+    let run = false;
+
+    const addEntry = (type, content) => {
+        const timestamp = Date.now();
+        store.data.push({ type: type, content: content, timestamp: timestamp, deviceId: device });
+    };
+
+    const wipe = () => {
+        store.data.splice(0, store.data.length);
+    };
 
     const init = async () => {
-        run++;
-        if (run > 1) return;
+        if (run) return;
+        run = true;
+        window.addEntry = addEntry;
+        window.wipe = wipe;
         // fix this as for some reason useEffect (re-render) is called twice
         console.log = (message) => {
             let node = document.createElement('li'); // Create a <li> node
@@ -50,10 +60,12 @@ export default function Android() {
             alias: roomAlias,
         });
         await provider.initialize();
-        const device = matrixClient.getDeviceId();
-        const timestamp = Date.now();
-        store.counters.push({ deviceId: device, timestamp: timestamp });
-        console.log('dump:' + JSON.stringify(store.counters.toJSON(), null, 2));
+        device = matrixClient.getDeviceId();
+        console.log('dump:' + JSON.stringify(store.data.toJSON(), null, 2));
+        doc.on('update', (update) => {
+            console.log('update');
+            console.log('dump:' + JSON.stringify(store.data.toJSON(), null, 2));
+        });
     };
 
     useEffect(() => {
