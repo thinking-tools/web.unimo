@@ -62,10 +62,16 @@ export default function Android() {
         });
         await provider.initialize();
         device = matrixClient.getDeviceId();
-        console.log('dump:' + JSON.stringify(store.data.toJSON(), null, 2));
+        if (Android !== undefined) {
+            Android.onReady();
+        }
         doc.on('update', (update) => {
             console.log('update');
-            console.log('dump:' + JSON.stringify(store.data.toJSON(), null, 2));
+            const data = store.data.toJSON();
+            console.log('dump:' + JSON.stringify(data, null, 2));
+            if (Android !== undefined) {
+                Android.update('update', JSON.stringify(data));
+            }
         });
     };
 
