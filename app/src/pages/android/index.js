@@ -1,10 +1,9 @@
-import * as Y from 'yjs';
 import { syncedStore, getYjsDoc } from '@syncedstore/core';
 import { MatrixProvider } from '@unimo/matrix-crdt';
 import { useEffect } from 'react';
 import sdk from 'matrix-js-sdk';
 export let crypto = global.window?.crypto;
-export default function Android() {
+export default function Sync() {
     const userIdPath = 'synapse.nas.s4fu.com';
     const baseUrl = 'https://synapse.nas.s4fu.com';
     const roomAlias = '#test_public_plain:synapse.nas.s4fu.com';
@@ -81,10 +80,11 @@ export default function Android() {
         let params = new URLSearchParams(window.location.search);
         login = params.get('login');
         accessToken = params.get('token');
+        deviceId = params.get('deviceId');
         if (!login || !accessToken) return;
         matrixClient = sdk.createClient({
             baseUrl: baseUrl,
-            deviceId: 'android-webview' + '_' + login,
+            deviceId: deviceId,
             accessToken: accessToken,
             userId: '@' + login + ':' + userIdPath,
             isVoipWithNoMediaAllowed: false,
