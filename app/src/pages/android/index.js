@@ -19,6 +19,7 @@ export default function Sync() {
     let provider, device;
     let login = false;
     let accessToken = false;
+    let deviceId = false;
 
     let matrixClient = null;
     let run = false;
@@ -81,7 +82,7 @@ export default function Sync() {
         login = params.get('login');
         accessToken = params.get('token');
         deviceId = params.get('deviceId');
-        if (!login || !accessToken) return;
+        if (!login || !accessToken || !deviceId) return;
         matrixClient = sdk.createClient({
             baseUrl: baseUrl,
             deviceId: deviceId,
