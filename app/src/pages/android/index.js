@@ -29,6 +29,20 @@ export default function Sync() {
         store.data.push({ type: type, content: content, timestamp: timestamp, deviceId: device });
     };
 
+    const update = (type, content) => {
+        const timestamp = Date.now();
+        // find the last entry with the same type and update it
+        const index = store.data
+            .slice()
+            .reverse()
+            .findIndex((entry) => entry.type === type);
+        if (index === -1) {
+            store.data.push({ type: type, content: content, timestamp: timestamp, deviceId: device });
+        } else {
+            store.data.splice(index, 1, { type: type, content: content, timestamp: timestamp, deviceId: device });
+        }
+    };
+
     const wipe = () => {
         store.data.splice(0, store.data.length);
     };
@@ -39,6 +53,7 @@ export default function Sync() {
         // todo remove later
         window.addEntry = addEntry;
         window.wipe = wipe;
+        window.update = update;
         // fix this as for some reason useEffect (re-render) is called twice
         console.log = (message) => {
             let node = document.createElement('li'); // Create a <li> node
