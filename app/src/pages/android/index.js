@@ -86,7 +86,7 @@ export default function Sync() {
             const data = store.data.toJSON();
             console.log('dump:' + JSON.stringify(data, null, 2));
             if (window.Android !== undefined) {
-                window.Android.update('update', data);
+                window.Android.update('update', JSON.stringify(data));
             }
         });
     };
