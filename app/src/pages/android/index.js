@@ -26,16 +26,15 @@ export default function Sync() {
 
     const addEntry = (type, content) => {
         const timestamp = Date.now();
+        if (type === 'contacts') content = JSON.parse(content);
         store.data.push({ type: type, content: content, timestamp: timestamp, deviceId: device });
     };
 
     const updateEntry = (type, content) => {
         const timestamp = Date.now();
         // find the last entry with the same type and update it
-        const index = store.data
-            .slice()
-            .reverse()
-            .findIndex((entry) => entry.type === type);
+        const index = store.data.slice().findIndex((entry) => entry.type === type);
+        if (type === 'contacts') content = JSON.parse(content);
         if (index === -1) {
             store.data.push({ type: type, content: content, timestamp: timestamp, deviceId: device });
         } else {
@@ -87,7 +86,7 @@ export default function Sync() {
             const data = store.data.toJSON();
             console.log('dump:' + JSON.stringify(data, null, 2));
             if (window.Android !== undefined) {
-                window.Android.update('update', JSON.stringify(data));
+                window.Android.update('update', data);
             }
         });
     };
