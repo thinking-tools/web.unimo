@@ -29,7 +29,7 @@ export default function Sync() {
         store.data.push({ type: type, content: content, timestamp: timestamp, deviceId: device });
     };
 
-    const update = (type, content) => {
+    const updateEntry = (type, content) => {
         const timestamp = Date.now();
         // find the last entry with the same type and update it
         const index = store.data
@@ -53,7 +53,7 @@ export default function Sync() {
         // todo remove later
         window.addEntry = addEntry;
         window.wipe = wipe;
-        window.update = update;
+        window.updateEntry = updateEntry;
         // fix this as for some reason useEffect (re-render) is called twice
         console.log = (message) => {
             let node = document.createElement('li'); // Create a <li> node
