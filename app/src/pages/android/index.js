@@ -1,4 +1,4 @@
-import { syncedStore, getYjsDoc } from '@syncedstore/core';
+import { syncedStore, getYjsDoc, observeDeep } from '@syncedstore/core';
 import { MatrixProvider } from '@unimo/matrix-crdt';
 import { useEffect } from 'react';
 import sdk from 'matrix-js-sdk';
@@ -7,7 +7,9 @@ export default function Sync() {
     const userIdPath = 'synapse.nas.s4fu.com';
     const baseUrl = 'https://synapse.nas.s4fu.com';
     const roomAlias = '#test_public_plain:synapse.nas.s4fu.com';
-    const store = syncedStore({ data: [] });
+
+    let store = syncedStore({ clipboard: [], contacts: [], data: [] });
+
     const doc = getYjsDoc(store);
     if (!crypto) {
         try {
@@ -27,23 +29,37 @@ export default function Sync() {
     const addEntry = (type, content) => {
         const timestamp = Date.now();
         if (type === 'contacts') content = JSON.parse(content);
-        store.data.push({ type: type, content: content, timestamp: timestamp, deviceId: device });
+        store[type].push({ type: type, content: content, timestamp: timestamp, deviceId: device });
     };
 
     const updateEntry = (type, content) => {
         const timestamp = Date.now();
         // find the last entry with the same type and update it
-        const index = store.data.slice().findIndex((entry) => entry.type === type);
+        const index = store[type].slice().findIndex((entry) => entry.type === type);
         if (type === 'contacts') content = JSON.parse(content);
         if (index === -1) {
-            store.data.push({ type: type, content: content, timestamp: timestamp, deviceId: device });
+            store[type].push({ type: type, content: content, timestamp: timestamp, deviceId: device });
         } else {
-            store.data.splice(index, 1, { type: type, content: content, timestamp: timestamp, deviceId: device });
+            store[type].splice(index, 1, { type: type, content: content, timestamp: timestamp, deviceId: device });
         }
     };
 
-    const wipe = () => {
-        store.data.splice(0, store.data.length);
+    const wipe = (type) => {
+        store[type].splice(0, store[type].length);
+    };
+
+    const sendToAndroid = (type, newData) => {
+        const data = newData.toJSON();
+        console.log('newData ::: ' + type, data);
+        if (window.Android !== undefined) {
+            window.Android.update(type, JSON.stringify(data));
+        }
+        showAll();
+    };
+
+    const showAll = () => {
+        const tempData = JSON.stringify(store);
+        console.log(tempData);
     };
 
     const init = async () => {
@@ -53,6 +69,7 @@ export default function Sync() {
         window.addEntry = addEntry;
         window.wipe = wipe;
         window.updateEntry = updateEntry;
+        window.showAll = showAll;
         // fix this as for some reason useEffect (re-render) is called twice
         console.log = (message) => {
             let node = document.createElement('li'); // Create a <li> node
@@ -79,15 +96,14 @@ export default function Sync() {
         if (window.Android !== undefined) {
             window.Android.onReady();
         }
-        const data = store.data.toJSON();
-        console.log('dump:' + JSON.stringify(data, null, 2));
-        doc.on('update', (update) => {
-            console.log('update');
-            const data = store.data.toJSON();
-            console.log('dump:' + JSON.stringify(data, null, 2));
-            if (window.Android !== undefined) {
-                window.Android.update('update', JSON.stringify(data));
-            }
+        observeDeep(store.clipboard, () => {
+            sendToAndroid('clipboard', store.clipboard);
+        });
+        observeDeep(store.contacts, () => {
+            sendToAndroid('contacts', store.contacts);
+        });
+        observeDeep(store.data, () => {
+            sendToAndroid('data', store.data);
         });
     };
 
