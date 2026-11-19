@@ -112,6 +112,7 @@ requestAnimationFrame(() =>
         import('./finale.js'),
         import('./features.js'),
         import('./clock.js'),
+        import('./castle.js'),
       ]);
     } catch (e) {
       console.error('[unimo] the scripts further down could not start', e);

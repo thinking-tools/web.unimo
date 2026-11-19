@@ -11,6 +11,10 @@
  * stretch before the chapter (`.dusk`) is scrolled through, the whole screen goes dark at once. This file says
  * how dark (`--night` on the page, from 0 to 1), and marks the page `is-night` from halfway, which is when the
  * top bar, faded out by then, turns dark.
+ *
+ * At the end of the night the page comes back to white the same way: while its last stretch (`.dawn`) is
+ * scrolled through, the whole screen goes white. This file says how white (`--day`), and from halfway marks the
+ * page `is-day` and no longer `is-night`, which is when the top bar, faded out once more, turns light.
  */
 import { clamp01, followRoad, stepsOf, stretch } from './road.js';
 
@@ -18,6 +22,7 @@ const root = document.documentElement;
 const band = document.querySelector('.finale');
 const stage = band.querySelector('.finale-stage');
 const dusk = document.querySelector('.dusk');
+const dawn = document.querySelector('.dawn');
 const launcher = band.querySelector('.launcher');
 const typed = launcher.querySelector('.launcher-typed');
 const answer = band.querySelector('.sum-answer');
@@ -86,15 +91,23 @@ function write(played) {
   }
 }
 
+/** How much of a stretch has come up the screen: none until its first line reaches the foot, all once its last does. */
+function risen(stretch) {
+  const { top, height } = stretch.getBoundingClientRect();
+  return clamp01((innerHeight - top) / height);
+}
+
 /**
- * Night falls while the dusk comes up the screen: it begins as the stretch's first line reaches the foot of
- * the screen, and is complete as its last does, which is when the chapter itself comes into view.
+ * Night falls while the dusk comes up the screen, and is complete when the chapter itself comes into view. Day
+ * breaks the same way while the dawn comes up, and is complete when what follows the night does.
  */
 function dim() {
-  const { top, height } = dusk.getBoundingClientRect();
-  const night = clamp01((innerHeight - top) / height);
+  const night = risen(dusk);
+  const day = risen(dawn);
   root.style.setProperty('--night', night);
-  root.classList.toggle('is-night', night >= 0.5);
+  root.style.setProperty('--day', day);
+  root.classList.toggle('is-night', night >= 0.5 && day < 0.5);
+  root.classList.toggle('is-day', day >= 0.5);
 }
 
 followRoad(

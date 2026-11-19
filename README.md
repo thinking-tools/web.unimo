@@ -26,6 +26,12 @@ script beside a new copy of another. And it lets only five connections wait at a
 some thirty files in one go: some are turned away ("connection reset"). `tools/serve.py` forbids copies, keeps
 connections open and takes many at once.
 
+Not `bun index.html` either. That is bun's bundler, not a file server: it rewrites the page's styles and
+scripts, and it answers every address it does not know with the page itself. The page sends for some of its
+files only while it runs (a language, the castle's drawing), bun does not know those, and so the page gets its
+own source in their place: the languages fall back to English and there is no drawing. (Before `castle.js`
+took only plain text for a drawing, it drew that source.)
+
 ## Where things are
 
 | File | What it holds |
@@ -42,6 +48,8 @@ connections open and takes many at once.
 | `assets/finale.js` | The finale: the fifth road. Fades the screen to black, types its sums into the bar and shows their answers. |
 | `assets/features.js` | Features: lights its panes as they come up the screen. |
 | `assets/clock.js` | Sets the clocks on the drawn devices to the visitor's time. |
+| `assets/castle.js` | Fetches the drawing behind the page's last part when that part comes near. |
+| `assets/castle-*.txt` | Prague Castle drawn in characters: a wide drawing, and one for narrow screens. |
 | `assets/lang.js` | Loads a language and repaints the page. |
 | `assets/lang/*.json` | One file per language other than English. |
 | `assets/apps/*.png` | The icons of the apps in the bar's list, as macOS ships them. |
@@ -53,6 +61,8 @@ connections open and takes many at once.
 | `tools/check-i18n.mjs` | Holds the language files, the picker and the list in the head to each other. |
 | `tools/sums.mjs` | Asks the apps' own calculator for the answers to the finale's sums. |
 | `tools/app-icons.swift` | Writes the app icons, from the apps on a Mac. |
+| `tools/castle.mjs` | Draws a photograph in characters (the two castle drawings). |
+| `tools/dist.mjs` | Writes what a server has to serve into `dist/`. |
 
 ## What loads when
 
@@ -132,6 +142,16 @@ this is where to follow it.
 
 It is drawn twice: large, on its road, and small, on the desk's laptop. On the road the app's row of pills under
 a typed query is left out; on the desk it shows once, when the question is pasted in.
+
+## Headings
+
+After the opening's three lines a heading on the page is one size and one weight (`--heading-size` at the top
+of `index.html`, semi-bold): the bar's captions, the desk's, "Long story short.", "No ads…", the credits, the
+questions and "Built by…". On a 1280px screen that is 36px. The owner found the desk's headings the right
+size and the ones at the end of the page "unnecessarily bigger" (51px, and 76px bold for two lines). The one
+exception is the three chapters (Only yours, Quiet, the finale), whose claims are 51px on that screen: the
+owner had them tried at 36px and asked for them back. What stands under a heading is a size below it: a
+pane's name and claim, a question, the first credit. A new heading takes `--heading-size`.
 
 ## The roads
 
@@ -326,9 +346,10 @@ one-time code and a yes on a device already in the account, a wipe on removal.
 ## Quiet
 
 The fourth road (`.quiet`), a chapter like the one before it, with two claims one after the other. First "Your
-old home screen. Designed to hijack your focus.", over a home screen as phones usually have one. Then "Minimal
-design.", over unimo's own, with its points: maximum focus, no triggers, no compulsive app checking, no
-forgetting why you unlocked. The comment above it in `index.html` lists the five steps.
+old home screen. Designed to hijack your focus.", over a home screen as phones usually have one. Then "New minimal
+design.", over unimo's own, with its points: for maximum focus, no triggers, no compulsive app checking, no
+forgetting why you unlocked. The second claim says "new" because the first says "old": the one screen turns into
+the other. The comment above it in `index.html` lists the five steps.
 
 - The picture is the desk's phone, on its own (`.quiet-scene .phone`), as tall as the screen has room for under
   the captions (`--phone-height`, which takes `--captions-room` off the screen's height).
@@ -337,7 +358,7 @@ forgetting why you unlocked. The comment above it in `index.html` lists the five
   data, a target, a bell, a cart. The drawings are this site's own (masks in `assets/unimo.css`), and no real
   app or company is shown.
 - The first step clears it. As the page scrolls, `assets/quiet.js` takes the pieces away one by one: the
-  widget, the apps row by row, the dock. "Minimal design." is only said once the screen is empty and unimo's bar
+  widget, the apps row by row, the dock. "New minimal design." is only said once the screen is empty and unimo's bar
   has come up: a black screen with one line, which is what unimo's home screen is on Android.
 - Two later steps type into the bar as the page scrolls, and show what the words find (`.quiet-take`: the words
   in `.quiet-query`, the row in `.quiet-hit`). "sig" finds Signal, because an app is a word away. "spag" finds
@@ -385,19 +406,19 @@ above it in `index.html` lists the six steps.
 
 ## The night
 
-From the finale to the end of the page everything stands on one black ground (`.night`, which wraps the finale,
-Features and the credits). It lies over the sheet that darkened the page, and inside it every colour takes its
+From the finale to the dawn everything stands on one black ground (`.night`, which wraps the finale,
+Features, the credits and the questions). It lies over the sheet that darkened the page, and inside it every colour takes its
 dark value, whatever the visitor's theme. It is one box on purpose: with a black ground for each part, what lay
 under them showed through as a hairline where two met on a fraction of a pixel. A part added after the finale
-goes inside it.
+goes inside it, before the dawn.
 
 ## Features
 
 `#features`, after the finale: "Long story short." A line under the heading says what unimo is, for a visitor who
 came here straight from the top bar. Then four panes, one for each of four things by name: synchronization,
 backups, security, privacy. A pane is a picture of the thing, its name and a claim set as one headline in two
-tones (as the chapters set theirs), and four facts, each a few words that can be read alone with a line under
-them. Under the panes stands what unimo does without: no ads, no trackers, no VC money.
+tones (as the chapters set theirs), and three or four facts, each a few words that can be read alone with a line
+under them. Under the panes stands what unimo does without: no ads, no trackers, no VC money.
 
 - It is not a road. It scrolls with the page, and `assets/features.js` only lights it as it comes up the screen:
   a pane at once, when the middle of its picture has come far enough (`data-lights`), and the heading and the
@@ -417,25 +438,40 @@ them. Under the panes stands what unimo does without: no ads, no trackers, no VC
     it. A mark's course is two swings at once, side to side and near to far, a quarter of a round apart, which
     makes the oval; near, it passes in front of the icon, and far, behind it. A change goes round: each mark
     lights in turn.
-  - Backups: three slips with the same sealed text, which is the memo as the page's markup has it sealed. The
-    third stands apart and wears another colour, for the other provider, and a write lands on each in turn.
+  - Backups: three slips with the same sealed text, which is the memo as the page's markup has it sealed: one
+    for each place it is kept in, each with a light of its own colour. A write lands on each in turn. The pane
+    says "three locations around Europe" and nothing about who runs them.
   - Security: the ciphers by name, the first from edge to edge. They come out of noise as the pane lights
     (`data-decodes`, in `features.js`).
-  - Privacy: a point and four rings that rise out of the pane's foot, one for each level in the list under
-    them, from the nearest out: your devices, our servers, the web, the law. A ring and its fact wear one
-    colour, and the ring of the fact under the pointer stays lit.
-- What the panes claim, and where it comes from. In the code: the six things synced; the clipboard off until
-  it is switched on, its five items, the notifications' own switch (on by default in the Android app) and their
-  24 hours; the five systems, each with a download; AES-256-GCM for content, ML-KEM-1024 for key exchange and
+  - Privacy: unimo's own mark, set as the desktop app sets it on its first screen (`UnimoColorIcon` in
+    `unimo-ui-lib`, 90vh tall there, with a pane of frosted glass over half of it). Here the glass lies across:
+    the upper half of the mark stands clear in the picture, the lower half is behind the glass, and the pane's
+    text is written on the glass (`.feature-glass`, the one pane whose text has a box of its own). The mark is
+    the page's `.rings`, still (the owner: "dont rotate that logo"), with its middle on the glass's edge. The
+    picture is half as tall as the pane is wide, up to 21rem, so on a phone the mark is nearly as wide as the
+    pane. The glass lets most light through at its edge, behind the headline, and less behind the small text.
+    The mark's wheel here has the logo's three darkest colours set lighter, each in its own hue (`#330f1f` →
+    `#7a2445`, `#002414` → `#1f7a57`, `#142847` → `#2f5fae`): two of them fall in the upper right, where the
+    logo's own made the rings fade out on the dark ground (the owner asked for them brighter).
+    The four facts go from the nearest out: your devices, our servers, the web, the law. The claim, "Where big
+    tech can’t follow you.", names what the pane is against. It replaced "Private from the web. And from us.":
+    the owner does not want a line that has people wary of unimo itself.
+- What the panes claim, and where it comes from. In the code: what is synced (the apps' collections: memos,
+  clipboard, notifications, web history, the agent's history, recent apps, settings, and the phone's contacts);
+  the clipboard off until it is switched on and the notifications' own switch (on by default in the Android
+  app); the five systems, each with a download; AES-256-GCM for content, ML-KEM-1024 for key exchange and
   ML-DSA-87 for signatures, with every change signed (`ts-sdk/README.md`); that even the names of a user's
   devices are encrypted (`gateway/src/users/types.ts`); the account key in the phone's secure hardware on
   Android, no password, a recovery key shown once, a one-time code and a yes for every new device, a wipe on
   removal; three storage targets that every write is copied to (`S3_*_A`, `_B`, `_C` in the gateway); searches
   and questions passed on without the asker's account or address; and no analytics in the apps (the Android app
   reports crashes in debug builds only). The operator's word, which the repositories cannot show: that the
-  three targets are with two providers, that all of it is hosted in the EU and out of reach of the US CLOUD Act
+  three targets are three locations around Europe, that all of it is hosted in the EU and out of reach of the US
+  CLOUD Act
   (which goes by who controls a provider, not only by where its servers stand), that what the AI is asked is
   not kept, and that unimo takes no venture capital and is paid for by its users alone.
+- Neither the panes nor the desk's captions say how much is kept or for how long (the clipboard's five items,
+  the notifications' 24 hours, as the apps have them today): that will go by the plan a person pays for.
 - The encryption has not had an independent audit (`ts-sdk/README.md` says so), and the panes do not claim one.
 - "Sealed" and "We only ever hold ciphertext" are said of what is synced. Searches and questions pass through
   unimo's server in the clear, on their way out, and the privacy pane says so ("unimo asks … for you").
@@ -449,20 +485,128 @@ side of the middle, smaller and quieter, and whose it is on the other, each name
 Launcher, which the Android app is a fork of, comes first with a line to itself, a little larger than the rest:
 top billing, not a title. The page ends on the thanks.
 
-- Every name is in the apps' or the server's own list of what they are built from: KISS (`android-app` is a
-  fork of it), Tauri, SolidJS, libqalculate and QuickJS (`desktop-app/package.json`), fend and ZXing
-  (`android-app`), noble and Bouncy Castle (the two SDKs), Bun, Hono and Valkey (`gateway`), Vite, Playwright
-  and Vitest (the tools). When one of these is replaced, replace it here.
+- Every name is in the apps' own list of what they are built from: KISS (`android-app` is a fork of it),
+  Tauri, SolidJS, libqalculate and QuickJS (`desktop-app/package.json`), fend (`android-app`), noble and Bouncy
+  Castle (the two SDKs). When one of these is replaced, replace it here. The owner took three rows out (QR
+  codes: ZXing; Server: Bun, Hono, Valkey; Build and tests: Vite, Playwright, Vitest); the thanks at the end
+  stands for those.
 - The names are not underlined at rest, as credits are not; a link shows under the pointer or the keyboard's
   focus, and the room round a name is the link's too, for a thumb.
-- The page does not yet link to unimo's own source. "Everything is open source" wants that link, to
-  repositories anyone can read.
+- The foot of the page links "Source code" to the forge's `thinking.tools` organisation, as the old page's
+  "Read the code" did. Whether every repository there can be read by anyone is the owner's to confirm.
+
+## Questions
+
+`#faq`, after the credits and still on the night: "Fair questions.", six of them, each with its answer in full
+under it. Nothing opens or closes: six short answers are quicker to read than to click through. They stand in
+twos where there is room. Under them a line and the apps' primary button (`.button`, the opening's button
+without its system marks), which writes a mail to `peter@unimo.app`, the address the server sends its welcome
+mail from (`gateway/src/users/email.ts`).
+
+- The six: the cost, the devices, the home screen, who can read a memo, a lost phone, and unimo shutting down.
+  Three are the old page's questions in the old page's words, translations included (`faq.q.1`, `faq.q.5` and
+  `faq.q.10` in `i18n/`); the answers to the others say what the page already says elsewhere.
+- What they must not say. No prices and no quotas: the plans are in the code (free, and two paid), their
+  prices are not, and the owner does not want amounts on the page. No iPhone promise: "There is no iPhone app
+  yet." The memo question is asked as "Who can read my memos?" and answered "Only you", not "Can you read
+  them?": the owner wants no line that has people wary of unimo itself.
+
+## The day
+
+After the questions the page comes back to white as it went to black: `.dawn` is the night's last stretch,
+empty, and while it is scrolled through a white sheet comes over the whole screen (`--day`, which `finale.js`
+sets beside `--night`). The top bar goes out with the first half and comes back light with the second (`is-day`
+on the page, and no longer `is-night`). What follows the night stands on white whatever the visitor's theme
+(`color-scheme: light`), as the night stands on black.
+
+Then the last part: "Built by thinking.tools in the ♥ of Europe." in the page's largest words. The maker's name
+is not set but drawn: the lettering of thinking.tools' logo (`thinking/web/src/assets/images/logo1.svg`, the
+site's `logo1-….svg`) without the six strokes that stand left and right of it there, as the owner asked ("keep
+just text"). It is the page's `#thinking-tools` symbol, sized so that its small letters are as tall as the
+heading's, a link to the maker, and it reads "thinking.tools" to software that reads aloud. The heart is a
+letter in the logo's red (U+2665 with the text selector after it, so that no system swaps in its
+own picture) that beats where motion is welcome. A reader's software is told the word the heart stands for,
+in each language (`aria-label` in `made.h`).
+
+Behind the words, Prague Castle drawn in characters, in soft grey:
+
+- `tools/castle.mjs` draws a photograph in characters: the darker a spot, the denser its character, and the
+  sky left empty. It wrote the two drawings in `assets/`: `castle-wide.txt` (200 columns, the photograph from
+  0.06 to 0.94 of its width) and `castle-narrow.txt` (92 columns, from 0.17 to 0.60, the cathedral in the
+  middle), both from 0.05 to 0.64 of its height. The file's head has the command. It needs `sips`, so a Mac.
+- `assets/castle.js` fetches the one the screen has room for, when the part comes within a screen and a half,
+  and puts it into the page as text. Without scripts there is no drawing.
+- The styles size the characters so that the drawing's columns fill the width (`--cols`), and keep the room
+  its lines will take (`--rows`) from the start. Both numbers are in `unimo.css` for each drawing, and the
+  width at which one gives way to the other (45rem) is in `castle.js` too: a drawing made again with other
+  measures wants all three changed.
+- The photograph is the one the owner named, a stock picture of the castle from across the Vltava (its file
+  name says Fotolia). It is not in this repository. Whether a drawing made from it may be published is the
+  owner's to settle; any other photograph of the same view can be drawn with the same command.
+
+## The foot
+
+`<footer class="foot">`, on the same white: the company as thinking.tools names itself on its own site (name,
+address, company and VAT numbers), and four short lists: where to go on this page and to the code and the
+status page; the policies; where to write; where to follow. Every address is one thinking.tools publishes in
+its own footer (`thinking/web/index.html`), and the policies are its policies (`POLICIES.md` on the forge):
+unimo has none of its own yet.
+
+- "This page set no cookies and loaded nothing from anyone but us." is the old page's line and is true of this
+  one: it sets no cookies, and every file it loads is its own.
+- The last line carries the credit Ubuntu's wallpaper asks for (CC BY-SA 4.0), which the desk shows to
+  Firefox on Ubuntu.
+- The links to `#about` and `#pricing` in the top bar still lead nowhere; the foot links only to parts that
+  exist.
 
 ## Publishing
 
-The files carry no version in their names, so for a few minutes after a new version is published a returning
-visitor's browser may run an old copy of one script beside a new copy of another. A change to what one script
-expects of another (what `road.js` hands to `bar.js`, say) can misbehave for that long.
+The site is its files: nothing is built. What a server has to serve is written into `dist/` by
+
+```bash
+node tools/dist.mjs
+```
+
+(`bun tools/dist.mjs` does the same.) It copies the page, its icons and `assets/` without the old page's files,
+and fails if a copied file names a file of the site that is not among the copies. `dist/` is not kept in git.
+
+It then goes to the server, into the folder Caddy serves:
+
+```bash
+rsync -az --delete dist/ user@host:/srv/unimo.app/
+```
+
+And Caddy serves that folder as it is:
+
+```
+unimo.app {
+	root * /srv/unimo.app
+	encode zstd gzip
+	file_server
+
+	@pictures path *.avif *.png *.ico
+	@rest not path *.avif *.png *.ico
+	header @pictures Cache-Control "public, max-age=86400"
+	header @rest Cache-Control "no-cache"
+}
+
+www.unimo.app {
+	redir https://unimo.app{uri} permanent
+}
+```
+
+- No `try_files … /index.html`: this is one page, and an address that names no file must be answered "not
+  found", not with the page.
+- `no-cache` does not mean "keep no copy": the browser keeps one and asks each time whether it is still
+  current, which is answered in a few bytes. The files carry no version in their names, so without it a
+  returning visitor's browser could run an old copy of one script beside a new copy of another. Pictures are
+  asked for again after a day.
+- Caddy gets and renews the certificate itself once the name points at the server. Where Caddy runs in
+  Docker, the folder is one more volume of its service (`/srv/unimo.app:/srv/unimo.app:ro`).
+- This configuration has not been run: there was no Caddy on the machine it was written on. `caddy validate`
+  says whether it reads.
+- `CNAME` at the site's root is from the host the site was published on before, which read the name from it.
+  Caddy has no use for it, and it is not copied.
 
 ## Colours and icons
 

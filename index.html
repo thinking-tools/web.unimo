@@ -53,6 +53,9 @@
   --space: clamp(1.5rem, 5svh, 4rem); /* the least room above and below a block */
   /* the opening's measures, shared by the parts they size and by the sum that places them (.hero) */
   --title-size: clamp(1.625rem, min(0.375rem + 7vw, 11.5svh), 5rem);
+  /* a heading after the opening's is this size, from the bar's captions to the last line of the page; only the
+     three chapters set theirs larger (.chapter in unimo.css) */
+  --heading-size: clamp(1.375rem, 1rem + 1.7vw, 2.25rem);
   --gap-download: clamp(1.75rem, 4.5svh, 2.75rem);
   --gap-bar: clamp(2.25rem, 7svh, 4.5rem);
   --platform-lines: 2;
@@ -996,7 +999,7 @@ h1 span {
 
 .does h2 {
   margin: 0;
-  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+  font-size: var(--heading-size);
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.025em;
@@ -1186,6 +1189,7 @@ h1 span {
 <link rel="modulepreload" href="/assets/finale.js" fetchpriority="low">
 <link rel="modulepreload" href="/assets/features.js" fetchpriority="low">
 <link rel="modulepreload" href="/assets/clock.js" fetchpriority="low">
+<link rel="modulepreload" href="/assets/castle.js" fetchpriority="low">
 <!-- and should the scripts fail to arrive at all, the page falls back the same way -->
 <script type="module" src="/assets/unimo.js" onerror="document.documentElement.classList.remove('js')"></script>
 </head>
@@ -1194,6 +1198,9 @@ h1 span {
 
 <!-- the marks of the systems unimo runs on -->
 <svg class="sprite" aria-hidden="true">
+  <!-- thinking.tools' name as its logo writes it (thinking/web, logo1.svg), without the six strokes that stand
+       to the left and right of it there -->
+  <symbol id="thinking-tools" viewBox="78.82 40.65 762.84 121.06"><polygon points="133.8 70.02 78.82 70.02 78.82 83.2 99.04 83.2 99.04 133.77 113.58 133.77 113.58 83.2 133.8 83.2"/><path d="M143.51,42.17 L158.14,42.17 L158.14,77.25 C162.53,71.8 169.31,68.6 177.16,68.6 C191.39,68.6 201.9,78.98 201.9,93.74 L201.9,133.78 L187.27,133.78 L187.27,96.93 C187.27,88.42 181.28,82.3 172.77,82.3 C164.26,82.3 158.14,88.42 158.14,96.93 L158.14,133.78 L143.51,133.78 L143.51,42.17 Z"/><path d="M211.61,49.44 C211.61,44.52 215.2,40.66 220.25,40.66 C225.3,40.66 228.9,44.52 228.9,49.44 C228.9,54.36 225.31,58.22 220.25,58.22 C215.19,58.22 211.61,54.36 211.61,49.44 Z M212.94,69.93 L227.57,69.93 L227.57,133.78 L212.94,133.78 L212.94,69.93 L212.94,69.93 Z"/><path d="M239.94,69.93 L254.57,69.93 L254.57,77.24 C258.96,71.79 265.74,68.59 273.59,68.59 C287.95,68.59 298.33,81.23 298.33,93.73 L298.33,133.77 L283.7,133.77 L283.7,96.92 C283.7,88.41 277.71,82.29 269.2,82.29 C260.69,82.29 254.57,88.41 254.57,96.92 L254.57,133.77 L239.94,133.77 L239.94,69.92 L239.94,69.93 Z"/><polygon points="309.24 42.17 323.87 42.17 323.87 99.99 349.67 69.93 367.1 69.93 340.23 100.52 368.43 133.77 349.81 133.77 323.87 102.51 323.87 133.77 309.24 133.77 309.24 42.16"/><path d="M372.63,49.44 C372.63,44.52 376.22,40.66 381.28,40.66 C386.34,40.66 389.93,44.52 389.93,49.44 C389.93,54.36 386.34,58.22 381.28,58.22 C376.22,58.22 372.63,54.36 372.63,49.44 Z M373.96,69.93 L388.59,69.93 L388.59,133.78 L373.96,133.78 L373.96,69.93 L373.96,69.93 Z"/><path d="M400.96,69.93 L415.59,69.93 L415.59,77.24 C419.98,71.79 426.76,68.59 434.61,68.59 C448.97,68.59 459.35,81.23 459.35,93.73 L459.35,133.77 L444.72,133.77 L444.72,96.92 C444.72,88.41 438.73,82.29 430.22,82.29 C421.71,82.29 415.59,88.41 415.59,96.92 L415.59,133.77 L400.96,133.77 L400.96,69.92 L400.96,69.93 Z"/><path d="M466.13,100.39 C466.13,82.3 479.03,68.6 496.19,68.6 C504.44,68.6 511.36,71.66 515.88,76.71 L515.88,69.93 L530.51,69.93 L530.51,131.12 C530.51,149.48 516.81,161.71 496.86,161.71 C483.42,161.71 473.18,156.66 466.93,147.74 L476.51,138.16 C481.57,144.55 487.95,147.74 497.13,147.74 C508.7,147.74 515.89,141.49 515.89,131.11 L515.89,124.19 C511.37,129.38 504.45,132.44 496.2,132.44 C479.04,132.44 466.14,118.61 466.14,100.38 L466.13,100.39 Z M516.81,100.52 C516.81,89.61 509.76,82.43 499.12,82.43 C488.48,82.43 481.16,89.74 481.16,100.52 C481.16,111.3 488.48,118.61 499.12,118.61 C509.76,118.61 516.81,111.43 516.81,100.52 Z"/><path d="M546.21,125.26 C546.21,119.67 550.2,115.42 555.92,115.42 C561.64,115.42 565.63,119.68 565.63,125.26 C565.63,130.84 561.64,135.1 555.92,135.1 C550.2,135.1 546.21,130.84 546.21,125.26 Z"/><polygon points="618.62 70.02 563.63 70.02 563.63 83.2 583.85 83.2 583.85 133.77 598.39 133.77 598.39 83.2 618.62 83.2"/><path d="M621.79,101.72 C621.79,83.23 636.42,68.6 655.18,68.6 C673.94,68.6 688.7,83.1 688.7,101.72 C688.7,120.34 674.07,135.11 655.18,135.11 C636.29,135.11 621.79,120.34 621.79,101.72 Z M673.67,101.72 C673.67,90.55 665.95,82.7 655.18,82.7 C644.41,82.7 636.82,90.68 636.82,101.72 C636.82,112.76 644.4,121.01 655.18,121.01 C665.96,121.01 673.67,113.03 673.67,101.72 Z"/><path d="M694.69,101.72 C694.69,83.23 709.32,68.6 728.08,68.6 C746.84,68.6 761.6,83.1 761.6,101.72 C761.6,120.34 746.97,135.11 728.08,135.11 C709.19,135.11 694.69,120.34 694.69,101.72 Z M746.57,101.72 C746.57,90.55 738.85,82.7 728.08,82.7 C717.31,82.7 709.72,90.68 709.72,101.72 C709.72,112.76 717.3,121.01 728.08,121.01 C738.86,121.01 746.57,113.03 746.57,101.72 Z"/><polygon points="769.71 42.17 784.34 42.17 784.34 133.78 769.71 133.78"/><path d="M790.99,123.4 L800.3,114.09 C804.69,119.28 810.41,121.8 817.72,121.8 C824.24,121.8 827.7,119.8 827.7,116.08 C827.7,104.51 794.58,111.42 794.58,88.28 C794.58,76.04 803.49,68.59 818.12,68.59 C828.36,68.59 836.34,72.32 841.66,79.5 L832.35,88.81 C828.62,84.15 823.97,81.89 817.72,81.89 C811.87,81.89 808.54,83.75 808.54,87.08 C808.54,97.59 841.66,91.34 841.66,114.88 C841.66,127.38 832.35,135.1 817.45,135.1 C806.67,135.1 797.1,130.84 790.98,123.4 L790.99,123.4 Z"/></symbol>
   <symbol id="os-android" viewBox="0 0 24 24"><path d="M18.4395 5.5586c-.675 1.1664-1.352 2.3318-2.0274 3.498-.0366-.0155-.0742-.0286-.1113-.043-1.8249-.6957-3.484-.8-4.42-.787-1.8551.0185-3.3544.4643-4.2597.8203-.084-.1494-1.7526-3.021-2.0215-3.4864a1.1451 1.1451 0 0 0-.1406-.1914c-.3312-.364-.9054-.4859-1.379-.203-.475.282-.7136.9361-.3886 1.5019 1.9466 3.3696-.0966-.2158 1.9473 3.3593.0172.031-.4946.2642-1.3926 1.0177C2.8987 12.176.452 14.772 0 18.9902h24c-.119-1.1108-.3686-2.099-.7461-3.0683-.7438-1.9118-1.8435-3.2928-2.7402-4.1836a12.1048 12.1048 0 0 0-2.1309-1.6875c.6594-1.122 1.312-2.2559 1.9649-3.3848.2077-.3615.1886-.7956-.0079-1.1191a1.1001 1.1001 0 0 0-.8515-.5332c-.5225-.0536-.9392.3128-1.0488.5449zm-.0391 8.461c.3944.5926.324 1.3306-.1563 1.6503-.4799.3197-1.188.0985-1.582-.4941-.3944-.5927-.324-1.3307.1563-1.6504.4727-.315 1.1812-.1086 1.582.4941zM7.207 13.5273c.4803.3197.5506 1.0577.1563 1.6504-.394.5926-1.1038.8138-1.584.4941-.48-.3197-.5503-1.0577-.1563-1.6504.4008-.6021 1.1087-.8106 1.584-.4941z"/></symbol>
   <symbol id="os-grapheneos" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 6.6L16.68 9.3V14.7L12 17.4L7.32 14.7V9.3ZM12 6.6V1M16.68 9.3L21.53 6.5M16.68 14.7L21.53 17.5M12 17.4V23M7.32 14.7L2.47 17.5M7.32 9.3L2.47 6.5"/></symbol>
   <symbol id="os-mac" viewBox="0 0 24 24"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></symbol>
@@ -1227,7 +1234,7 @@ h1 span {
     <nav class="menu" id="menu" popover>
       <a href="#about" data-i18n="nav.about">About</a>
       <a href="#features" data-i18n="nav.features">Features</a>
-      <a href="#pricing" data-i18n="nav.pricing">Pricing</a>
+      <a href="#faq" data-i18n="">FAQ</a>
       <div class="lang">
         <span class="lang-name" aria-hidden="true">English</span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
@@ -1276,6 +1283,7 @@ h1 span {
          stands here as a link still to be made. -->
     <p class="platforms" id="platforms">
       <span data-i18n="avail.lead">Available on</span>
+      <br />
       <a data-os="android" href="https://code.nolog.cz/thinking.tools/android-unimo-app/releases/download/v0.0.5/unimo-v0.0.5.apk"><svg class="os" aria-hidden="true"><use href="#os-android"/></svg><span>Android</span></a>,
       <a href="https://code.nolog.cz/thinking.tools/android-unimo-app/releases/download/v0.0.5/unimo-v0.0.5.apk"><svg class="os" aria-hidden="true"><use href="#os-grapheneos"/></svg><span>GrapheneOS</span></a>,
       <a data-os="mac" href="https://code.nolog.cz/thinking.tools/unimo-desktop-app/releases/download/v0.0.9/unimo_0.0.9_universal.dmg"><svg class="os" aria-hidden="true"><use href="#os-mac"/></svg><span>Mac</span></a>,
@@ -1441,11 +1449,11 @@ h1 span {
           </div>
           <div class="caption" data-at="1" data-until="3">
             <h3 data-i18n="desk.notif.h">A message or call reaches your phone. <span>Your laptop shows it too.</span></h3>
-            <p data-i18n="desk.notif.p"><b>You decide what travels.</b> Notifications have their own switch, and they are deleted after 24 hours.</p>
+            <p data-i18n="desk.notif.p"><b>You decide what travels.</b> Notifications have their own switch, and only your devices can read them.</p>
           </div>
           <div class="caption" data-at="3" data-until="5">
             <h3 data-i18n="desk.clip.h">Copy on your phone. <span>Paste on your laptop.</span></h3>
-            <p data-i18n="desk.clip.p"><b>Text and pictures.</b> The last five things you copied are on both devices. Clipboard sharing stays off until you switch it on.</p>
+            <p data-i18n="desk.clip.p"><b>Text and pictures.</b> What you copy on one device is ready to paste on the other. Clipboard sharing stays off until you switch it on.</p>
           </div>
           <!-- The agent. Its name stays for as long as it is asked and thinks, and under the name, one at a time,
                what holds while it does. -->
@@ -1459,7 +1467,7 @@ h1 span {
             <p data-i18n="ask.kept.p">Your question is deleted as soon as it is answered, and never used for training. unimo keeps no record of who asked what.</p>
           </div>
           <div class="caption is-under-topic" data-at="7" data-until="8">
-            <h4 data-i18n="ask.law.h">Processed under EU law.</h4>
+            <h4 data-i18n="ask.law.h">Protected under EU law.</h4>
             <p data-i18n="ask.law.p">From question to answer, European privacy law applies.</p>
           </div>
           <div class="caption is-under-topic" data-at="8" data-until="9">
@@ -1657,9 +1665,9 @@ h1 span {
           <h3 data-i18n="quiet.hijack.h">Designed to hijack your focus.</h3>
           <p data-i18n="quiet.hijack.p">You unlocked your phone to look up a recipe. Twenty minutes later you know all about a stranger’s holiday. Still hungry.</p>
         </div>
-        <h3 class="topic" data-at="1" data-i18n="quiet.min.h">Minimal design.</h3>
+        <h3 class="topic" data-at="1" data-i18n="quiet.min.h">New minimal design.</h3>
         <div class="caption is-under-topic" data-at="1" data-until="2">
-          <h4 data-i18n="quiet.focus.h">Maximum focus.</h4>
+          <h4 data-i18n="quiet.focus.h">For maximum focus.</h4>
           <p data-i18n="quiet.focus.p">unimo’s home screen is one line. It is blank on purpose.</p>
         </div>
         <div class="caption is-under-topic" data-at="2" data-until="3">
@@ -1714,7 +1722,7 @@ h1 span {
        slowly from there on (data-lingers-from, a count of characters) and takes more of its step
        (data-typed-by). -->
   <div class="dusk" aria-hidden="true"></div>
-  <!-- the night: everything from here to the end of the page stands on one black ground -->
+  <!-- the night: everything from here to the dawn stands on one black ground -->
   <div class="night">
   <div class="finale chapter" data-still="5">
     <section class="finale-stage chapter-stage" aria-labelledby="finale-title">
@@ -1768,8 +1776,8 @@ h1 span {
 
   <!-- Features: the long story above, short. Four panes, one for each of four things by name
        (synchronization, backups, security, privacy): a picture of the thing, its name and a claim set as one
-       headline, and four facts, each a few words that can be read alone with a line under them. No fact is
-       said twice. Then, under the panes, what unimo does without.
+       headline, and three or four facts, each a few words that can be read alone with a line under them. No
+       fact is said twice. Then, under the panes, what unimo does without.
        It stands on the finale's black and is not a road: it scrolls with the page. features.js lights a pane
        once its picture has come far enough up the screen (data-lights), which also sets the picture moving,
        and lights the heading and the last line a word at a time (data-lights-by-word). The pictures are for
@@ -1792,23 +1800,22 @@ h1 span {
         <h3 data-i18n="feat.sync.t">Synchronization.</h3>
         <p class="feature-claim" data-i18n="feat.sync.c">What one device knows, they all know.</p>
         <ul class="facts">
-          <li><b data-i18n="feat.sync.1.k">Contacts, memos, clipboard</b><span data-i18n="feat.sync.1.d">Notifications, history and settings too.</span></li>
+          <li><b data-i18n="feat.sync.1.k">Contacts, memos, clipboard</b><span data-i18n="feat.sync.1.d">Notifications, web searches and results, your search index, AI chats and settings too.</span></li>
           <li><b data-i18n="feat.sync.2.k">Android, Mac, Windows, Linux</b><span data-i18n="feat.sync.2.d">GrapheneOS too. A web app is next.</span></li>
           <li><b data-i18n="feat.sync.3.k">You decide what travels</b><span data-i18n="feat.sync.3.d">The clipboard stays off until you switch it on. Notifications have their own switch.</span></li>
-          <li><b data-i18n="feat.sync.4.k">It forgets on purpose</b><span data-i18n="feat.sync.4.d">The clipboard keeps your last five items. Notifications are deleted after 24 hours.</span></li>
+          <li><b data-i18n="feat.sync.4.k">Find it from any device</b><span data-i18n="feat.sync.4.d">A memo from your phone, a contact, a page you opened yesterday. A few letters in the bar.</span></li>
         </ul>
       </article>
-      <!-- three copies of the memo as our server holds it, the third set apart: it is with the other
-           provider. A write lands on each in turn. -->
+      <!-- three copies of the memo as our server holds it, one for each place it is kept in. A write lands on
+           each in turn. -->
       <article class="feature is-backups" data-lights>
         <div class="art art-backups" aria-hidden="true"><i></i><i></i><i></i></div>
         <h3 data-i18n="feat.backup.t">Backups.</h3>
         <p class="feature-claim" data-i18n="feat.backup.c">Lose your phone. Lose nothing.</p>
         <ul class="facts">
-          <li><b data-i18n="feat.backup.1.k">Three locations</b><span data-i18n="feat.backup.1.d">Every change is written to three separate storage sites.</span></li>
-          <li><b data-i18n="feat.backup.2.k">Two providers</b><span data-i18n="feat.backup.2.d">No single company holds all three copies.</span></li>
-          <li><b data-i18n="feat.backup.3.k">Sealed, all three</b><span data-i18n="feat.backup.3.d">Every copy is encrypted before it arrives. Neither we nor the providers can read it.</span></li>
-          <li><b data-i18n="feat.backup.4.k">One recovery key</b><span data-i18n="feat.backup.4.d">Shown once, at sign-up. If every device is gone, it brings everything back.</span></li>
+          <li><b data-i18n="feat.backup.1.k">Three locations around Europe</b><span data-i18n="feat.backup.1.d">Every change is written to all three. No single site holds your only copy.</span></li>
+          <li><b data-i18n="feat.backup.2.k">Sealed, all three</b><span data-i18n="feat.backup.2.d">Every copy is encrypted before it arrives. Nobody who stores it can read it, and neither can we.</span></li>
+          <li><b data-i18n="feat.backup.3.k">One recovery key</b><span data-i18n="feat.backup.3.d">Shown once, at sign-up. If every device is gone, it brings everything back.</span></li>
         </ul>
       </article>
       <!-- the ciphers by name, which come out of noise as the pane lights (features.js, data-decodes) -->
@@ -1827,20 +1834,21 @@ h1 span {
           <li><b data-i18n="feat.sec.4.k">You approve every device</b><span data-i18n="feat.sec.4.d">A new one joins with a one-time code and your yes. Remove one and its copy is wiped.</span></li>
         </ul>
       </article>
-      <!-- a point, and four rings rising round it, one for each level in the list under them, from the
-           nearest out: your devices, our servers, the web, the law. A fact wears its ring's colour. -->
+      <!-- unimo's mark, set as the desktop app sets it on its first screen (UnimoColorIcon in unimo-ui-lib,
+           half of it behind a pane of frosted glass). Here the glass lies across: the upper half of the mark
+           stands clear, and the pane's text is written on the glass over the lower half. -->
       <article class="feature is-privacy" data-lights>
-        <div class="art art-privacy" aria-hidden="true">
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="2"/><circle cx="50" cy="50" r="13"/><circle cx="50" cy="50" r="23"/><circle cx="50" cy="50" r="33"/><circle cx="50" cy="50" r="43"/></svg>
+        <div class="art art-privacy" aria-hidden="true"><span class="rings art-logo"></span></div>
+        <div class="feature-glass">
+          <h3 data-i18n="feat.priv.t">Privacy.</h3>
+          <p class="feature-claim" data-i18n="feat.priv.c">Where big tech can’t follow you.</p>
+          <ul class="facts">
+            <li><b data-i18n="feat.priv.1.k">On your devices</b><span data-i18n="feat.priv.1.d">Only your devices can read what you sync. Even their names are encrypted.</span></li>
+            <li><b data-i18n="feat.priv.2.k">On our servers</b><span data-i18n="feat.priv.2.d">What you ask the AI is not kept. Searches are not tied to your account.</span></li>
+            <li><b data-i18n="feat.priv.3.k">Out on the web</b><span data-i18n="feat.priv.3.d">unimo asks the web and the AI for you. They get the question, never your account or IP address.</span></li>
+            <li><b data-i18n="feat.priv.4.k">Under EU law</b><span data-i18n="feat.priv.4.d">Hosted in the EU. The GDPR applies. The US CLOUD Act does not.</span></li>
+          </ul>
         </div>
-        <h3 data-i18n="feat.priv.t">Privacy.</h3>
-        <p class="feature-claim" data-i18n="feat.priv.c">Private from the web. And from us.</p>
-        <ul class="facts">
-          <li><b data-i18n="feat.priv.1.k">On your devices</b><span data-i18n="feat.priv.1.d">Only your devices can read what you sync. Even their names are encrypted.</span></li>
-          <li><b data-i18n="feat.priv.2.k">On our servers</b><span data-i18n="feat.priv.2.d">What you ask the AI is not kept. Searches are not tied to your account.</span></li>
-          <li><b data-i18n="feat.priv.3.k">Out on the web</b><span data-i18n="feat.priv.3.d">unimo asks the web and the AI for you. They get the question, never your account or IP address.</span></li>
-          <li><b data-i18n="feat.priv.4.k">Under EU law</b><span data-i18n="feat.priv.4.d">Hosted in the EU. The GDPR applies. The US CLOUD Act does not.</span></li>
-        </ul>
       </article>
     </div>
     <!-- and what it does without -->
@@ -1853,7 +1861,7 @@ h1 span {
   <!-- The credits, as at the end of a film: what unimo is built on, by what it is used for. The first is the
        one unimo owes most to, the launcher its Android app is a fork of, and has a line to itself. Every name
        here is in the apps' or the server's own list of what they are built from (android-app, desktop-app,
-       gateway, the two SDKs). The page ends on the thanks. -->
+       gateway, the two SDKs). They end on the thanks. -->
   <section class="giants" id="open-source" aria-labelledby="giants-title">
     <h2 id="giants-title" data-i18n="giants.h">Everything is open source. <span>Standing on the shoulders of giants.</span></h2>
     <p class="giants-lead" data-i18n="giants.p">The Android app is GPLv3, everything else MIT. These people shared their code. So do we.</p>
@@ -1882,23 +1890,114 @@ h1 span {
         <dt data-i18n="giants.r.agent">Agent sandbox</dt>
         <dd><a href="https://github.com/quickjs-ng/quickjs" rel="noopener">QuickJS</a></dd>
       </div>
-      <div>
-        <dt data-i18n="giants.r.qr">QR codes</dt>
-        <dd><a href="https://github.com/zxing/zxing" rel="noopener">ZXing</a></dd>
-      </div>
-      <div>
-        <dt data-i18n="giants.r.server">Server</dt>
-        <dd><a href="https://bun.sh" rel="noopener">Bun</a>, <a href="https://hono.dev" rel="noopener">Hono</a>, <a href="https://valkey.io" rel="noopener">Valkey</a></dd>
-      </div>
-      <div>
-        <dt data-i18n="giants.r.tools">Build and tests</dt>
-        <dd><a href="https://vite.dev" rel="noopener">Vite</a>, <a href="https://playwright.dev" rel="noopener">Playwright</a>, <a href="https://vitest.dev" rel="noopener">Vitest</a></dd>
-      </div>
     </dl>
     <p class="giants-thanks" data-i18n="giants.thanks">And everyone else whose code runs in ours. Thank you.</p>
   </section>
+
+  <!-- The questions people ask before they try it: six, each with its answer in full (nothing opens or closes),
+       and under them a way to ask another, by mail. The answers say what the page or the apps' code already
+       says; where the old page (index2.html) had the same question, its words are kept. -->
+  <section class="faq" id="faq" aria-labelledby="faq-title">
+    <h2 id="faq-title" data-i18n="faq.h">Fair questions.</h2>
+    <dl class="questions">
+      <div>
+        <dt data-i18n="faq.cost.q">What does it cost?</dt>
+        <dd data-i18n="faq.cost.a">Nothing to start. Everything that happens on your devices is free and has no limit: apps, contacts, memos, the calculator, the clipboard. Web searches and AI answers cost us money each time, so the free plan includes some and the paid plans more. No ads, no data sales.</dd>
+      </div>
+      <div>
+        <dt data-i18n="faq.devices.q">Which devices does it run on?</dt>
+        <dd data-i18n="faq.devices.a">Android phones, GrapheneOS included, and Mac, Windows and Linux computers. A web app is next. There is no iPhone app yet.</dd>
+      </div>
+      <div>
+        <dt data-i18n="faq.home.q">Do I have to give up my home screen?</dt>
+        <dd data-i18n="faq.home.a">On Android, unimo is the home screen. Try it for a day. To switch back, open Settings, search for “home app” and pick your old one. Nothing is lost.</dd>
+      </div>
+      <div>
+        <dt data-i18n="faq.read.q">Who can read my memos?</dt>
+        <dd data-i18n="faq.read.a">Only you. They are scrambled on your phone with a key that stays on your devices. What our servers hold is the scrambled copy.</dd>
+      </div>
+      <div>
+        <dt data-i18n="faq.lost.q">What if I lose my phone?</dt>
+        <dd data-i18n="faq.lost.a">Sign in on a new one with your recovery key, then remove the lost phone from your account. Its copy is wiped the next time it connects.</dd>
+      </div>
+      <div>
+        <dt data-i18n="faq.end.q">What happens to my things if unimo shuts down?</dt>
+        <dd data-i18n="faq.end.a">Your memos and contacts live on your own devices, so they stay with you. And the code is open: anyone can run the server.</dd>
+      </div>
+    </dl>
+    <p class="faq-more">
+      <span data-i18n="faq.more">Is yours not here?</span>
+      <a class="button" href="mailto:peter@unimo.app?subject=unimo" data-i18n="faq.ask">Send us your question</a>
+    </p>
+  </section>
+
+  <!-- The lights come up. As the dusk turned the whole screen black, this stretch, with nothing in it, turns
+       it white while it is scrolled through (finale.js says how white, --day). -->
+  <div class="dawn"></div>
   </div>
 
+  <!-- Who made it, and where: on white whatever the visitor's theme, over Prague Castle drawn in characters
+       (tools/castle.mjs made the drawings, assets/castle.js fetches the one the screen has room for). The
+       maker's name is its logo's lettering, a link, and reads "thinking.tools" to software that reads aloud. -->
+  <section class="made" aria-labelledby="made-title">
+    <h2 id="made-title" data-i18n="made.h">Built by <a href="https://thinking.tools" rel="noopener" aria-label="thinking.tools"><svg class="wordmark" aria-hidden="true"><use href="#thinking-tools"/></svg></a> in the <span class="heart" role="img" aria-label="heart">&#9829;&#xFE0E;</span> of Europe.</h2>
+    <pre class="castle" aria-hidden="true" data-wide="/assets/castle-wide.txt" data-narrow="/assets/castle-narrow.txt"></pre>
+  </section>
+
 </main>
+
+<!-- The foot of the page, on the same white: the company as thinking.tools names itself, where to go on the
+     page, the policies, and where to write or follow. The addresses are the ones thinking.tools publishes. -->
+<footer class="foot">
+  <div class="foot-grid">
+    <div class="foot-company">
+      <a class="foot-brand" href="/"><span class="mark" aria-hidden="true"></span>unimo</a>
+      <p data-i18n="foot.clean">This page set no cookies and loaded nothing from anyone but us.</p>
+      <address>
+        thinking.tools s.r.o.<br>
+        Korunní 2569/108<br>
+        101 00 Prague 10, Vinohrady<br>
+        Czechia, EU
+      </address>
+      <p><span data-i18n="foot.id">Company ID</span> 23956526<br><span data-i18n="foot.vat">VAT ID</span> CZ23956526</p>
+    </div>
+    <nav aria-labelledby="foot-unimo">
+      <h3 id="foot-unimo">unimo</h3>
+      <ul>
+        <li><a href="#features" data-i18n="nav.features">Features</a></li>
+        <li><a href="#faq" data-i18n="foot.questions">Questions</a></li>
+        <li><a href="#open-source" data-i18n="foot.open">Open source</a></li>
+        <li><a href="https://code.nolog.cz/thinking.tools" rel="noopener" data-i18n="foot.code">Source code</a></li>
+        <li><a href="https://thinking-tools.instatus.com" rel="noopener" data-i18n="foot.status">Status page</a></li>
+      </ul>
+    </nav>
+    <nav aria-labelledby="foot-legal">
+      <h3 id="foot-legal" data-i18n="foot.legal">Legal</h3>
+      <ul>
+        <li><a href="https://code.nolog.cz/thinking.tools/policies.web.thinking.tools/src/branch/main/POLICIES.md#privacy-policy" rel="noopener" data-i18n="foot.privacy">Privacy policy</a></li>
+        <li><a href="https://code.nolog.cz/thinking.tools/policies.web.thinking.tools/src/branch/main/POLICIES.md#terms-of-service" rel="noopener" data-i18n="foot.terms">Terms of service</a></li>
+        <li><a href="https://code.nolog.cz/thinking.tools/policies.web.thinking.tools/src/branch/main/POLICIES.md#cookie-policy" rel="noopener" data-i18n="foot.cookies">Cookie policy</a></li>
+      </ul>
+    </nav>
+    <nav aria-labelledby="foot-contact">
+      <h3 id="foot-contact" data-i18n="foot.contact">Contact</h3>
+      <ul>
+        <li><a href="mailto:peter@unimo.app">peter@unimo.app</a></li>
+        <li><a href="mailto:security@thinking.tools" data-i18n="foot.bug">Report a bug</a></li>
+        <li><a href="https://thinking.tools" rel="noopener">thinking.tools</a></li>
+      </ul>
+    </nav>
+    <nav aria-labelledby="foot-follow">
+      <h3 id="foot-follow" data-i18n="foot.follow">Follow</h3>
+      <ul>
+        <li><a href="https://signal.group/#CjQKIG6miiB8LmfSuhcl2h7LQyceOHd3NgOCZcgRlAiJNfREEhAnYPRZZMqWyFU_WY0cRpbk" rel="noopener">Signal</a></li>
+        <li><a href="https://bsky.app/profile/thinkingtools.bsky.social" rel="noopener">Bluesky</a></li>
+        <li><a href="https://github.com/thinking-tools" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/company/thinking-dot-tools" rel="noopener">LinkedIn</a></li>
+      </ul>
+    </nav>
+  </div>
+  <p class="foot-end"><span>© 2026 thinking.tools s.r.o.</span> <span>Ubuntu wallpaper © Canonical Ltd, CC BY-SA 4.0</span></p>
+</footer>
 </body>
 </html>
