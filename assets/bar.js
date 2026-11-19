@@ -18,9 +18,21 @@ const captions = [...stage.querySelectorAll('.does-step')];
 /** What the bar shows of its mode: the mark on its mode button and the placeholder, one of each per mode (`data-in`). */
 const modeParts = [...launcher.querySelectorAll('[data-in]')];
 
+/**
+ * The road is a stretch for each take, and before the first a short one in which the bar has arrived at its
+ * place and nothing is typed yet: a beat to take the page's tempo in. It is this long, in takes.
+ */
+const LEAD = 0.15;
 /** Of one take's stretch of the road, typing in fills the first part and typing back out the last. */
-const TYPED_IN_BY = 0.3;
-const ERASED_FROM = 0.82;
+const TYPED_IN_BY = 0.42;
+const ERASED_FROM = 0.86;
+/**
+ * The aura behind the bar shows whole on the first screen. While the bar rises to its place it settles to this
+ * share of itself, which it keeps for the road, and over the last stretch of the road it goes out, so that the
+ * stage scrolls on without it.
+ */
+const AURA_AT_WORK = 0.55;
+const AURA_OUT_FROM = 0.88;
 /** A row answers from the second letter, unless it names its own letters (data-from, data-until). */
 const ANSWERS_FROM = 2;
 
@@ -41,9 +53,13 @@ const takes = [...list.querySelectorAll('.take')].map(take => ({
 const BAR_EMS = 3.5;
 const ROW_EMS = 3.375;
 
+/** Where the road begins, as a scroll position: the aura goes by it too. */
+let roadStart = 0;
+
 /**
- * The road begins once the bar has risen far enough up the first screen for its longest list to be in view:
- * typing from the very top of the page would drop that list off the bottom of the screen.
+ * The road begins once the bar has risen to the place it is held at, and not before its longest list is in view
+ * there: typing while the bar is still on its way up would have the first answer over before the bar has
+ * settled, and typing from the very top of the page would drop that list off the bottom of the screen.
  */
 function begin({ caughtAt, heldAt }) {
   const mostRows = Math.max(
@@ -53,13 +69,31 @@ function begin({ caughtAt, heldAt }) {
   );
   const em = parseFloat(getComputedStyle(launcher).fontSize);
   const whereTheBarRests = caughtAt + heldAt; // from the top of the page: the stage starts with the bar
-  return whereTheBarRests + em * (BAR_EMS + mostRows * ROW_EMS) + em - innerHeight;
+  const whereTheListFits = whereTheBarRests + em * (BAR_EMS + mostRows * ROW_EMS) + em - innerHeight;
+  roadStart = Math.max(caughtAt, whereTheListFits, 0);
+  return roadStart;
+}
+
+let glow;
+
+/** How much of the aura shows: all of it at the top of the page, less on the road, none at the road's end. */
+function light(progress, isHeld) {
+  const risen = roadStart > 0 ? clamp01(scrollY / roadStart) : 1;
+  const left = 1 - clamp01((progress - AURA_OUT_FROM) / (1 - AURA_OUT_FROM));
+  const next = isHeld ? ((1 - (1 - AURA_AT_WORK) * risen) * left).toFixed(3) : '';
+  if (next === glow) return;
+  glow = next;
+  // where there is no road the aura is as the styles have it
+  if (next) stage.style.setProperty('--aura', next);
+  else stage.style.removeProperty('--aura');
 }
 
 let drawn = '';
 
-function draw(progress) {
-  const along = progress * takes.length;
+function draw(progress, isHeld) {
+  light(progress, isHeld);
+
+  const along = Math.max(0, progress * (takes.length + LEAD) - LEAD);
   const index = Math.min(Math.floor(along), takes.length - 1);
   const within = along - index;
   const { take, query, caption, mode, rows } = takes[index];

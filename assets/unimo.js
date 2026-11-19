@@ -1,7 +1,7 @@
 /**
  * Starts the page. The language, the menu, the name in the top bar and the download button belong to the first
- * screen and are seen to at once; what lies further down (the bar's road, the desk's, the memo that seals itself)
- * starts once that screen has been painted.
+ * screen and are seen to at once; what lies further down (the roads, the memo that seals itself, the clocks on
+ * the drawn devices) starts once that screen has been painted.
  */
 import { lang, setLang } from './lang.js';
 
@@ -98,13 +98,21 @@ await showLang(askedLang ? spoken(twoLetters(askedLang)) : deviceLang);
 
 /* ── what lies further down ───────────────────────────── */
 
-// The roads and the memo that seals itself lie below the first screen, so their scripts wait for it to be
-// painted: for the next frame, and one turn of the event loop past it. Should they fail to arrive, the page falls
-// back to how it reads without scripts.
+// The roads, the memo that seals itself and the clocks lie below the first screen, so their scripts wait for it
+// to be painted: for the next frame, and one turn of the event loop past it. Should they fail to arrive, the page
+// falls back to how it reads without scripts.
 requestAnimationFrame(() =>
   setTimeout(async () => {
     try {
-      await Promise.all([import('./bar.js'), import('./desk.js'), import('./seal.js')]);
+      await Promise.all([
+        import('./bar.js'),
+        import('./desk.js'),
+        import('./seal.js'),
+        import('./quiet.js'),
+        import('./finale.js'),
+        import('./features.js'),
+        import('./clock.js'),
+      ]);
     } catch (e) {
       console.error('[unimo] the scripts further down could not start', e);
       root.classList.remove('js');

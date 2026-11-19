@@ -1,8 +1,8 @@
 /**
  * The desk: a laptop and a phone, what passes between them, and then the question that was passed, put to the
  * agent in a bar of its own. The scene is markup in index.html, which also lists its steps and says at which of
- * them each part is there (road.js, stepsOf); this file only says which step it is. It also sets the scene's two
- * clocks and starts the agent's spinner.
+ * them each part is there (road.js, stepsOf); this file only says which step it is, and starts the agent's
+ * spinner.
  *
  * The steps are played on two roads, one after the other. The first holds the whole stage: the devices, and
  * under them the caption and the bar. Then the stage is let go and scrolls on, and its lower part (`.ask`, the
@@ -63,25 +63,3 @@ followRoad(
 /* ── the agent's spinner ──────────────────────────────── */
 
 for (const canvas of desk.querySelectorAll('canvas.spinner')) spin(canvas);
-
-/* ── the clocks ───────────────────────────────────────── */
-
-const clocks = [...desk.querySelectorAll('[data-clock]')];
-/** The time of day as the visitor's own devices write it: 21:41 for some, 9:41 PM for others. */
-const timeOfDay = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
-const MINUTE_MS = 60_000;
-
-/**
- * Sets the clocks to the visitor's time, now and at the turn of every minute: the one thing on the page that goes
- * by a timer and not by scrolling. A clock marked `brief` leaves out the AM or PM, as a phone's status bar does.
- */
-function tellTime() {
-  const parts = timeOfDay.formatToParts(new Date());
-  const written = kept => kept.reduce((text, part) => text + part.value, '').trim();
-  const full = written(parts);
-  const brief = written(parts.filter(part => part.type !== 'dayPeriod'));
-  for (const clock of clocks) clock.textContent = clock.dataset.clock === 'brief' ? brief : full;
-  setTimeout(tellTime, MINUTE_MS - (Date.now() % MINUTE_MS));
-}
-
-tellTime();

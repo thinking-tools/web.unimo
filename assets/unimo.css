@@ -271,10 +271,15 @@
   --sheet: light-dark(rgb(255 255 255 / 0.86), rgb(38 40 45 / 0.86));
 }
 
-.desk-scene {
+/* what the devices are made of, on the desk and where the phone stands alone */
+.desk-scene,
+.quiet-scene {
   --device: light-dark(#d6d7db, #2d2f34); /* silver by day, dark by night */
   --device-shade: light-dark(#a9abb1, #1a1b1f);
   --glass: #0b0b0c;
+}
+
+.desk-scene {
   /* the wallpaper: the mark's colours, out of focus */
   --wallpaper:
     radial-gradient(70% 90% at 12% 18%, #2874d7 0%, transparent 70%),
@@ -308,12 +313,28 @@
 }
 
 .laptop-lid {
+  position: relative;
   width: 100em;
   height: 64em;
   padding: 1.1em 1.1em 2.4em;
   border-radius: 1.5em 1.5em 0.4em 0.4em;
   background: var(--glass);
   box-shadow: inset 0 0 0 0.16em var(--device-shade);
+}
+
+/* The screen ends on a fraction of a pixel, as everything in the scene does, and along its right and lower
+   edges some browsers let the light page show through there as a hairline. So the bezel is drawn once more
+   over that edge: a ring that laps a pixel of the screen and a pixel of the bezel all the way round. Its
+   place and its corners are the screen's, by the lid's padding (here and for a Mac, below). */
+.laptop-lid::after {
+  --lap: 1px;
+  content: '';
+  position: absolute;
+  z-index: 4; /* over everything on the screen */
+  inset: calc(1.1em - var(--lap)) calc(1.1em - var(--lap)) calc(2.4em - var(--lap));
+  border: calc(2 * var(--lap)) solid var(--glass);
+  border-radius: calc(0.5em + var(--lap));
+  pointer-events: none;
 }
 
 .screen {
@@ -420,6 +441,11 @@
 
 :root[data-os='mac'] .laptop .screen {
   border-radius: 1em 1em 0.3em 0.3em;
+}
+
+:root[data-os='mac'] .laptop-lid::after {
+  inset: calc(1.3em - var(--lap));
+  border-radius: calc(1em + var(--lap)) calc(1em + var(--lap)) calc(0.3em + var(--lap)) calc(0.3em + var(--lap));
 }
 
 :root[data-os='mac'] .laptop .screen::before {
@@ -826,18 +852,20 @@
     min-width: min(100%, 14rem);
   }
 
-  /* the first road: five steps */
+  /* Both roads go at the chapters' pace, 55svh a step, so that the page keeps one tempo from the bar to the
+     end. The first has five steps, and starts three tenths of a screen before the stage is held (desk.js),
+     which leaves this much to be held for. */
   .js .desk::after {
     content: '';
     display: block;
-    height: 185svh;
+    height: 245svh;
   }
 
   /* the second: nine steps, most with something to read */
   .js .desk-stage::after {
     content: '';
     display: block;
-    height: 380svh;
+    height: 495svh;
   }
 
   /* The caption and the bar stand where the longest list under the bar, the web's, still ends on the screen, and
@@ -881,16 +909,16 @@
   }
 }
 
-/* ── only yours ─────────────────────────────────────────── */
+/* ── the chapters ───────────────────────────────────────── */
 
-/* A claim, what it rests on, and under the words the memo from the bar, shown where it is. Without the road
-   further down this reads as a list: the captions in the order the markup has them, and the memo after the one
-   that is about it, sealed, on our server. */
-.seal {
+/* After the desk the page goes on in chapters, each with a road of its own (.chapter): a claim that stays, the
+   points under it one at a time, and under the words a picture. "Only yours" is one, "quiet" the other. Without
+   its road a chapter reads as a list: its captions in the order the markup has them, and its picture. */
+.chapter {
   padding-top: clamp(3rem, 14svh, 8rem); /* a new part of the page, and the room that says so */
 }
 
-.seal-stage {
+.chapter-stage {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -898,41 +926,52 @@
   text-align: center;
 }
 
-/* in the list the captions stand in the stage's own column, so that the memo can stand among them */
-.seal .captions {
+/* in the list the captions stand in the stage's own column, so that a picture can stand among them */
+.chapter .captions {
   display: contents;
 }
 
-/* this is where a new part of the page begins, and its headings are set larger than the captions before it:
-   wide enough for one line each, over notes that keep the measure of the others */
-.seal .captions > * {
+/* a chapter's headings are set larger than the captions before it: wide enough for one line each, over notes
+   that keep the measure of the others */
+.chapter .captions > * {
   width: min(100%, 52rem);
 }
 
-/* at this size one long word can be wider than a phone ("Wiederherstellungsschlüssel"), so words may break; and
-   on a wide but short screen the size goes by the height, so that the stage still fits */
-.seal .captions :is(h2, h3) {
+/* At this size one long word can be wider than a phone ("Wiederherstellungsschlüssel"). Such a word says in the
+   text where it may break (a soft hyphen in its language's file), and one that does not breaks where it must.
+   A browser is not left to hyphenate on its own: to even out two lines it will split a short word that had no
+   need of it ("hi-jack"). On a wide but short screen the size goes by the height, so that the stage still fits. */
+.chapter .captions :is(h2, h3, h4) {
   font-size: clamp(1.75rem, min(1.15rem + 2.6vw, 6.4svh), 3.25rem);
   line-height: 1.1;
   letter-spacing: -0.03em;
   overflow-wrap: break-word;
-  hyphens: auto;
+  hyphens: manual;
 }
 
-.seal .caption p {
+.chapter .caption p {
   max-width: 36rem;
   margin-inline: auto;
 }
 
-.seal .caption {
+.chapter .caption {
   margin-top: 2rem;
 }
 
 /* the first of them finishes the claim's sentence */
-.seal .topic + .caption {
+.chapter .topic + .caption {
   margin-top: 0.125em;
 }
 
+/* a chapter may make a second claim, after the points of its first */
+.chapter .caption + .topic {
+  margin-top: 3.5rem;
+}
+
+/* ── only yours ─────────────────────────────────────────── */
+
+/* A claim, what it rests on, and under the words the memo from the bar, shown where it is. In the list the memo
+   stands after the caption that is about it: sealed, on our server. */
 .seal .caption:nth-child(n + 4) {
   order: 2;
 }
@@ -1098,15 +1137,20 @@
   align-self: center;
 }
 
-/* no password: a fingerprint drawn in the mark's colours, and rings going out from it as from a finger laid on
-   glass */
+/* No password: a fingerprint drawn in the mark's colours. Every so often a light goes out through it from its
+   middle, and where the light leaves the print a ring sets out, as from a finger laid on glass. The print
+   itself keeps still. One beat (--beat) is the time from one light to the next; a ring lives for two, so
+   there are always two on their way. */
 .seal-touch {
+  --beat: 2.2s;
   position: relative;
   width: clamp(5rem, 19svh, 9rem);
   aspect-ratio: 1;
 }
 
 .seal-print {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
@@ -1129,8 +1173,24 @@
   stop-color: light-dark(#2874d7, #99c2ff);
 }
 
-.seal-touch.on .seal-print {
-  animation: seal-press 2.4s ease-in-out infinite;
+/* The light: the ridges again, behind the print, wider and out of focus, so that each wears a halo of its own
+   colour. Of that, only a band shows: a ring that grows from the print's middle until it is well past its
+   edge (the mask, which grows with its size). The band's brightest part crosses the edge of the print a third
+   of a beat after it set out, and that is when a ring sets out from there. */
+.seal-glow {
+  stroke-width: 2.75;
+  filter: blur(0.1875rem) saturate(1.5) brightness(1.15);
+  mask: radial-gradient(closest-side, transparent 40%, #000 66%, #000 72%, transparent) center / 0 0 no-repeat;
+}
+
+.seal-touch.on .seal-glow {
+  animation: seal-light var(--beat) linear infinite;
+}
+
+@keyframes seal-light {
+  to {
+    mask-size: 400% 400%;
+  }
 }
 
 .seal-touch::before,
@@ -1145,32 +1205,21 @@
 
 .seal-touch.on::before,
 .seal-touch.on::after {
-  animation: seal-touch 2.4s ease-out infinite;
+  animation: seal-touch calc(2 * var(--beat)) cubic-bezier(0.2, 0.5, 0.3, 1) calc(0.33 * var(--beat)) infinite;
 }
 
 .seal-touch.on::after {
-  animation-delay: 1.2s;
+  animation-delay: calc(1.33 * var(--beat));
 }
 
 @keyframes seal-touch {
   from {
-    opacity: 0.75;
+    opacity: 0.7;
     scale: 1;
   }
   to {
     opacity: 0;
     scale: 1.9;
-  }
-}
-
-/* the finger comes down as a ring sets out */
-@keyframes seal-press {
-  10% {
-    scale: 0.95;
-  }
-  35%,
-  to {
-    scale: 1;
   }
 }
 
@@ -1251,37 +1300,1137 @@
   }
 }
 
-/* The third road, held under the same conditions as the others and played by seal.js: the claim stays, the
-   captions take turns under it as the desk's do (above), and so do the pictures. */
+/* ── quiet ──────────────────────────────────────────────── */
+
+/* The desk's phone (above), here on its own. On it a home screen as phones usually have one, which the road
+   clears until unimo's own is left. The phone is as tall as the screen has room for under the top bar and the
+   tallest of the captions (--captions-room, with the room around them: more on a wide screen, where the
+   headings are larger). */
+.quiet {
+  --captions-room: 20rem;
+}
+
+@media (width >= 45rem) {
+  .quiet {
+    --captions-room: 22.75rem;
+  }
+}
+
+.quiet-scene {
+  --phone-height: clamp(13rem, 100svh - var(--header) - var(--captions-room), 27rem);
+  display: grid; /* index.html holds the scene back until this file is in */
+  justify-items: center;
+  width: 100%;
+  margin-top: 2rem;
+  text-align: start;
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* the phone is drawn 65em tall, and stands in the page's flow */
+.quiet-scene .phone {
+  position: relative;
+  top: auto;
+  left: auto;
+  font-size: calc(var(--phone-height) / 65);
+}
+
+.quiet-scene [data-at] {
+  transition:
+    opacity 300ms ease-out,
+    scale 300ms ease-out,
+    translate 300ms ease-out;
+}
+
+.js .quiet-scene [data-at]:not(.on) {
+  opacity: 0;
+}
+
+/* What usually fills a home screen, drawn without anyone's marks: a widget with something new in it, rows of
+   apps, a dock, and red counts on some. All of it belongs to the road. In the list the phone shows unimo's
+   own screen, which is what the markup is. */
+.quiet-widget,
+.quiet-apps,
+.quiet-dock,
+.quiet-take {
+  display: none;
+}
+
+.quiet-widget,
+.quiet-apps,
+.quiet-dock,
+.quiet-hit {
+  position: absolute;
+}
+
+.quiet-widget {
+  inset: 6.4em 2.2em auto;
+  grid-template-columns: 7.2em 1fr;
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0 1.6em;
+  align-items: center;
+  height: 11em;
+  padding: 1.6em;
+  border-radius: 2.2em;
+  background: rgb(255 255 255 / 0.14);
+}
+
+/* its picture, and three lines of something to read */
+.quiet-widget i {
+  grid-row: 1 / -1;
+  align-self: stretch;
+  border-radius: 1.3em;
+  background: linear-gradient(135deg, #fb8841, #c83228);
+}
+
+.quiet-widget span {
+  height: 0.9em;
+  border-radius: 1em;
+  background: rgb(255 255 255 / 0.55);
+}
+
+.quiet-widget span:nth-of-type(2) {
+  width: 82%;
+  background: rgb(255 255 255 / 0.3);
+}
+
+.quiet-widget span:nth-of-type(3) {
+  width: 58%;
+  background: rgb(255 255 255 / 0.3);
+}
+
+.quiet-apps {
+  inset: 20.4em 2.4em auto;
+  grid-template-columns: repeat(4, 4.7em);
+  justify-content: space-between;
+  row-gap: 2.5em;
+}
+
+.quiet-dock {
+  inset: auto 1.3em 2.6em;
+  grid-template-columns: repeat(4, 4.7em);
+  justify-content: space-between;
+  padding: 1.1em;
+  border-radius: 2.6em;
+  background: rgb(255 255 255 / 0.14);
+}
+
+/* an app: a tile in one of the mark's colours */
+:is(.quiet-apps, .quiet-dock) i {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 28%;
+  background: #2874d7;
+}
+
+:is(.quiet-apps, .quiet-dock) i:nth-child(5n + 1) {
+  background: #c83228;
+}
+
+:is(.quiet-apps, .quiet-dock) i:nth-child(5n + 2) {
+  background: #fb8841;
+}
+
+:is(.quiet-apps, .quiet-dock) i:nth-child(5n + 3) {
+  background: #59824f;
+}
+
+:is(.quiet-apps, .quiet-dock) i:nth-child(5n) {
+  background: #99c2ff;
+}
+
+.quiet-dock i:first-child {
+  background: #d3dd92;
+}
+
+/* What each app is after is drawn on its tile, in white: a camera that watches, a megaphone, an eye, shelves
+   of data, a target, a bell, a cart, a pin on a map, a price tag, a microphone, a chart, a video that plays
+   itself, a chat. The drawings are this site's own. */
+:is(.quiet-apps, .quiet-dock) i::before {
+  content: '';
+  position: absolute;
+  inset: 21%;
+  background: rgb(255 255 255 / 0.92);
+  mask: center / contain no-repeat;
+}
+
+.quiet-apps i:nth-child(12n + 1)::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M2 7h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H9v3h3v2H4v-2h3v-3H2zM17.5 9.5 22 7.5v6l-4.5-2z'/%3E%3C/svg%3E");
+}
+
+.quiet-apps i:nth-child(12n + 2)::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M3 9.5v5h3l8 4.5V5L6 9.5zM16.5 8v8a4.5 4.5 0 0 0 0-8z'/%3E%3C/svg%3E");
+}
+
+.quiet-apps i:nth-child(12n + 3)::before,
+.quiet-dock i:nth-child(4)::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 5C6.5 5 2.5 9.5 1.5 12c1 2.5 5 7 10.5 7s9.5-4.5 10.5-7c-1-2.5-5-7-10.5-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2.2a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6z'/%3E%3C/svg%3E");
+}
+
+.quiet-apps i:nth-child(12n + 4)::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M4 4h16v4H4zM4 10h16v4H4zM4 16h16v4H4zM6.5 5.25h2v1.5h-2zM6.5 11.25h2v1.5h-2zM6.5 17.25h2v1.5h-2z'/%3E%3C/svg%3E");
+}
+
+.quiet-apps i:nth-child(12n + 5)::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 3a7 7 0 1 1 0 14 7 7 0 0 1 0-14zm0 3.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z'/%3E%3C/svg%3E");
+}
+
+.quiet-apps i:nth-child(12n + 6)::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2.5a1.5 1.5 0 0 0-1.5 1.5v.7A6 6 0 0 0 6 10.5V15l-2 2.5V19h16v-1.5L18 15v-4.5a6 6 0 0 0-4.5-5.8V4A1.5 1.5 0 0 0 12 2.5zM10 20.2a2 2 0 0 0 4 0z'/%3E%3C/svg%3E");
+}
+
+.quiet-apps i:nth-child(12n + 7)::before,
+.quiet-dock i:nth-child(3)::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M2 3v2h2.3l2.4 10.5h11.3l2.5-8.5H7.5L6.7 3zM8.5 17.5a1.75 1.75 0 1 0 0 3.5 1.75 1.75 0 0 0 0-3.5zm8 0a1.75 1.75 0 1 0 0 3.5 1.75 1.75 0 0 0 0-3.5z'/%3E%3C/svg%3E");
+}
+
+.quiet-apps i:nth-child(12n + 8)::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 4.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z'/%3E%3C/svg%3E");
+}
+
+.quiet-apps i:nth-child(12n + 9)::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M3 3h8.5L21 12.5 12.5 21 3 11.5zm4.5 3a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z'/%3E%3C/svg%3E");
+}
+
+.quiet-apps i:nth-child(12n + 10)::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zM6 11a6 6 0 0 0 5 5.9V20H8v2h8v-2h-3v-3.1A6 6 0 0 0 18 11h-2a4 4 0 0 1-8 0z'/%3E%3C/svg%3E");
+}
+
+.quiet-apps i:nth-child(12n + 11)::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M4 13h3.5v8H4zM10.25 8h3.5v13h-3.5zM16.5 3H20v18h-3.5z'/%3E%3C/svg%3E");
+}
+
+.quiet-apps i:nth-child(12n)::before,
+.quiet-dock i:nth-child(2)::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M7 4v16l13-8z'/%3E%3C/svg%3E");
+}
+
+.quiet-dock i:nth-child(1)::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M3 4h18v12H10l-5 4.5V16H3z'/%3E%3C/svg%3E");
+}
+
+/* each piece of the clutter leaves on its own, as the first step is scrolled through (quiet.js) */
+.quiet-widget,
+.quiet-dock,
+.quiet-apps i {
+  transition:
+    opacity 220ms ease-out,
+    scale 220ms ease-out,
+    translate 220ms ease-out;
+}
+
+.quiet-scene .is-gone {
+  opacity: 0;
+  scale: 0.6;
+  translate: 0 1em;
+}
+
+/* a red count on a tile's corner */
+.quiet-scene i[data-count]::after {
+  content: attr(data-count);
+  position: absolute;
+  top: -0.65em;
+  right: -0.65em;
+  min-width: 1.9em;
+  padding-inline: 0.45em;
+  border-radius: 1em;
+  background: #ff3b30;
+  color: #ffffff;
+  font: 600 1.05em / 1.9 var(--font-sans);
+  text-align: center;
+}
+
+/* unimo's bar is what this phone is here to show, so it is drawn a third larger than on the desk's. It comes up
+   from the foot of the screen. */
+.quiet-scene .homebar {
+  inset: auto 0.45em 2em;
+  font-size: 1.3em;
+}
+
+.js .quiet-scene .homebar:not(.on) {
+  translate: 0 1.5em;
+}
+
+/* What is typed into it stands before the hint, and takes its place. The cursor is there from the start. */
+.quiet-scene .homebar .quiet-typed {
+  flex: none;
+  overflow: visible;
+  color: #ffffff;
+}
+
+.quiet-typed::after {
+  content: '';
+  display: inline-block;
+  width: 0.1em;
+  height: 1.05em;
+  margin-inline: 0.06em 0.3em;
+  border-radius: 1em;
+  background: #ffffff;
+  vertical-align: -0.16em;
+  animation: caret-blink 1.15s steps(1, end) infinite;
+}
+
+.homebar:has(.quiet-typed:not(:empty)) .quiet-hint {
+  display: none;
+}
+
+.quiet-scene .homebar svg {
+  margin-inline-start: auto;
+}
+
+/* what the words find: a row over the bar, as the Android app lists what it finds. It shows once the words
+   are all typed (quiet.js). */
+.quiet-hit {
+  display: flex;
+  inset: auto 0.6em 7.9em;
+  align-items: center;
+  gap: 1.1em;
+  min-height: 6.6em;
+  padding: 1.2em 1.8em 1.2em 1.3em;
+  border-radius: 2.2em;
+  background: rgb(22 24 28 / 0.94);
+  color: #ffffff;
+  opacity: 0;
+  translate: 0 0.8em;
+  transition:
+    opacity 250ms ease-out,
+    translate 250ms ease-out;
+}
+
+.quiet-take.is-found .quiet-hit {
+  opacity: 1;
+  translate: none;
+}
+
+/* an app's icon; a memo's mark, on the tile the bar gives it */
+.quiet-hit :is(img, svg) {
+  flex: none;
+  width: 4.2em;
+  height: 4.2em;
+}
+
+.quiet-hit svg {
+  padding: 0.9em;
+  border-radius: 1em;
+  background: rgb(255 255 255 / 0.12);
+  fill: rgb(255 255 255 / 0.75);
+}
+
+.quiet-hit b {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.7em;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.quiet-hit small {
+  color: rgb(255 255 255 / 0.6);
+  font-size: 1.4em;
+}
+
+/* ── the finale ─────────────────────────────────────────── */
+
+/* The lights go down. .dusk is a stretch of page with nothing in it, and while it is scrolled through the
+   whole screen fades to black at once: a black sheet laid over the page, as dense as the stretch is scrolled
+   (--night, from 0 to 1, which finale.js sets on the page). The sheet lies over everything, the top bar too,
+   but not over the night (.night, below): the last chapter and what follows it, which stand on it, on black
+   whatever the visitor's theme. In there every colour takes its dark value. The top bar fades out under the sheet with the first half of the
+   night, and comes back over it with the second, dark: it changes while it cannot be seen (finale.js marks the
+   page is-night from halfway). */
+.dusk {
+  height: 70svh;
+}
+
+.dusk::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 11; /* over the top bar, which is 10 */
+  background: #000000;
+  opacity: var(--night, 0);
+  pointer-events: none;
+}
+
+/* without scripts nothing fades, and the stretch runs into black on its own */
+:root:not(.js) .dusk {
+  background: linear-gradient(var(--background), #000000);
+}
+
+/* The night: the finale and all that follows it, on one black ground that lies over the sheet. It is one box
+   and not a black ground for each part, because where two such grounds met on a fraction of a pixel, what lay
+   under them showed through as a hairline. */
+.night {
+  position: relative;
+  z-index: 12; /* over the sheet */
+  color-scheme: dark;
+  background: #000000;
+  color: var(--foreground);
+}
+
+.finale {
+  overflow-x: clip; /* what is drawn larger than its box in here must not widen the page */
+}
+
+.top {
+  opacity: max(1 - 2 * var(--night, 0), 2 * var(--night, 0) - 1);
+}
+
+:root.is-night .top {
+  z-index: 13;
+  color-scheme: dark;
+  color: var(--foreground);
+}
+
+.finale-scene {
+  display: flex; /* index.html holds the scene back until this file is in */
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.finale-scene [data-at] {
+  transition: opacity 300ms ease-out;
+}
+
+.js .finale-scene [data-at]:not(.on) {
+  opacity: 0;
+}
+
+/* The answer, in the logo's colours and as large as it can be: as tall as the room kept for it (--room), or as
+   wide as the screen lets so many characters be (--chars, which finale.js counts). Behind it the same figures
+   again, out of focus, for a glow. */
+.sum-answer {
+  --chars: 2;
+  --room: clamp(5rem, 20svh, 12rem);
+  position: relative;
+  isolation: isolate;
+  width: fit-content;
+  height: var(--room);
+  margin: clamp(0.75rem, 2.5svh, 1.75rem) auto 0;
+  background: linear-gradient(90deg, #c83228, #fb8841 26%, #d3dd92 50%, #99c2ff 76%, #2874d7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: min(var(--room), min(100vw - 2 * var(--gutter), 75rem) / (var(--chars) * 0.62));
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: var(--room);
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.sum-answer::after {
+  content: attr(data-answer);
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: blur(0.3em);
+  opacity: 0.55;
+}
+
+/* ── features, and the credits ──────────────────────────── */
+
+/* The long story, short, and after it the credits. Both follow the finale and stand on its black (.night,
+   above). Neither is a road: they scroll with the page. */
+.features,
+.giants {
+  padding: clamp(4rem, 16svh, 9rem) var(--edge-end) clamp(4rem, 16svh, 9rem) var(--edge-start);
+  text-align: center;
+}
+
+/* the first of them has room above it for the finale to leave the screen before its heading is read */
+.features {
+  padding-top: clamp(8rem, 38svh, 20rem);
+}
+
+/* their claims are set as the chapters' are, a second sentence in the quieter tone and on a line of its own */
+:is(.features, .giants) h2 {
+  margin: 0;
+  font-size: clamp(1.75rem, min(1.15rem + 2.6vw, 6.4svh), 3.25rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.giants h2 span {
+  display: block;
+  color: var(--quiet);
+}
+
+/* the note under a claim */
+.features-lead,
+.giants-lead {
+  max-width: 36rem;
+  margin: 1rem auto 0;
+  color: var(--quiet);
+  font-size: clamp(0.9375rem, 0.9rem + 0.3vw, 1.0625rem);
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
+/* The four things, a pane each. Where there is room the first and the last take the whole width, with their
+   facts side by side, and the two between them stand as a pair: those two are the ones that show sealed text. */
+.feature-grid {
+  display: grid;
+  gap: clamp(1.25rem, 2vw, 1.5rem);
+  width: min(100%, 72rem);
+  margin: clamp(2.5rem, 8svh, 5rem) auto 0;
+  text-align: start;
+}
+
+/* A pane is made of what the bar is made of on a dark ground: the bar's own tone, corner and lit rim. Nothing
+   is laid over it for effect; the only colour in a pane is its picture's. The picture stands at the pane's
+   head, across all of it. */
+.feature {
+  --pad: clamp(1.25rem, 3.2vw, 2.25rem);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: var(--pad);
+  border-radius: calc(1.375 * var(--bar-scale));
+  background: rgb(22 24 28 / 0.58);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+
+/* the name and the claim are one headline in two tones, as the chapters' are */
+.feature h3,
+.feature-claim {
+  margin: 0;
+  font-size: clamp(1.5rem, 1.2rem + 1.25vw, 2rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+.feature-claim {
+  margin-top: 0.125em;
+  color: var(--quiet);
+}
+
+/* the facts: a few words that can be read alone, and a line under them for whoever reads on */
+.facts {
+  display: grid;
+  gap: 1.125rem;
+  margin: 1.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.facts b {
+  display: block;
+  margin-bottom: 0.125rem;
+  font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.facts span {
+  display: block;
+  color: var(--quiet);
+  text-wrap: pretty;
+}
+
+/* The pictures. Each has a shape of its own: a course round a point, three slips, a word from edge to edge,
+   and arcs that rise out of the pane's foot. */
+.art {
+  position: relative;
+  height: clamp(11rem, 30vw, 16rem);
+  margin: calc(-1 * var(--pad)) calc(-1 * var(--pad)) clamp(0.75rem, 2svh, 1.25rem);
+}
+
+/* Synchronization: unimo's icon in the light it has on the first screen, and the five systems going round it,
+   each on a level course that passes behind the icon and comes back in front of it. A mark's course is two
+   swings at once, each as a pendulum swings: side to side (the outer box), and near to far a quarter of a
+   round later (the inner one), and that makes the oval. Which side of the icon it is on goes by the near and
+   far (orbit-side). And a change goes round: each mark lights in turn as it lands there. */
+.art-sync {
+  --lap: 24s; /* once round */
+  container-type: inline-size;
+}
+
+.art-sync::before {
+  content: '';
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: min(80cqw, 30rem);
+  aspect-ratio: 1.5;
+  translate: -50% -50%;
+  background: conic-gradient(
+    from 30deg,
+    #99c2ff 20deg,
+    #2874d7 60deg 88deg,
+    #d3dd92 132deg 172deg,
+    #c83228 214deg 234deg,
+    #fb8841 270deg 294deg,
+    #99c2ff
+  );
+  mask-image: radial-gradient(closest-side, rgb(0 0 0 / 0.9), transparent);
+  opacity: 0.3;
+}
+
+.art-hub {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 5.5rem;
+  height: 5.5rem;
+  translate: -50% -50%;
+  border-radius: 1.5rem;
+  background: #ffffff;
+}
+
+.art-hub .rings {
+  font-size: 3.875rem;
+}
+
+.orbiter {
+  --wide: 42cqw;
+  --step: calc(var(--n) * var(--lap) / -5); /* each mark a fifth of a round after the one before */
+  position: absolute;
+  inset: 50% auto auto 50%;
+  /* where it stands when nothing moves: the five in a row */
+  translate: calc((var(--n) - 2) * var(--wide) / 2) 0;
+  animation:
+    orbit-across calc(var(--lap) / 2) cubic-bezier(0.37, 0, 0.63, 1) var(--step) infinite alternate,
+    orbit-side var(--lap) linear calc(var(--step) - var(--lap) / 4) infinite;
+}
+
+.orbiter i {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin: -1.5rem;
+  border-radius: 50%;
+  background: #1c1d21;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14);
+  color: #ffffff;
+  animation:
+    orbit-near calc(var(--lap) / 2) cubic-bezier(0.37, 0, 0.63, 1) calc(var(--step) - var(--lap) / 4) infinite alternate,
+    change-lands 6s ease-in-out calc(var(--n) * 0.3s) infinite;
+}
+
+.orbiter .os {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+@keyframes orbit-across {
+  from {
+    translate: calc(-1 * var(--wide)) 0;
+  }
+  to {
+    translate: var(--wide) 0;
+  }
+}
+
+@keyframes orbit-near {
+  from {
+    translate: 0 -3.25rem;
+    scale: 0.6;
+    opacity: 0.7;
+  }
+  to {
+    translate: 0 3.25rem;
+    scale: 1.15;
+    opacity: 1;
+  }
+}
+
+/* far for the first and the last quarter of the swing, near in between */
+@keyframes orbit-side {
+  0%,
+  24.99% {
+    z-index: 0;
+  }
+  25%,
+  74.99% {
+    z-index: 2;
+  }
+  75%,
+  100% {
+    z-index: 0;
+  }
+}
+
+@keyframes change-lands {
+  0%,
+  24%,
+  100% {
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14);
+  }
+  8% {
+    box-shadow:
+      inset 0 0 0 1.5px #fb8841,
+      0 0 1.25rem rgb(251 136 65 / 0.5);
+  }
+}
+
+/* Backups: three copies of the memo as our server holds it, the same sealed text on each. The third stands
+   apart and wears another colour: it is with the other provider. A write lands on each in turn. */
+.art-backups {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.625rem, 2.5vw, 1.125rem);
+}
+
+.art-backups i {
+  --provider: #fb8841;
+  position: relative;
+  width: clamp(5.5rem, 25%, 9rem);
+  height: 76%;
+  overflow: hidden;
+  padding: 1.625rem 0.75rem 0;
+  border-radius: 0.875rem;
+  background: rgb(0 0 0 / 0.4);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12);
+  color: rgb(255 255 255 / 0.45);
+  font: 500 0.75rem / 1.5 var(--font-mono);
+  font-variant-ligatures: none;
+  word-break: break-all;
+  animation: copy-lands 6s ease-in-out infinite;
+}
+
+.art-backups i:nth-child(2) {
+  animation-delay: 0.45s;
+}
+
+.art-backups i:nth-child(3) {
+  --provider: #d3dd92;
+  margin-inline-start: clamp(0.75rem, 5%, 2.25rem);
+  animation-delay: 0.9s;
+}
+
+/* the text runs out of sight at the slip's foot, as a list that goes on does */
+.art-backups i::before {
+  content: 'bgwIPRFhS9R6v7+znE9C0t714RtkNJuVeQI6LxMKODTLlT9pDL7Ng/a7FpxxhE06TwQRBh/WUPsls2ZbgwIPRFhS9R6v7+znE9C0t714RtkNJuVeQI6';
+  display: block;
+  height: 100%;
+  mask-image: linear-gradient(#000 45%, transparent 92%);
+}
+
+.art-backups i::after {
+  content: '';
+  position: absolute;
+  inset: 0.6875rem auto auto 0.75rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--provider);
+  box-shadow: 0 0 0.75rem var(--provider);
+}
+
+@keyframes copy-lands {
+  0%,
+  24%,
+  100% {
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12);
+    color: rgb(255 255 255 / 0.45);
+    translate: none;
+  }
+  8% {
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--provider) 80%, transparent),
+      0 0 2rem color-mix(in srgb, var(--provider) 45%, transparent);
+    color: rgb(255 255 255 / 0.9);
+    translate: 0 -0.25rem;
+  }
+}
+
+/* Security: the ciphers by name, in the type of a thing typed. The first is the news: it runs from edge to
+   edge of the pane's words, in the logo's colours, as the finale's answer does. The other two stand under it
+   side by side. */
+.is-security {
+  --warm: #d3dd92;
+  --cool: #99c2ff;
+}
+
+.is-security .art {
+  height: clamp(8.5rem, 26vw, 14rem);
+}
+
+.art-security {
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-content: center;
+  justify-content: center;
+  justify-items: center;
+  gap: 0.375rem 1.5em;
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.art-security span {
+  color: rgb(255 255 255 / 0.6);
+  font-size: clamp(0.9375rem, 4.4cqw, 1.5rem);
+  letter-spacing: 0.02em;
+}
+
+.art-security span:first-child {
+  grid-column: 1 / -1;
+  background: linear-gradient(90deg, var(--warm), var(--cool));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: min(13cqw, 4.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  filter: drop-shadow(0 0 1.25rem color-mix(in srgb, var(--cool) 40%, transparent));
+}
+
+/* Privacy: a point, and four rings round it that rise out of the pane's foot and run off its head and sides:
+   one for each level in the list, from the nearest out. A ring and its fact wear one colour, the fact as a
+   small ring before its words. The rings light one after the other, outwards, and the one whose fact the
+   pointer is on stays lit. */
+.art-privacy {
+  overflow: clip;
+  mask-image: linear-gradient(#000 55%, transparent 98%);
+}
+
+.art-privacy svg {
+  position: absolute;
+  inset: auto auto 0 50%;
+  width: auto;
+  height: 250%;
+  aspect-ratio: 1;
+  translate: -50% 42%;
+  fill: none;
+  stroke-width: 2.25;
+}
+
+.art-privacy circle {
+  --level: 0;
+  stroke: var(--mark);
+  opacity: 0.4;
+  animation: level-lights 6s ease-in-out calc(var(--level) * 0.4s) infinite;
+}
+
+.art-privacy circle:first-child {
+  fill: #ffffff;
+  stroke: none;
+  opacity: 1;
+  animation: none;
+}
+
+.art-privacy circle:nth-child(2),
+.is-privacy .facts li:nth-child(1) {
+  --mark: #fb8841;
+}
+
+.art-privacy circle:nth-child(3),
+.is-privacy .facts li:nth-child(2) {
+  --level: 1;
+  --mark: #d3dd92;
+}
+
+.art-privacy circle:nth-child(4),
+.is-privacy .facts li:nth-child(3) {
+  --level: 2;
+  --mark: #99c2ff;
+}
+
+.art-privacy circle:nth-child(5),
+.is-privacy .facts li:nth-child(4) {
+  --level: 3;
+  --mark: #2874d7;
+}
+
+.is-privacy .facts b::before {
+  content: '';
+  display: inline-block;
+  width: 0.625rem;
+  height: 0.625rem;
+  margin-inline-end: 0.5rem;
+  border: 2px solid var(--mark);
+  border-radius: 50%;
+}
+
+.is-privacy:has(.facts li:nth-child(1):hover) circle:nth-child(2),
+.is-privacy:has(.facts li:nth-child(2):hover) circle:nth-child(3),
+.is-privacy:has(.facts li:nth-child(3):hover) circle:nth-child(4),
+.is-privacy:has(.facts li:nth-child(4):hover) circle:nth-child(5) {
+  opacity: 1;
+  animation: none;
+}
+
+@keyframes level-lights {
+  0%,
+  36%,
+  100% {
+    opacity: 0.4;
+  }
+  12% {
+    opacity: 1;
+  }
+}
+
+/* Where there is room, the first and the last pane take the whole width: the picture and the headline in the
+   middle, as a chapter's are, and the four facts side by side, under the four rings in the last. */
+@media (width >= 56rem) {
+  .feature-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .feature:is(.is-sync, .is-privacy) {
+    grid-column: 1 / -1;
+  }
+
+  .feature:is(.is-sync, .is-privacy) .art {
+    height: 17rem;
+  }
+
+  .feature:is(.is-sync, .is-privacy) :is(h3, .feature-claim) {
+    text-align: center;
+  }
+
+  .feature:is(.is-sync, .is-privacy) .facts {
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 2rem;
+    margin-top: 2.25rem;
+  }
+
+  .is-sync .art-hub {
+    width: 7rem;
+    height: 7rem;
+    border-radius: 1.95rem;
+  }
+
+  .is-sync .art-hub .rings {
+    font-size: 4.9rem;
+  }
+
+  .is-sync .orbiter {
+    --wide: 30cqw;
+  }
+
+  .is-sync .orbiter i {
+    width: 3.75rem;
+    height: 3.75rem;
+    margin: -1.875rem;
+  }
+
+  .is-sync .orbiter .os {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .is-privacy .art-privacy svg {
+    height: 330%;
+  }
+}
+
+/* What unimo does without is said in white, larger than anything in the panes, with the room of a new thought
+   above it. The line under it is a note. */
+.without {
+  margin-top: clamp(5rem, 18svh, 10rem);
+}
+
+.without h3 {
+  margin: 0;
+  font-size: clamp(2rem, 1rem + 5.2vw, 4.75rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.without p {
+  max-width: 36rem;
+  margin: clamp(0.75rem, 2.5svh, 1.25rem) auto 0;
+  color: var(--quiet);
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  line-height: 1.45;
+  text-wrap: balance;
+}
+
+/* The panes light up as they come up the screen (features.js marks the ones that have come far enough): a
+   pane comes up whole, and its picture starts to move. Until then it is dim and its picture still. The
+   heading and the last line light a word at a time, each word in a span the script gave it. Where no script
+   says so, or a visitor asked for less motion, everything is lit, and nothing moves. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .feature,
+  .js .features [data-lights-by-word] > span {
+    transition: opacity 500ms ease-out;
+  }
+
+  .js .feature:not(.is-lit) {
+    opacity: 0.3;
+  }
+
+  .js .feature:not(.is-lit) :is(.orbiter, .orbiter i, .art-backups i, .art-privacy circle) {
+    animation-play-state: paused;
+  }
+
+  /* a line is dim as a whole until its words have their spans, and then word by word */
+  .js .features [data-lights-by-word]:not(.is-split),
+  .js .features [data-lights-by-word] > span:not(.is-lit) {
+    opacity: 0.2;
+  }
+}
+
+/* for a visitor who asked for less motion the pictures stand still: the systems in a row, without the icon
+   they went round, which would stand on the middle one */
+@media (prefers-reduced-motion: reduce) {
+  .orbiter,
+  .orbiter i,
+  .art-backups i,
+  .art-privacy circle {
+    animation: none;
+  }
+
+  .art-hub,
+  .art-sync::before {
+    display: none;
+  }
+
+  .art-privacy circle {
+    opacity: 1;
+  }
+}
+
+/* The credits, as at the end of a film: what each thing is for on one side of the middle, smaller and in the
+   quieter tone, and whose it is on the other. A name is a link to its project, and shows that under the
+   pointer or the keyboard's focus. */
+.credits {
+  display: grid;
+  gap: clamp(0.625rem, 1.8svh, 0.9375rem);
+  width: min(100%, 36rem);
+  margin: clamp(2.5rem, 8svh, 4.5rem) auto 0;
+  font-size: clamp(0.9375rem, 0.85rem + 0.5vw, 1.1875rem);
+  line-height: 1.35;
+}
+
+.credits > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.125em;
+  align-items: baseline;
+}
+
+.credits dt {
+  color: var(--quiet);
+  font-size: 0.8125em;
+  text-align: end;
+}
+
+.credits dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: start;
+}
+
+/* the one unimo owes most to comes first and has a line to itself: top billing, not a title */
+.credits .is-first {
+  grid-template-columns: 1fr;
+  gap: 0.125rem;
+  margin-bottom: clamp(1.25rem, 4svh, 2.25rem);
+}
+
+.credits .is-first :is(dt, dd) {
+  text-align: center;
+}
+
+.credits .is-first dd {
+  font-size: clamp(1.25rem, 1.05rem + 1vw, 1.75rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+/* a name can be hit with a thumb: the room round it is the link's too, without moving the lines */
+.credits a {
+  margin-inline: -0.15em;
+  padding: 0.55em 0.15em;
+  border-radius: 0.25rem;
+  color: inherit;
+  text-decoration: underline transparent;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--transition-fast);
+}
+
+.credits a:hover,
+.credits a:focus-visible {
+  text-decoration-color: currentColor;
+}
+
+/* on a narrow phone the names get the wider half, so that three of them stay on one line */
+@media (width < 30rem) {
+  .credits > div:not(.is-first) {
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  }
+}
+
+/* the page ends on the thanks */
+.giants-thanks {
+  max-width: 36rem;
+  margin: clamp(2.5rem, 8svh, 4.5rem) auto 0;
+  font-size: clamp(1.0625rem, 0.95rem + 0.5vw, 1.3125rem);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+/* The chapters' roads, held under the same conditions as the others: the claim stays, the captions take turns
+   under it as the desk's do (above), and so do the pictures. A chapter says how long its road is (--road) and
+   how far from the top of the screen its stage is held (--held-at). */
 @media (height >= 30rem) and (prefers-reduced-motion: no-preference) {
-  /* The stage stands about the middle of the screen, and on a shorter screen higher: never so low that there
-     is less than 39rem under its top, which is what the tallest of its captions and pictures take together, and
-     never under the top bar. */
-  .js .seal-stage {
+  .js .chapter-stage {
     position: sticky;
-    top: max(calc(var(--header) + 0.75rem), min(calc(50svh - 14rem), calc(100svh - 39rem)));
+    top: var(--held-at);
     padding-bottom: var(--space);
   }
 
-  /* six steps, two of them with a memo to turn */
-  .js .seal::after {
+  .js .chapter::after {
     content: '';
     display: block;
-    height: 330svh;
+    height: var(--road);
   }
 
-  .js .seal .captions {
+  .js .chapter .captions {
     display: grid;
     grid-template-columns: minmax(0, 1fr); /* as wide as the stage, however long a word in it */
     margin-top: 0;
   }
 
-  .js .seal .caption {
+  .js .chapter .caption {
     margin-top: 0.125em;
   }
 
-  .js .seal-scene {
+  .js .chapter .topic {
+    margin-top: 0;
+  }
+
+  .js :is(.seal-scene, .quiet-scene, .finale-scene) {
     margin-top: clamp(1.5rem, 4.5svh, 2.75rem);
+  }
+
+  /* Only yours, played by seal.js: six steps, two of them with a memo to turn. Its stage stands about the
+     middle of the screen, and on a shorter screen higher: never so low that there is less than 39rem under its
+     top, which is what the tallest of its captions and pictures take together, and never under the top bar. */
+  .js .seal {
+    --road: 330svh;
+    --held-at: max(calc(var(--header) + 0.75rem), min(calc(50svh - 14rem), calc(100svh - 39rem)));
   }
 
   /* a short screen holds the stage only without the line under the places, and with less room between its parts */
@@ -1307,6 +2456,70 @@
   .js .seal-ask {
     display: grid;
   }
+
+  /* Quiet, played by quiet.js: five steps. The phone takes the height the captions leave it, so the stage
+     fills the screen from a little under the top bar; on a screen tall enough for the phone at its full size
+     it stands about the middle, and on a short one right under the bar. */
+  .js .quiet {
+    --road: 270svh;
+    --held-at: max(calc(var(--header) + 2rem), calc(50svh - var(--captions-room) - 1rem));
+  }
+
+  @media (height < 38rem) {
+    .js .quiet {
+      --held-at: calc(var(--header) + 0.75rem);
+    }
+
+    .js .quiet-scene {
+      margin-top: 1rem;
+    }
+  }
+
+  .js :is(.quiet-widget, .quiet-apps, .quiet-dock) {
+    display: grid;
+  }
+
+  .js .quiet-take {
+    display: contents;
+  }
+
+  /* The finale, played by finale.js: the words alone, then five sums. Its stage stands about the middle of
+     the screen, and higher on a shorter one, as the sealed memo's does. */
+  .js .finale {
+    --road: 330svh;
+    --held-at: max(calc(var(--header) + 0.75rem), min(calc(50svh - 15rem), calc(100svh - 36rem)));
+  }
+
+  /* before the first sum the words stand alone: larger, and lower, where the answers will be */
+  .js .finale .topic {
+    transform-origin: 50% 0;
+    transition:
+      opacity 200ms ease-out,
+      scale 600ms cubic-bezier(0.2, 0, 0, 1),
+      translate 600ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .js .finale[data-step='0'] .topic {
+    scale: 1.15;
+    translate: 0 min(24svh, 12rem);
+  }
+
+  /* a short screen holds the stage with a smaller answer and less room between its parts */
+  @media (height < 38rem) {
+    .js .finale-scene {
+      margin-top: 1rem;
+    }
+
+    .js .sum-answer {
+      --room: 16svh;
+    }
+  }
+
+  @media (width >= 45rem) {
+    .js .finale[data-step='0'] .topic {
+      scale: 1.35;
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1315,7 +2528,10 @@
   .ask > .launcher,
   .seal-scene [data-at],
   .seal-places > span,
-  .seal-carrier {
+  .seal-carrier,
+  .quiet-scene [data-at],
+  .quiet-scene .is-gone,
+  .finale-scene [data-at] {
     transition: none;
   }
 }
