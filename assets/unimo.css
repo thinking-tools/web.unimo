@@ -1,0 +1,1321 @@
+/* unimo.app, below the first screen: the desk, and the band under it.
+   The first screen and the bar's road are styled in index.html itself, which is also where the colours and
+   sizes are set. This file is fetched without holding up the first paint. */
+
+/* the pills under a bar with something typed in it: what it offers to do with that (unimo-ui-lib, action-bar.css).
+   Here the three share the bar's width, and a label too long for its pill is cut short. */
+.launcher-pills {
+  display: flex;
+  gap: 0.5em;
+}
+
+.launcher-pills > span {
+  position: relative;
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(0.5 * var(--bar-scale));
+  min-width: 0;
+  min-height: calc(2.25 * var(--bar-scale));
+  padding-inline: calc(0.75 * var(--bar-scale));
+  border-radius: 9999px;
+  background: var(--pane);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  font-size: 0.875em;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.launcher-pills svg {
+  flex: none;
+  width: var(--bar-scale);
+  height: var(--bar-scale);
+  fill: currentColor;
+}
+
+.launcher-pills span span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* a pill that is about to be taken: tinted as the app tints the one under the pointer */
+.pick {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+/* More pills than there is room for, as when the bar searches the web: there the app lets them keep their width,
+   a third of the bar at the least, and run off the end, which fades. */
+.launcher-pills.is-long {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, #000 calc(100% - 2.5em), transparent);
+}
+
+.launcher-pills.is-long > span {
+  flex: 1 0 calc(100% / 3 - 1.75 * var(--bar-scale));
+  min-width: auto;
+}
+
+/* a result from the web: under the page's title its address, then what the page says, on two lines at most
+   (unimo-ui-lib, result.css) */
+.result-url {
+  overflow: hidden;
+  color: color-mix(in srgb, currentColor 65%, transparent);
+  font-size: 0.875em;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.result-url + .result-description {
+  margin-top: calc(0.125 * var(--bar-scale));
+}
+
+.result-web :is(.result-title, .result-description) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* A list of what a search found is longer than the room under the bar. It is cut where the room ends, as a list
+   that scrolls is. */
+.launcher-list.is-long {
+  max-height: 13.5em;
+  overflow: hidden;
+}
+
+/* Pictures are tiles, each the shape of its picture, laid in rows that fill the width; what is left of the last
+   row stays empty. A tile without a picture shows the glyph for one. */
+.launcher-list.is-mosaic {
+  flex-flow: row wrap;
+  gap: 0.375em;
+}
+
+.launcher-list.is-mosaic::after {
+  content: '';
+  flex: 10000 1 0;
+}
+
+.result-tile {
+  position: relative;
+  flex: var(--ratio) 1 calc(var(--ratio) * 7.5em);
+  display: grid;
+  place-items: center;
+  aspect-ratio: var(--ratio);
+  overflow: hidden;
+  border-radius: 0.5em;
+  background: var(--secondary);
+  color: color-mix(in srgb, currentColor 65%, transparent);
+}
+
+.result-tile > svg {
+  width: 1.5em;
+  height: 1.5em;
+  fill: currentColor;
+}
+
+.result-tile img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  outline: 1px solid light-dark(rgb(0 0 0 / 0.1), rgb(255 255 255 / 0.1));
+  outline-offset: -1px;
+  object-fit: cover;
+}
+
+/* the selected tile says where its picture is from, and what Return will do */
+.result-caption {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  align-items: center;
+  gap: calc(0.5 * var(--bar-scale));
+  padding: calc(1.25 * var(--bar-scale)) calc(0.5 * var(--bar-scale)) calc(0.375 * var(--bar-scale));
+  background: linear-gradient(transparent, rgb(0 0 0 / 0.7));
+  color: #ffffff;
+  font-size: 0.75em;
+  font-weight: 500;
+  line-height: var(--bar-scale);
+}
+
+.result-host {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.result-caption .result-hint {
+  height: auto;
+  color: color-mix(in srgb, currentColor 80%, transparent);
+  font-size: inherit;
+}
+
+/* the agent's run, a row of the list: under the question its thinking, then its answer (unimo-ui-lib, agent.css) */
+.agent-status,
+.agent-reply {
+  margin-top: calc(0.125 * var(--bar-scale));
+  font-size: 0.875em;
+  line-height: 1.4;
+}
+
+.agent-status {
+  color: color-mix(in srgb, currentColor 65%, transparent);
+}
+
+/* The apps' spinner, drawn on this canvas by spinner.js, at the size the apps draw it when it stands alone. Here it
+   stands in the row's icon while the agent thinks, and its dot takes the colour a mark there would have. */
+.spinner {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+/* it turns on the row itself: the tile a mark stands on comes back with the mark */
+.result-icon:has(.spinner.on) {
+  background: none;
+}
+
+/* the mark of a run that has ended well, in the apps' colour for that (unimo-ui-lib, agent.css) */
+.result-icon .done {
+  color: var(--positive);
+}
+
+/* while the agent works, a light passes over the words that say so */
+@media (prefers-reduced-motion: no-preference) {
+  .agent-status {
+    background-image: linear-gradient(90deg, currentColor 40%, var(--foreground) 50%, currentColor 60%);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 2s linear infinite;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0% 0;
+  }
+}
+
+/* ── the desk ───────────────────────────────────────────── */
+
+/* A laptop and a phone, drawn. Under them what passes between the two, and under that the bar the question ends
+   up in. */
+.desk-stage {
+  --ratio: 1.1; /* the scene's height over its width: on a phone the two devices stand one before the other */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space) var(--edge-end) 0 var(--edge-start);
+  text-align: center;
+}
+
+/* The caption and the bar. The bar's pills and list hang below the bar without taking room, so the room for the
+   longest of them is kept here. */
+.ask {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-bottom: calc(17 * var(--bar-scale) + var(--space));
+}
+
+.ask > .launcher {
+  margin-top: clamp(1.25rem, 3.5svh, 2rem);
+  transition:
+    opacity 250ms ease-out,
+    translate 250ms ease-out;
+}
+
+/* it appears with the paste; where no script says when that is, it is there from the start */
+.js .ask > .launcher:not(.on) {
+  opacity: 0;
+  translate: 0 0.8em;
+}
+
+/* On a narrow phone the pills have no room for their marks, and the words get all of it. Of the three pills the
+   agent's is the one this is about, so it stays whole and the other two share what is left. */
+@media (width < 30rem) {
+  .ask .launcher-pills svg {
+    display: none;
+  }
+
+  .ask .launcher-pills:not(.is-long) > span {
+    flex: 1 1 auto;
+    padding-inline: calc(0.5 * var(--bar-scale));
+  }
+
+  .ask .launcher-pills:not(.is-long) > .is-key {
+    flex: none;
+  }
+}
+
+/* Inside the scene every length is a share of its width: a device sets its own unit as its font size (a laptop's
+   lid is 100 of them across, a phone 30), and its parts are drawn in em. */
+/* what the systems draw their cards on: the desk's messages, and the request to join at the end of the page */
+.desk-scene,
+.seal-ask {
+  --sheet: light-dark(rgb(255 255 255 / 0.86), rgb(38 40 45 / 0.86));
+}
+
+.desk-scene {
+  --device: light-dark(#d6d7db, #2d2f34); /* silver by day, dark by night */
+  --device-shade: light-dark(#a9abb1, #1a1b1f);
+  --glass: #0b0b0c;
+  /* the wallpaper: the mark's colours, out of focus */
+  --wallpaper:
+    radial-gradient(70% 90% at 12% 18%, #2874d7 0%, transparent 70%),
+    radial-gradient(60% 80% at 92% 8%, #c83228 0%, transparent 62%),
+    radial-gradient(75% 85% at 75% 105%, #fb8841 0%, transparent 62%),
+    radial-gradient(60% 75% at 15% 105%, #59824f 0%, transparent 68%), #142847;
+  container-type: inline-size;
+  position: relative;
+  display: block; /* index.html holds the scene back until this file is in */
+  width: min(100%, 60rem);
+  aspect-ratio: 1 / var(--ratio);
+  text-align: start;
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.laptop,
+.phone {
+  position: absolute;
+  filter: drop-shadow(0 1.5em 2em rgb(0 0 0 / 0.2));
+}
+
+/* the laptop: a plain modern one, unless the visitor is on a Mac (below) */
+.laptop {
+  --unit: 0.9cqw;
+  --bar-scale: 1.45cqw;
+  top: 2cqw;
+  left: 5cqw;
+  font-size: var(--unit);
+}
+
+.laptop-lid {
+  width: 100em;
+  height: 64em;
+  padding: 1.1em 1.1em 2.4em;
+  border-radius: 1.5em 1.5em 0.4em 0.4em;
+  background: var(--glass);
+  box-shadow: inset 0 0 0 0.16em var(--device-shade);
+}
+
+.screen {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 0.5em;
+  background: var(--wallpaper);
+}
+
+.laptop-base {
+  position: relative;
+  width: 116em;
+  height: 2.3em;
+  margin-inline-start: -8em;
+  border-radius: 0.3em 0.3em 0.9em 0.9em;
+  background: linear-gradient(var(--device), var(--device-shade));
+}
+
+/* the lip it opens by */
+.laptop-base::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 14em;
+  height: 0.55em;
+  margin-inline-start: -7em;
+  border-radius: 0 0 0.6em 0.6em;
+  background: rgb(0 0 0 / 0.2);
+}
+
+/* On the laptop the wallpaper is the visitor's own system's, where the page has it (index.html lists them). A
+   picture that is not shown is never fetched, and the mark's colours lie under the one that is until it is in. */
+.wallpaper {
+  display: none;
+}
+
+:root[data-os='mac'] .wallpaper[data-for='mac'],
+:root[data-os='windows'] .wallpaper[data-for='windows'],
+:root[data-distro='ubuntu'] .wallpaper[data-for='ubuntu'] {
+  display: block;
+}
+
+.wallpaper img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The system's own bar, across the top of the screen: a few of its items, and at the far end the tray, where
+   unimo's icon sits beside the clock. */
+.sysbar {
+  position: absolute;
+  z-index: 2;
+  inset: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.3em;
+  height: 2.7em;
+  padding-inline: 1.8em;
+  background: rgb(0 0 0 / 0.38);
+  color: #ffffff;
+}
+
+.sysbar i {
+  width: 3.2em;
+  height: 0.75em;
+  border-radius: 1em;
+  background: color-mix(in srgb, currentColor 70%, transparent);
+}
+
+.sysbar i:first-child {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.tray {
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+  margin-inline-start: auto;
+}
+
+.tray .rings {
+  font-size: 1.85em;
+}
+
+/* both clocks, the laptop's and the phone's, tell the visitor's own time (desk.js) */
+.clock {
+  font-size: 1.35em;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* a Mac's: rounder, an even bezel with the camera's notch in it, a light menu bar */
+:root[data-os='mac'] .laptop-lid {
+  padding: 1.3em;
+  border-radius: 2.2em 2.2em 0.5em 0.5em;
+}
+
+:root[data-os='mac'] .laptop .screen {
+  border-radius: 1em 1em 0.3em 0.3em;
+}
+
+:root[data-os='mac'] .laptop .screen::before {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  left: 50%;
+  width: 13em;
+  height: 2.2em;
+  margin-inline-start: -6.5em;
+  border-radius: 0 0 0.8em 0.8em;
+  background: var(--glass);
+}
+
+:root[data-os='mac'] .laptop-base {
+  border-radius: 0.3em 0.3em 1.6em 1.6em;
+}
+
+:root[data-os='mac'] .sysbar {
+  background: rgb(255 255 255 / 0.2);
+  -webkit-backdrop-filter: blur(1em);
+  backdrop-filter: blur(1em);
+}
+
+/* Windows keeps its bar at the foot of the screen, the tray and the clock at its end. That end lies behind the
+   phone, so the tray stops short of it: by more where the phone stands before the laptop than where it stands
+   beside it (below). */
+:root[data-os='windows'] .sysbar {
+  --behind-phone: 39em;
+  inset: auto 0 0;
+  gap: 1em;
+  height: 3.6em;
+  background: light-dark(rgb(243 243 243 / 0.8), rgb(28 28 28 / 0.8));
+  color: light-dark(#1b1b1b, #ffffff);
+  -webkit-backdrop-filter: blur(1.5em);
+  backdrop-filter: blur(1.5em);
+}
+
+:root[data-os='windows'] .sysbar i {
+  width: 1.9em;
+  height: 1.9em;
+  border-radius: 0.45em;
+}
+
+:root[data-os='windows'] .tray {
+  position: absolute;
+  inset-inline-end: var(--behind-phone);
+}
+
+/* The bar, open on the laptop: the same drawing as above, at a scale of its own, so it is placed in the laptop's
+   units by name. Here it keeps to the left, clear of the phone that stands before the laptop's other half. */
+.laptop .launcher {
+  position: absolute;
+  top: calc(10 * var(--unit));
+  left: calc(4 * var(--unit));
+  width: calc(58 * var(--unit));
+}
+
+/* A part of a bar on the desk is not displayed until it is on (index.html says so, with the bar's own styles).
+   The pictures are the exception. A picture in a part that is not displayed would be sent for only when the part
+   is shown, and the tiles would stand empty for a moment. So the tiles wait laid out but unseen, out of the
+   flow, and their pictures are fetched as the bar comes near. */
+.js .desk .launcher .is-mosaic:not(.on) {
+  position: absolute;
+  inset-inline: var(--frame);
+  display: flex;
+  visibility: hidden;
+}
+
+/* the phone: an Android one, with unimo as its home screen */
+.phone {
+  top: 30cqw;
+  left: 62cqw;
+  width: 30em;
+  height: 65em;
+  padding: 0.9em;
+  border-radius: 4.6em;
+  background: var(--glass);
+  box-shadow: inset 0 0 0 0.22em var(--device-shade);
+  font-size: 1.15cqw;
+}
+
+/* its home screen is black, as unimo's is on a phone */
+.phone .screen {
+  border-radius: 3.8em;
+  background: #000000;
+}
+
+/* its camera, and the line at the foot of the screen that gestures start from */
+.phone .screen::before,
+.phone .screen::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+}
+
+.phone .screen::before {
+  z-index: 3;
+  top: 1.5em;
+  width: 1.7em;
+  height: 1.7em;
+  margin-inline-start: -0.85em;
+  border-radius: 50%;
+  background: var(--glass);
+}
+
+.phone .screen::after {
+  bottom: 1.1em;
+  width: 9em;
+  height: 0.45em;
+  margin-inline-start: -4.5em;
+  border-radius: 1em;
+  background: rgb(255 255 255 / 0.85);
+}
+
+.statusbar {
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4.8em;
+  padding-inline: 2.8em;
+  color: #ffffff;
+}
+
+.statusbar .clock {
+  font-size: 1.5em;
+}
+
+.statusbar i {
+  width: 2.6em;
+  height: 1.2em;
+  border-radius: 0.4em;
+  background: rgb(255 255 255 / 0.85);
+}
+
+/* unimo on the phone: the bar at the foot of a black home screen, as the Android app draws it (android-app,
+   res/layout/main.xml and drawable/glass_pill.xml). A slim dark pill nearly as wide as the screen: the mark, the
+   hint, the menu. It is drawn a little larger than life, so that the hint can still be read at this size. */
+.homebar {
+  position: absolute;
+  inset: auto 0.5em 2.4em;
+  display: flex;
+  align-items: center;
+  height: 3.4em;
+  border-radius: 1.7em;
+  background: rgb(22 24 28 / 0.94);
+  color: rgb(255 255 255 / 0.6); /* the hint, in the app's secondary text on dark */
+}
+
+.homebar .rings {
+  margin-inline: 0.95em 0.7em;
+  font-size: 1.7em;
+}
+
+.homebar span:not(.rings) {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 1.3em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.homebar svg {
+  flex: none;
+  width: 1.6em;
+  height: 1.6em;
+  margin-inline: 0.5em 0.9em;
+  fill: #ffffff;
+}
+
+/* a message, as each system shows it: a card at the head of the phone's screen, a banner in the laptop's corner */
+.notice,
+.toast {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 1.2em;
+  background: var(--sheet);
+  color: var(--foreground);
+  box-shadow: 0 0.8em 2em rgb(0 0 0 / 0.25);
+  -webkit-backdrop-filter: blur(2em);
+  backdrop-filter: blur(2em);
+}
+
+.notice {
+  inset: 5.6em 1.3em auto;
+  gap: 1em;
+  padding: 1.3em;
+  border-radius: 2.4em;
+}
+
+.toast {
+  top: 4em;
+  right: 1.5em;
+  width: 36em;
+  padding: 1.3em 1.5em;
+  border-radius: 1.6em;
+}
+
+.app-tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 4.2em;
+  height: 4.2em;
+  border-radius: 1.2em;
+  background: #59824f;
+  color: #ffffff;
+}
+
+.app-tile svg {
+  width: 2.4em;
+  height: 2.4em;
+  fill: currentColor;
+}
+
+/* a little smaller on the phone's narrow card */
+.notice .app-tile {
+  width: 3.6em;
+  height: 3.6em;
+}
+
+/* On the laptop the banner is unimo's own, and wears unimo's icon: the mark on white, as on a home screen. So
+   does the request to join. */
+:is(.toast, .seal-ask) .app-tile {
+  background: #ffffff;
+}
+
+:is(.toast, .seal-ask) .rings {
+  font-size: 3.1em;
+}
+
+.message {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 1.65em;
+  line-height: 1.3;
+}
+
+.message-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+/* the sender's name stays whole; the app's name gives way to it */
+.message-head b {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.message-head small {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--quiet);
+  font-size: 0.85em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* copying it on the phone: the text picked out, the button that copies, the word that it has */
+.picked {
+  border-radius: 0.2em;
+  transition: background-color 200ms ease-out;
+}
+
+.desk:is([data-step='3'], [data-step='4']) .picked {
+  background: color-mix(in srgb, #2874d7 35%, transparent);
+}
+
+.chip,
+.snack {
+  position: absolute;
+  padding: 0.5em 1.1em;
+  border-radius: 2em;
+  background: var(--sheet); /* on the phone's black screen the page's own button colour would not show */
+  color: var(--foreground);
+  font-size: 1.6em;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.chip {
+  inset-block-start: calc(100% + 0.5em);
+  inset-inline-start: 3.6em;
+}
+
+.snack {
+  z-index: 2;
+  inset: auto 0 6.8em;
+  width: max-content;
+  margin-inline: auto;
+}
+
+/* a part of the scene is there only while it is on */
+.desk-scene [data-at] {
+  transition:
+    opacity 250ms ease-out,
+    translate 250ms ease-out;
+}
+
+.desk-scene [data-at]:not(.on) {
+  opacity: 0;
+  translate: 0 -0.8em;
+}
+
+/* on a wider screen the two stand side by side, the phone a little in front */
+@media (width >= 45rem) {
+  .desk-stage {
+    --ratio: 0.55;
+  }
+
+  .laptop {
+    --unit: 0.68cqw;
+    --bar-scale: 1.1cqw;
+    left: 8cqw;
+  }
+
+  /* with the phone beside the laptop, the bar opens where it does on a real screen: in the middle, a third wide */
+  .laptop .launcher {
+    top: calc(15 * var(--unit));
+    left: calc(26 * var(--unit));
+    width: calc(48 * var(--unit));
+  }
+
+  .phone {
+    top: 12cqw;
+    left: 71cqw;
+    font-size: 0.6cqw;
+  }
+
+  /* Windows, with room for its ways: the apps in the middle of the bar, and a message in the corner above the
+     tray, both just clear of the phone */
+  :root[data-os='windows'] .sysbar {
+    --behind-phone: 8.5em;
+    justify-content: center;
+  }
+
+  :root[data-os='windows'] .toast {
+    top: auto;
+    right: 8.5em;
+    bottom: 5em;
+  }
+}
+
+/* what passes between them, and what the agent stands for: without the roads below, a plain list under the scene */
+.captions {
+  display: grid;
+  gap: 2rem;
+  width: min(100%, 40rem);
+  margin-top: clamp(1.25rem, 4svh, 2.5rem);
+}
+
+.captions :is(h2, h3, h4) {
+  margin: 0;
+  font-size: clamp(1.375rem, 1rem + 1.7vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+/* a heading's second sentence, a point made under a topic, and the note under either, in the quieter tone */
+.caption h3 span,
+.caption.is-under-topic :is(h3, h4),
+.caption p {
+  color: var(--quiet);
+}
+
+.caption p {
+  margin: 0.625rem 0 0;
+  font-size: clamp(0.9375rem, 0.9rem + 0.3vw, 1.0625rem);
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
+.caption b {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+/* The desk has two roads, held under the same conditions as the bar's (index.html) and played by desk.js. On the
+   first the whole stage is held: the devices, their caption and the bar. Then the stage is let go and scrolls on,
+   the devices with it, while its lower part, the caption and the bar, is caught again higher up and held for a
+   road of its own: the stage's own distance, which follows that part inside the stage. */
+@media (height >= 30rem) and (prefers-reduced-motion: no-preference) {
+  .js .desk-stage {
+    position: sticky;
+    top: max(calc(var(--header) + 0.5rem), calc(50svh - 23rem));
+    padding-top: 0;
+  }
+
+  /* held, the scene is no taller than the screen can show together with its caption and the bar */
+  .js .desk-scene {
+    width: min(100%, 60rem, (100svh - var(--header) - 21rem) / var(--ratio));
+    min-width: min(100%, 14rem);
+  }
+
+  /* the first road: five steps */
+  .js .desk::after {
+    content: '';
+    display: block;
+    height: 185svh;
+  }
+
+  /* the second: nine steps, most with something to read */
+  .js .desk-stage::after {
+    content: '';
+    display: block;
+    height: 380svh;
+  }
+
+  /* The caption and the bar stand where the longest list under the bar, the web's, still ends on the screen, and
+     the caption never under the top bar. */
+  .js .ask {
+    position: sticky;
+    top: max(calc(var(--header) + 0.75rem), calc(50svh - 13rem));
+  }
+
+  /* The captions take turns in one place. The agent's name has the first line of that place to itself, and the
+     points made under it the rest; every other caption takes the whole. */
+  .js .captions {
+    gap: 0;
+    margin-top: clamp(1.25rem, 3.5svh, 2rem);
+  }
+
+  .js .caption,
+  .js .topic {
+    grid-area: 1 / 1 / 3 / 2;
+    transition:
+      opacity 200ms ease-out,
+      translate 200ms ease-out;
+  }
+
+  .js .topic {
+    grid-row: 1;
+  }
+
+  .js .caption.is-under-topic {
+    grid-row: 2;
+  }
+
+  .js :is(.caption, .topic):not(.on) {
+    opacity: 0;
+    translate: 0 0.5rem;
+  }
+
+  /* the name stays put while the points under it change, so it only fades */
+  .js .topic:not(.on) {
+    translate: none;
+  }
+}
+
+/* ── only yours ─────────────────────────────────────────── */
+
+/* A claim, what it rests on, and under the words the memo from the bar, shown where it is. Without the road
+   further down this reads as a list: the captions in the order the markup has them, and the memo after the one
+   that is about it, sealed, on our server. */
+.seal {
+  padding-top: clamp(3rem, 14svh, 8rem); /* a new part of the page, and the room that says so */
+}
+
+.seal-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 var(--edge-end) calc(2 * var(--space)) var(--edge-start);
+  text-align: center;
+}
+
+/* in the list the captions stand in the stage's own column, so that the memo can stand among them */
+.seal .captions {
+  display: contents;
+}
+
+/* this is where a new part of the page begins, and its headings are set larger than the captions before it:
+   wide enough for one line each, over notes that keep the measure of the others */
+.seal .captions > * {
+  width: min(100%, 52rem);
+}
+
+/* at this size one long word can be wider than a phone ("Wiederherstellungsschlüssel"), so words may break; and
+   on a wide but short screen the size goes by the height, so that the stage still fits */
+.seal .captions :is(h2, h3) {
+  font-size: clamp(1.75rem, min(1.15rem + 2.6vw, 6.4svh), 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.seal .caption p {
+  max-width: 36rem;
+  margin-inline: auto;
+}
+
+.seal .caption {
+  margin-top: 2rem;
+}
+
+/* the first of them finishes the claim's sentence */
+.seal .topic + .caption {
+  margin-top: 0.125em;
+}
+
+.seal .caption:nth-child(n + 4) {
+  order: 2;
+}
+
+.seal-scene {
+  order: 1;
+  display: grid;
+  justify-items: center;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+/* the pictures take turns in one place */
+.seal-scene > * {
+  grid-area: 1 / 1;
+}
+
+.seal-scene [data-at] {
+  transition:
+    opacity 250ms ease-out,
+    translate 250ms ease-out;
+}
+
+.js .seal-scene [data-at]:not(.on) {
+  opacity: 0;
+  translate: 0 0.5rem;
+}
+
+.seal-memo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* The memo, in the type of a thing typed: every character is as wide as every other, so one can take another's
+   place without anything moving. As the markup has it, it is sealed, which is the quieter tone. */
+.seal-text,
+.seal-key {
+  margin: 0;
+  font: 500 clamp(1rem, min(5.4vw, 3.2svh), 1.375rem) / 1.45 var(--font-mono);
+  font-variant-ligatures: none;
+}
+
+.seal-text {
+  color: var(--quiet);
+}
+
+/* a line of the memo is a line here, and the long one breaks wherever the screen ends */
+.seal-line {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.seal-gap {
+  display: none;
+  white-space: pre-wrap;
+}
+
+.seal-text .is-plain {
+  color: var(--foreground);
+}
+
+/* a character on the turn wears one of the mark's colours */
+.seal-text .is-turning {
+  color: #c83228;
+}
+
+.seal-text .is-turning:nth-child(4n + 2) {
+  color: #fb8841;
+}
+
+.seal-text .is-turning:nth-child(4n + 3) {
+  color: light-dark(#59824f, #d3dd92);
+}
+
+.seal-text .is-turning:nth-child(4n) {
+  color: light-dark(#2874d7, #99c2ff);
+}
+
+/* The three places the memo is in, side by side, and over the one it is in now the mark of what it links to
+   (--place: 0, 1 or 2, and anything between on the way). */
+.seal-places {
+  --place: 1;
+  --sealed: 1; /* how far that mark is from the visitor's own devices: 0 on them, 1 on our server */
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: min(100%, 38rem);
+  margin-top: clamp(1.25rem, 4svh, 2.5rem);
+  padding-top: 3.375em; /* the mark's room */
+  color: var(--quiet);
+  font-size: clamp(0.8125rem, 0.75rem + 0.3vw, 1rem);
+  line-height: 1.3;
+}
+
+.seal-places > span {
+  padding-inline: 0.25rem;
+  text-wrap: balance;
+  transition: color 200ms ease-out;
+}
+
+.seal-places .is-here {
+  color: var(--foreground);
+}
+
+.seal-carrier {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: calc(100% / 3);
+  translate: calc(var(--place) * 100%) 0;
+  /* scrolling moves it in small jumps, which this evens out */
+  transition: translate 120ms linear;
+}
+
+/* A video's mark on the visitor's devices, a blob with nothing to tell it by on our server. Its outline is
+   drawn by seal.js for every place between; the colour, the play button and the blob's bits go by --sealed. */
+.seal-cargo {
+  display: block;
+  width: 3em;
+  height: 3em;
+}
+
+/* it keeps its red for most of the way, and loses it as the bits show */
+.seal-cargo-shape {
+  fill: color-mix(in srgb, var(--quiet) calc(var(--sealed) * var(--sealed) * 100%), #ff0033);
+}
+
+.seal-cargo-play {
+  fill: #ffffff;
+  opacity: calc(1 - 2 * var(--sealed));
+}
+
+.seal-cargo-bytes {
+  fill: var(--background);
+  opacity: calc(2 * var(--sealed) - 1);
+}
+
+/* said only where it is true: where this browser did the sealing (seal.js) */
+.seal-real {
+  width: min(100%, 30rem);
+  margin: clamp(0.75rem, 2.5svh, 1.5rem) 0 0;
+  color: var(--quiet);
+  font-size: clamp(0.8125rem, 0.775rem + 0.2vw, 0.9375rem);
+  line-height: 1.4;
+  text-wrap: balance;
+}
+
+.seal:not(.is-live) .seal-real {
+  display: none;
+}
+
+/* The pictures of the account's three points belong to the road, where each stands under its own caption. In
+   the list there is no such place for them, and the captions say it all. */
+.seal-touch,
+.seal-key,
+.seal-ask {
+  display: none;
+  align-self: center;
+}
+
+/* no password: a fingerprint drawn in the mark's colours, and rings going out from it as from a finger laid on
+   glass */
+.seal-touch {
+  position: relative;
+  width: clamp(5rem, 19svh, 9rem);
+  aspect-ratio: 1;
+}
+
+.seal-print {
+  display: block;
+  width: 100%;
+  height: 100%;
+  stroke-width: 1.25;
+}
+
+.seal-print stop:nth-child(1) {
+  stop-color: #c83228;
+}
+
+.seal-print stop:nth-child(2) {
+  stop-color: #fb8841;
+}
+
+.seal-print stop:nth-child(3) {
+  stop-color: light-dark(#59824f, #d3dd92);
+}
+
+.seal-print stop:nth-child(4) {
+  stop-color: light-dark(#2874d7, #99c2ff);
+}
+
+.seal-touch.on .seal-print {
+  animation: seal-press 2.4s ease-in-out infinite;
+}
+
+.seal-touch::before,
+.seal-touch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 0.1875rem solid var(--quiet);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.seal-touch.on::before,
+.seal-touch.on::after {
+  animation: seal-touch 2.4s ease-out infinite;
+}
+
+.seal-touch.on::after {
+  animation-delay: 1.2s;
+}
+
+@keyframes seal-touch {
+  from {
+    opacity: 0.75;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 1.9;
+  }
+}
+
+/* the finger comes down as a ring sets out */
+@keyframes seal-press {
+  10% {
+    scale: 0.95;
+  }
+  35%,
+  to {
+    scale: 1;
+  }
+}
+
+/* the key's four lines are the markup's own */
+.seal-key {
+  white-space: pre;
+}
+
+/* what it keeps to itself */
+.seal-key span {
+  color: color-mix(in srgb, var(--foreground) 35%, transparent);
+}
+
+/* A new device asks, and the answer is given: a notification as the desk's laptop draws one (.toast, above),
+   here at life size. Its measures are the toast's, in em, and the em is set to match. */
+.seal-ask {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 1.3em;
+  width: min(100%, 38em);
+  padding: 1.5em;
+  border-radius: 1.8em;
+  background: var(--sheet);
+  box-shadow:
+    0 1.4em 4em rgb(0 0 0 / 0.16),
+    0 0 0 1px light-dark(rgb(0 0 0 / 0.07), rgb(255 255 255 / 0.1));
+  font-size: clamp(0.625rem, 0.55rem + 0.25vw, 0.75rem);
+  text-align: start;
+}
+
+/* on a sheet as white as itself, the icon's tile needs an edge */
+.seal-ask .app-tile {
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08);
+}
+
+.seal-ask b {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* the two answers, side by side under the words, as a system lays out a notification's buttons */
+.seal-answers {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8em;
+}
+
+.seal-answers span {
+  padding: 0.6em 1em;
+  border-radius: 0.6em;
+  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+  font-size: 1.5em;
+  font-weight: 500;
+  text-align: center;
+}
+
+.seal-answers .is-picked {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* it comes in from the side, as notifications do: from no further than the gutter, or it would widen the page */
+.js .seal-scene .seal-ask:not(.on) {
+  translate: min(1.5rem, var(--edge-end)) 0;
+}
+
+@media (width >= 45rem) {
+  .seal-text,
+  .seal-key {
+    font-size: clamp(1.25rem, min(2.6vw, 4.4svh), 2.125rem);
+  }
+
+  /* room for the memo's first two lines side by side, with the space that is between them */
+  .seal-line:not(.is-long),
+  .seal-gap {
+    display: inline;
+  }
+}
+
+/* The third road, held under the same conditions as the others and played by seal.js: the claim stays, the
+   captions take turns under it as the desk's do (above), and so do the pictures. */
+@media (height >= 30rem) and (prefers-reduced-motion: no-preference) {
+  /* The stage stands about the middle of the screen, and on a shorter screen higher: never so low that there
+     is less than 39rem under its top, which is what the tallest of its captions and pictures take together, and
+     never under the top bar. */
+  .js .seal-stage {
+    position: sticky;
+    top: max(calc(var(--header) + 0.75rem), min(calc(50svh - 14rem), calc(100svh - 39rem)));
+    padding-bottom: var(--space);
+  }
+
+  /* six steps, two of them with a memo to turn */
+  .js .seal::after {
+    content: '';
+    display: block;
+    height: 330svh;
+  }
+
+  .js .seal .captions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr); /* as wide as the stage, however long a word in it */
+    margin-top: 0;
+  }
+
+  .js .seal .caption {
+    margin-top: 0.125em;
+  }
+
+  .js .seal-scene {
+    margin-top: clamp(1.5rem, 4.5svh, 2.75rem);
+  }
+
+  /* a short screen holds the stage only without the line under the places, and with less room between its parts */
+  @media (height < 38rem) {
+    .js .seal-real {
+      display: none;
+    }
+
+    .js .seal-scene {
+      margin-top: 1rem;
+    }
+
+    .js .seal-places {
+      margin-top: 0.75rem;
+    }
+  }
+
+  .js .seal-touch,
+  .js .seal-key {
+    display: block;
+  }
+
+  .js .seal-ask {
+    display: grid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .picked,
+  .desk-scene [data-at],
+  .ask > .launcher,
+  .seal-scene [data-at],
+  .seal-places > span,
+  .seal-carrier {
+    transition: none;
+  }
+}

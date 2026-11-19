@@ -3,499 +3,1498 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0c0c0c">
-<meta name="color-scheme" content="dark">
-<meta name="description" content="All your devices. One experience. Break free from app silos.">
-<title>Unimo</title>
-<link rel="icon" href="/favicon.ico">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="color-scheme" content="light dark">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0a">
+<meta name="description" content="Open apps, find people and memos, search the web and ask questions from one bar. Works across Android, Mac, Windows and Linux. Only your devices can read what it keeps.">
+<meta property="og:title" content="unimo: one private search bar for your phone and computer">
+<meta property="og:description" content="Open apps, find people and memos, search the web and ask questions from one bar. Only your devices can read what it keeps.">
+<meta property="og:url" content="https://unimo.app/">
+<meta property="og:site_name" content="unimo">
+<title data-i18n="title">unimo: one private search bar for your phone and computer</title>
+<link rel="canonical" href="https://unimo.app/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
+<!-- The styles of the first screen and of the bar's road, written into the page so that the first paint waits
+     for nothing but the page itself. What lies further down is styled by /assets/unimo.css (below). -->
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#fff;user-select:none;-webkit-user-select:none}
+/* unimo.app
+   Ink on paper, in the apps' own colours (unimo-ui-lib, tokens.css). The only other colour is the mark's.
+   Light or dark follows the visitor's system. */
 
-.wp-macos{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 20%,#0f3460 40%,#533483 60%,#e94560 80%,#f5a623 100%)}
-.wp-windows{background:linear-gradient(135deg,#000428 0%,#004e92 35%,#00b4db 55%,#0083b0 75%,#001f54 100%)}
-.wp-linux{background:linear-gradient(135deg,#2c001e 0%,#5e2750 25%,#e95420 60%,#f2994a 80%,#77216f 100%)}
-.wp-ios{background:linear-gradient(145deg,#1c1c3a 0%,#3a1c71 20%,#d76d77 50%,#ffaf7b 75%,#f7c59f 100%)}
-.wp-android{background:linear-gradient(135deg,#0d1b2a 0%,#1b263b 20%,#415a77 40%,#778da9 60%,#e0e1dd 90%)}
+:root {
+  color-scheme: light dark;
 
-.screen{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden;contain:layout style}
+  /* from unimo-ui-lib tokens.css */
+  --background: light-dark(#ffffff, #0a0a0a);
+  --foreground: light-dark(#0a0a0a, #fafafa);
+  --popover: light-dark(#ffffff, #16181c);
+  --primary: light-dark(#171717, #fafafa);
+  --primary-foreground: light-dark(#fafafa, #171717);
+  --secondary-foreground: light-dark(#171717, #fafafa);
+  --accent: light-dark(#737373, #3b82f6);
+  --border: light-dark(#d4d4d4, #3d3d3d);
+  --ring: light-dark(#737373, #3b82f6);
+  --secondary: light-dark(#f5f5f5, #262626);
+  --positive: light-dark(#4b7342, #d3dd92);
+  --font-sans: system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --transition-fast: 150ms cubic-bezier(0.2, 0, 0, 1);
 
-.status-bar{display:none;height:env(safe-area-inset-top,44px);min-height:44px;padding:12px 24px 0;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;z-index:100;flex-shrink:0}
-.status-bar .time{flex:1}
-.status-bar .notch{flex:1;display:flex;justify-content:center}
-.status-bar .notch-shape{width:120px;height:28px;background:#000;border-radius:0 0 18px 18px}
-.status-bar .indicators{flex:1;display:flex;justify-content:flex-end;gap:6px;align-items:center}
-.mobile .status-bar{display:flex}
-
-.menu-bar{display:none;height:28px;padding:0 12px;align-items:center;font-size:13px;font-weight:500;gap:16px;background:rgba(0,0,0,.35);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);z-index:100;flex-shrink:0}
-.menu-bar .right{margin-left:auto;display:flex;gap:14px;align-items:center;font-size:12px}
-.desktop .menu-bar{display:flex}
-
-.app-grid-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;contain:layout style}
-
-.desktop .app-grid{display:grid;grid-template-columns:repeat(7,88px);gap:28px 36px;justify-content:center;align-content:center}
-.desktop .app-icon-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:default}
-.desktop .app-icon{width:64px;height:64px;border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.15);position:relative}
-.desktop .app-icon svg{width:34px;height:34px;fill:white}
-.desktop .app-label{font-size:11px;color:rgba(255,255,255,.9);text-shadow:0 1px 3px rgba(0,0,0,.6);text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-.mobile .app-grid{display:grid;grid-template-columns:repeat(4,72px);gap:22px 20px;justify-content:center;align-content:start;padding-top:10px}
-.mobile .app-icon-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;position:relative}
-.mobile .app-icon{width:60px;height:60px;border-radius:13.5px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.25);position:relative}
-.mobile .app-icon svg{width:30px;height:30px;fill:white}
-.mobile .app-label{font-size:11px;color:rgba(255,255,255,.9);text-shadow:0 1px 2px rgba(0,0,0,.5);text-align:center;max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-.badge{position:absolute;top:-5px;right:-5px;min-width:20px;height:20px;background:#ff3b30;border-radius:10px;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid rgba(0,0,0,.15);z-index:2;animation:badgePop .4s cubic-bezier(.34,1.8,.64,1) forwards;box-shadow:0 0 8px rgba(255,59,48,.6)}
-.badge.pulse{animation:badgePop .4s cubic-bezier(.34,1.8,.64,1),badgePulse 1.5s ease-in-out .4s infinite}
-@keyframes badgePop{0%{transform:scale(0)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
-@keyframes badgePulse{0%,100%{transform:scale(1);box-shadow:0 0 8px rgba(255,59,48,.6)}50%{transform:scale(1.15);box-shadow:0 0 14px rgba(255,59,48,.9)}}
-
-.dock{display:none;padding:8px 0 calc(env(safe-area-inset-bottom,8px) + 8px);flex-shrink:0}
-.mobile .dock{display:flex;justify-content:center}
-.dock-inner{display:flex;gap:18px;padding:8px 16px;background:rgba(255,255,255,.12);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:22px}
-.dock .app-icon{width:56px;height:56px;border-radius:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.25)}
-.dock .app-icon svg{width:28px;height:28px;fill:white}
-
-.desktop-dock{display:none;padding-bottom:6px;flex-shrink:0}
-.desktop .desktop-dock{display:flex;justify-content:center}
-.desktop-dock .dock-inner{gap:4px;padding:4px 8px;border-radius:16px;background:rgba(255,255,255,.1);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px)}
-.desktop-dock .app-icon{width:48px;height:48px;border-radius:11px;display:flex;align-items:center;justify-content:center;transition:transform .15s;cursor:default}
-.desktop-dock .app-icon:hover{transform:scale(1.2) translateY(-6px)}
-.desktop-dock .app-icon svg{width:26px;height:26px;fill:white}
-.dock-sep{width:1px;background:rgba(255,255,255,.2);margin:4px 2px}
-
-.notif-container{position:fixed;z-index:1000;pointer-events:none;contain:layout style}
-.mobile .notif-container{top:50px;left:6px;right:6px}
-.desktop .notif-container{top:36px;right:12px;width:380px;max-width:calc(100vw - 24px)}
-.notif{background:rgba(30,30,30,.85);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;pointer-events:auto;margin-bottom:8px;box-shadow:0 8px 32px rgba(0,0,0,.4);animation:notifIn .45s cubic-bezier(.34,1.56,.64,1) forwards;opacity:0;transform:translateY(-30px);will-change:transform,opacity;contain:layout style}
-.notif.out{animation:notifOut .35s ease-in forwards}
-.notif-icon{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.notif-icon svg{width:20px;height:20px;fill:white}
-.notif-body{flex:1;min-width:0}
-.notif-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
-.notif-app{font-size:13px;font-weight:600;color:rgba(255,255,255,.7)}
-.notif-time{font-size:12px;color:rgba(255,255,255,.4)}
-.notif-text{font-size:15px;font-weight:500;color:#fff;line-height:1.35}
-
-@keyframes notifIn{0%{opacity:0;transform:translateY(-30px) scale(.95)}100%{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes notifOut{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-20px) scale(.95)}}
-@keyframes screenShake{0%,100%{transform:translate(0)}10%{transform:translate(-2px,1px)}30%{transform:translate(2px,-1px)}50%{transform:translate(-1px,2px)}70%{transform:translate(1px,-2px)}90%{transform:translate(-1px,1px)}}
-.screen.shake{animation:screenShake .3s ease}
-.anxiety-vignette{position:fixed;inset:0;pointer-events:none;z-index:500;opacity:0;transition:opacity 2s ease;background:radial-gradient(ellipse at center,transparent 40%,rgba(255,0,0,.15) 100%)}
-.anxiety-vignette.active{opacity:1}
-
-.search-bar{display:none;justify-content:center;padding:16px 0 8px;flex-shrink:0}
-.desktop .search-bar{display:flex}
-.search-inner{width:260px;height:34px;border-radius:8px;background:rgba(255,255,255,.12);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;color:rgba(255,255,255,.5)}
-.search-inner svg{width:14px;height:14px;fill:rgba(255,255,255,.5)}
-
-.page-dots{display:none;justify-content:center;gap:6px;padding:8px 0}
-.mobile .page-dots{display:flex}
-.page-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3)}
-.page-dot.active{background:rgba(255,255,255,.85)}
-
-/* Narrow desktops / landscape tablets */
-@media(max-width:900px){
-.desktop .app-grid{grid-template-columns:repeat(6,80px);gap:24px 28px}
-.desktop .app-icon{width:58px;height:58px;border-radius:13px}
-.desktop .app-icon svg{width:30px;height:30px}
-.desktop-dock .app-icon{width:42px;height:42px}
-.desktop-dock .app-icon svg{width:22px;height:22px}
-}
-@media(max-width:700px){
-.desktop .app-grid{grid-template-columns:repeat(5,72px);gap:20px 22px}
-.desktop .app-icon{width:52px;height:52px;border-radius:12px}
-.desktop .app-icon svg{width:26px;height:26px}
-.desktop .app-label{font-size:10px}
-.desktop .notif-container{width:300px}
-}
-/* Small phones (SE, 5s, etc.) */
-@media(max-width:374px){
-.mobile .app-grid{grid-template-columns:repeat(4,58px);gap:18px 14px}
-.mobile .app-icon{width:50px;height:50px;border-radius:11px}
-.mobile .app-icon svg{width:26px;height:26px}
-.mobile .app-label{font-size:10px;max-width:56px}
-.dock-inner{gap:14px;padding:6px 12px}
-.dock .app-icon{width:48px;height:48px;border-radius:11px}
-.dock .app-icon svg{width:24px;height:24px}
-.notif{padding:10px 12px;gap:10px;border-radius:14px}
-.notif-icon{width:32px;height:32px;border-radius:7px}
-.notif-icon svg{width:16px;height:16px}
-.notif-text{font-size:13px}
-.notif-app{font-size:12px}
-.badge{min-width:18px;height:18px;font-size:10px;border-radius:9px}
-}
-/* Tall phones - more rows visible */
-@media(max-height:600px) and (max-width:820px){
-.mobile .app-grid{gap:14px 16px}
-.mobile .app-icon{width:48px;height:48px}
-.mobile .app-icon svg{width:24px;height:24px}
-.status-bar{min-height:32px;padding:6px 16px 0}
+  /* the page's own */
+  --quiet: color-mix(in srgb, var(--foreground) 65%, transparent); /* the apps' tone for secondary text */
+  --page: 75rem;
+  --gutter: 1rem;
+  --header: 3.5rem;
+  --space: clamp(1.5rem, 5svh, 4rem); /* the least room above and below a block */
+  /* the opening's measures, shared by the parts they size and by the sum that places them (.hero) */
+  --title-size: clamp(1.625rem, min(0.375rem + 7vw, 11.5svh), 5rem);
+  --gap-download: clamp(1.75rem, 4.5svh, 2.75rem);
+  --gap-bar: clamp(2.25rem, 7svh, 4.5rem);
+  --platform-lines: 2;
+  /* the size the bar is drawn at, what the app calls 1rem: life size on the narrowest phones, where a row has least room */
+  --bar-scale: clamp(1rem, 5vw, 1.125rem);
+  /* the gutters, kept clear of a phone's notch when it lies on its side */
+  --edge-start: max(var(--gutter), env(safe-area-inset-left));
+  --edge-end: max(var(--gutter), env(safe-area-inset-right));
 }
 
-/* Hero CTA overlay */
-.hero-overlay{position:fixed;inset:0;z-index:2000;background:#0c0c0c;display:flex;align-items:center;justify-content:center;padding:8vw 10vw;opacity:0;pointer-events:none;transition:opacity 1.8s ease;contain:layout style paint}
-.hero-overlay.active{opacity:1;pointer-events:auto}
-.hero-content{max-width:720px}
-.hero-headline{font-size:clamp(28px,5.5vw,64px);font-weight:700;line-height:1.15;letter-spacing:-.02em;color:#e8e8ec;margin-bottom:32px;opacity:0;transform:translateY(30px);transition:opacity 1s ease .4s,transform 1s ease .4s}
-.hero-sub{font-size:clamp(15px,2vw,22px);font-weight:400;line-height:1.5;color:rgba(232,232,236,.5);margin-bottom:48px;max-width:520px;opacity:0;transform:translateY(20px);transition:opacity 1s ease .9s,transform 1s ease .9s}
-.hero-btn{display:inline-block;padding:16px 36px;font-size:clamp(15px,1.8vw,18px);font-weight:600;color:#fff;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:12px;cursor:pointer;text-decoration:none;opacity:0;transform:translateY(20px);transition:opacity 1s ease 1.4s,transform 1s ease 1.4s,box-shadow .2s;box-shadow:0 4px 24px rgba(99,102,241,.4);font-family:inherit}
-.hero-btn:hover{box-shadow:0 6px 32px rgba(99,102,241,.6)}
-.hero-overlay.active .hero-headline,.hero-overlay.active .hero-sub,.hero-overlay.active .hero-btn{opacity:1;transform:translateY(0)}
-@media(max-width:600px){
-.hero-overlay{padding:10vw 8vw}
-.hero-headline{margin-bottom:24px}
-.hero-sub{margin-bottom:36px}
-.hero-btn{padding:14px 28px;border-radius:10px;width:100%;text-align:center}
+@media (width >= 45rem) {
+  :root {
+    --gutter: 1.5rem;
+    --header: 4rem;
+    --platform-lines: 1;
+    --bar-scale: 1.25rem;
+  }
 }
 
-@media(prefers-reduced-motion:reduce){
-.notif{animation:none!important;opacity:1;transform:none}
-.notif.out{animation:none!important;opacity:0}
-.desktop .app-icon:hover,.desktop-dock .app-icon:hover{transform:none}
-.screen.shake{animation:none!important}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* a visitor whose language is not English waits a moment for it instead of watching the text swap */
+html.lang-wait body {
+  visibility: hidden;
+  animation: reveal 0s 2s forwards;
+}
+
+@keyframes reveal {
+  to {
+    visibility: visible;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font: 400 1rem/1.5 var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+:target {
+  scroll-margin-top: calc(var(--header) + 1rem);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.sprite {
+  display: none;
+}
+
+.os {
+  flex: none;
+  fill: currentColor;
+}
+
+.skip {
+  position: absolute;
+  top: 0.5rem;
+  left: -9999px;
+  z-index: 20;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  text-decoration: none;
+}
+
+.skip:focus {
+  left: var(--edge-start);
+}
+
+/* ── top bar ────────────────────────────────────────────── */
+
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--background) 82%, transparent);
+  -webkit-backdrop-filter: blur(1rem);
+  backdrop-filter: blur(1rem);
+}
+
+.top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: var(--page);
+  height: var(--header);
+  margin-inline: auto;
+  padding-inline: var(--edge-start) var(--edge-end);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  border-radius: 0.375rem;
+  color: inherit;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* The name stands in a window that opens at the mark's edge: a grid of one column, as wide as the name, which
+   shows nothing that lies outside it. */
+.brand-name {
+  --tuck: 400ms; /* how long the name takes to go in behind the mark, or to come out again */
+  display: grid;
+  grid-template-columns: 1fr;
+  overflow: hidden;
+}
+
+.brand-text {
+  min-width: 0; /* lets the column close all the way */
+  text-indent: 0.5rem; /* the space between mark and name, inside the window so that it closes with it */
+}
+
+/* On a phone the top bar has little room. Once the headline has slipped under it (unimo.js marks the page as
+   scrolled), the name slides out of its window towards the mark, and is gone behind it. Only then does the
+   window close, so that the link is no wider than what is left to see. Back at the top the window opens at once
+   and the name slides out again. */
+@media (width < 45rem) {
+  .brand-name {
+    transition: grid-template-columns 0s;
+  }
+
+  .brand-text {
+    transition:
+      translate var(--tuck) cubic-bezier(0.4, 0, 0.2, 1),
+      opacity var(--tuck) cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .is-scrolled .brand-name {
+    grid-template-columns: 0fr;
+    transition-delay: var(--tuck);
+  }
+
+  .is-scrolled .brand-text {
+    opacity: 0;
+    translate: -100% 0;
+  }
+}
+
+/* set like a comment in code */
+.beta {
+  margin-inline-start: 0.125rem;
+  color: var(--quiet);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* The logo is four even rings cut out of a colour wheel. The rings are this mask; the wheel is drawn twice, as the
+   logo itself has it (.mark, here) and as the apps draw it small (.rings, in the bar). */
+.mark,
+.rings {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='black' stroke-width='4'%3E%3Ccircle cx='50' cy='50' r='24'/%3E%3Ccircle cx='50' cy='50' r='32'/%3E%3Ccircle cx='50' cy='50' r='40'/%3E%3Ccircle cx='50' cy='50' r='48'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+/* the mark: the wheel as desktop-app/public/o-logo.svg turns and stretches it */
+.mark {
+  flex: none;
+  position: relative;
+  overflow: hidden;
+  width: 1.5rem;
+  aspect-ratio: 1;
+}
+
+.mark::before {
+  content: '';
+  position: absolute;
+  inset: -48%;
+  background: conic-gradient(
+    from 90deg,
+    #330f1f 0deg,
+    #c83228 43.2deg,
+    #fb8841 90deg,
+    #d3dd92 133.2deg,
+    #59824f 181.7deg,
+    #002414 223.2deg,
+    #142847 266.4deg,
+    #2874d7 313.2deg,
+    #99c2ff 349.2deg,
+    #330f1f 360deg
+  );
+  transform: matrix(0, 0.512, -0.8509, 0, 0, 0);
+}
+
+/* white laid over the mark on a dark ground, so its three darkest rings still show */
+.mark::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: light-dark(transparent, rgb(255 255 255 / 0.24));
+}
+
+.menu a,
+.lang {
+  border-radius: 0.375rem;
+  text-decoration: none;
+}
+
+/* The language picker is a native select, laid unseen over its own label: the system draws the list,
+   the page draws the name. */
+.lang {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.lang svg {
+  flex: none;
+  width: 1em;
+  height: 1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lang select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  opacity: 0;
+  font: inherit;
+  font-size: 1rem; /* below this an iPhone zooms the page in on focus */
+  cursor: pointer;
+  appearance: none;
+}
+
+.lang:has(select:focus-visible) {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* switching language takes the script */
+html:not(.js) .lang {
+  display: none;
+}
+
+/* On a phone the links wait in a menu behind a button. */
+@media (width < 45rem) {
+  .menu-button {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-inline-end: -0.625rem; /* the drawn lines, not the touch area, meet the gutter */
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .menu-button svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+  }
+
+  /* open, the two lines cross */
+  .menu-button path {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform var(--transition-fast);
+  }
+
+  .menu-button[aria-expanded='true'] path:first-child {
+    transform: translateY(3.5px) rotate(45deg);
+  }
+
+  .menu-button[aria-expanded='true'] path:last-child {
+    transform: translateY(-3.5px) rotate(-45deg);
+  }
+
+  .menu {
+    position: fixed;
+    inset: calc(var(--header) - 0.25rem) var(--edge-end) auto auto;
+    min-width: 13rem;
+    margin: 0;
+    padding: 0.375rem;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: var(--popover);
+    color: var(--foreground);
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+    transform-origin: 100% 0;
+  }
+
+  .menu:popover-open {
+    transition:
+      opacity var(--transition-fast),
+      scale var(--transition-fast);
+  }
+
+  @starting-style {
+    .menu:popover-open {
+      opacity: 0;
+      scale: 0.96;
+    }
+  }
+
+  .menu a,
+  .lang {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: 0.75rem;
+    border-radius: 0.625rem;
+    color: inherit;
+  }
+
+  .menu a:hover,
+  .lang:hover {
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+  }
+
+  /* the language sits apart from the links, under a line */
+  .lang {
+    justify-content: space-between;
+    margin-top: 0.75rem;
+  }
+
+  .lang::before {
+    content: '';
+    position: absolute;
+    inset: -0.375rem 0.75rem auto;
+    border-top: 1px solid var(--border);
+  }
+}
+
+/* On a wider screen they stand in the bar: the same element, no longer a popover in anything but name. */
+@media (width >= 45rem) {
+  .menu-button {
+    display: none;
+  }
+
+  .menu {
+    position: static;
+    inset: auto;
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overflow: visible;
+    background: none;
+    color: inherit;
+    font-size: 0.9375rem;
+  }
+
+  .menu a,
+  .lang {
+    padding-block: 0.375rem;
+    color: var(--quiet);
+    transition: color var(--transition-fast);
+  }
+
+  .menu a:hover,
+  .lang:hover {
+    color: var(--foreground);
+  }
+}
+
+/* ── the opening ────────────────────────────────────────── */
+
+/* The opening and the bar under it make one group, which stands just above the middle of the first screen.
+   The bar has to be free to stay behind when the opening scrolls away, so no box can hold the two and centre
+   them. The opening is pushed down by the room that is left over instead, worked out from the heights of the
+   parts. A headline that takes a fourth line makes the group taller than reckoned: it starts where it would
+   have and ends a line lower. */
+.hero {
+  --group: calc(
+    3.12 * var(--title-size) + var(--gap-download) + 3.25rem + 1rem + 1.875rem * var(--platform-lines) +
+      var(--gap-bar) + 2.75 * var(--bar-scale)
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: max(var(--space), calc((100svh - 2 * var(--header) - var(--group)) / 2 - 3svh)) var(--edge-end) 0
+    var(--edge-start);
+  text-align: center;
+}
+
+/* three lines of one size */
+h1 {
+  margin: 0;
+  font-size: var(--title-size);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+h1 span {
+  display: block;
+}
+
+/* the apps' primary button, at the size of a page's one action */
+.download {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  max-width: 100%;
+  min-height: 3.25rem;
+  margin-top: var(--gap-download);
+  padding: 0.75rem clamp(1.25rem, 6vw, 1.75rem); /* a long label on a narrow phone gives up padding before it wraps */
+  border-radius: 1.625rem; /* a pill at one line, and still a sound shape should a label take two */
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-decoration: none;
+  text-wrap: balance;
+  transition:
+    background-color var(--transition-fast),
+    scale var(--transition-fast);
+}
+
+.download:hover {
+  background: color-mix(in srgb, var(--primary), var(--background) 16%);
+}
+
+.download:active {
+  scale: 0.96;
+}
+
+.download .os {
+  width: 1.125em;
+  height: 1.125em;
+}
+
+/* of the marks and labels inside the button, only the visitor's own system shows */
+.download [data-for] {
+  display: none;
+}
+
+:root:not([data-os]) .download [data-for='any'],
+:root[data-os='android'] .download [data-for='android'],
+:root[data-os='mac'] .download [data-for='mac'],
+:root[data-os='windows'] .download [data-for='windows'],
+:root[data-os='linux'] .download [data-for='linux'] {
+  display: block;
+}
+
+.platforms {
+  margin: 1rem 0 0;
+  color: var(--quiet);
+  font-size: 0.9375rem;
+  line-height: 2;
+  text-wrap: balance;
+}
+
+.platforms a {
+  padding-block: 0.375rem; /* a taller touch area; the line keeps its height */
+  border-radius: 0.25rem;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--transition-fast);
+}
+
+/* the name is underlined, its mark is not */
+.platforms a span {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  text-underline-offset: 0.22em;
+}
+
+.platforms a:hover,
+.platforms:target a {
+  color: var(--foreground);
+}
+
+.platforms .os {
+  width: 1em;
+  height: 1em;
+  margin-inline-end: 0.3em;
+  vertical-align: -0.125em;
+}
+
+/* ── the stage: the bar, and what it does ───────────────── */
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: var(--gap-bar);
+  padding: 0 var(--edge-end) var(--space) var(--edge-start);
+  text-align: center;
+}
+
+/* The bar, drawn as the desktop app draws it. Every length is the app's own (desktop-app/src/ui/styles.css, and
+   command-bar.css, result.css and caret.css in unimo-ui-lib), in em where the app says rem: one em here is
+   --bar-scale, the app's 16px. Where a part sets its own font size, its lengths are multiples of --bar-scale. */
+.launcher {
+  --hairline: 1px;
+  --pane: light-dark(rgb(255 255 255 / 0.9), rgb(22 24 28 / 0.58));
+  --pane-edge: 0 0 0 var(--hairline) light-dark(rgb(0 0 0 / 0.08), rgb(255 255 255 / 0.09));
+  position: relative;
+  z-index: 1; /* the list drops over what lies under the bar */
+  width: min(100%, 34rem);
+  height: 2.75em; /* the bar in its frame: the list hangs below without pushing the page down */
+  font-size: var(--bar-scale);
+  line-height: 1.6;
+  text-align: start;
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@media (resolution >= 2dppx) {
+  .launcher {
+    --hairline: 0.5px; /* one device pixel */
+  }
+}
+
+/* The frame is glass. No desktop lies behind it here, so the glass is made at its edges, as the app makes it
+   where nothing blurs the screen: a lit rim inside, a hairline and a short shadow outside. */
+.launcher-frame {
+  --bar-radius: 1.125em;
+  --frame: 0.25em;
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--frame); /* as thick between the bar and the list as around them */
+  padding: var(--frame);
+  border-radius: calc(var(--bar-radius) + var(--frame)); /* concentric with the bar */
+  background: linear-gradient(light-dark(rgb(255 255 255 / 0.55), rgb(255 255 255 / 0.07)), transparent 2.5em)
+    light-dark(rgb(255 255 255 / 0.56), rgb(0 0 0 / 0.22));
+  box-shadow:
+    inset 0 1px 0 light-dark(rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.16)),
+    inset 0 0 0 1px light-dark(rgb(255 255 255 / 0.4), rgb(255 255 255 / 0.06)),
+    0 0 0 var(--hairline) light-dark(rgb(0 0 0 / 0.16), rgb(0 0 0 / 0.55)),
+    0 1px 2px light-dark(rgb(0 0 0 / 0.08), rgb(0 0 0 / 0.2)),
+    0 4px 9px -1px light-dark(rgb(0 0 0 / 0.12), rgb(0 0 0 / 0.3));
+  transition: border-radius var(--transition-fast);
+  /* glass: it shows only where something lies behind the bar, as on the desk's laptop */
+  -webkit-backdrop-filter: blur(1.5em) saturate(1.5);
+  backdrop-filter: blur(1.5em) saturate(1.5);
+}
+
+/* Over a list the lower corners follow the list's. A list is showing unless it is hidden; on the desk, where the
+   bar's parts come and go with the scene's steps, while it is on. */
+.launcher-frame:has(.launcher-list:not([hidden], [data-at]), .launcher-list.on) {
+  border-end-start-radius: calc(0.75em + var(--frame));
+  border-end-end-radius: calc(0.75em + var(--frame));
+}
+
+.launcher-bar,
+.launcher-list {
+  background: var(--pane);
+  box-shadow: var(--pane-edge);
+}
+
+.launcher-bar {
+  display: flex;
+  align-items: center;
+  min-height: 2.25em;
+  border-radius: var(--bar-radius);
+}
+
+/* the mode button on the left, the menu button on the right */
+.launcher-button {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.25em;
+  height: 2.25em;
+  color: var(--secondary-foreground);
+}
+
+.launcher-button svg {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+  fill-rule: evenodd;
+}
+
+/* the mark as the apps draw it small: the same rings, the wheel unstretched (unimo-ui-lib, UnimoColorIcon) */
+.rings {
+  flex: none;
+  width: 1em;
+  height: 1em;
+  background: conic-gradient(
+    from 180deg,
+    #330f1f,
+    #c83228 12%,
+    #fb8841 25%,
+    #d3dd92 37%,
+    #59824f 50.48%,
+    #002414 62%,
+    #142847 74%,
+    #2874d7 87%,
+    #99c2ff 97%,
+    #330f1f
+  );
+}
+
+/* the field: what has been typed, the caret after it, and the placeholder while there is nothing */
+.launcher-field {
+  flex: 1;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden; /* the field clips the caret's glow, as it does in the app */
+}
+
+.launcher-typed {
+  white-space: pre;
+}
+
+.launcher-placeholder {
+  overflow: hidden;
+  color: color-mix(in srgb, currentColor 65%, transparent);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.launcher-caret {
+  flex: none;
+  width: 0.125em;
+  height: 1.1875em;
+  margin-inline-end: -0.125em; /* it stands on the first letter's edge and takes no room of its own */
+  border-radius: 0.125em;
+  background: var(--foreground);
+  box-shadow: 0 0 1em color-mix(in srgb, var(--foreground) 55%, transparent);
+  animation: caret-blink 1.15s steps(1, end) infinite;
+}
+
+@keyframes caret-blink {
+  0%,
+  52% {
+    opacity: 1;
+  }
+  53%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* With something typed the placeholder goes, and the menu button becomes the one that clears the field. bar.js
+   says so on the bar it types into; on the desk the typed text is a part of the scene, and says so by being on. */
+.launcher .when-typing,
+.launcher:is([data-typing], :has(.launcher-typed.on)) :is(.when-empty, .launcher-placeholder) {
+  display: none;
+}
+
+.launcher:is([data-typing], :has(.launcher-typed.on)) .when-typing {
+  display: block;
+}
+
+/* the list of results; a take is one query's worth of rows, and only one take shows at a time */
+.launcher-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125em;
+  padding: 0.25em;
+  border-radius: 0.75em; /* concentric with the rows inside its padding */
+}
+
+.take {
+  display: contents;
+}
+
+.take-query {
+  display: none; /* what bar.js types for this take */
+}
+
+.result {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75em;
+  padding: 0.625em;
+  border-radius: 0.5em;
+}
+
+.result.is-selected {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+.result-app {
+  align-items: center;
+}
+
+.result-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2em;
+  height: 2em;
+  overflow: hidden;
+  border-radius: 0.375em;
+  background: var(--secondary);
+  color: color-mix(in srgb, currentColor 65%, transparent);
+}
+
+.result-app .result-icon,
+.result-contact .result-icon {
+  border-radius: 50%;
+}
+
+.result-icon svg {
+  width: 1.25em;
+  height: 1.25em;
+  fill: currentColor;
+}
+
+.result-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* a person without a photo is an initial on a tint */
+.initial {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background: #f6d8ec;
+  color: #b8067c;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* a person with a name and nothing under it: the name stands against the middle of the picture */
+.result-contact:not(:has(.result-description)) {
+  align-items: center;
+}
+
+.result-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.result-title {
+  font-size: 0.875em;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.result-description {
+  color: color-mix(in srgb, currentColor 65%, transparent);
+  font-size: 0.875em;
+  line-height: 1.4;
+}
+
+/* the selected row names what Return will do, and only that row */
+.result:not(.is-selected) .result-hint {
+  display: none;
+}
+
+.result-hint {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: calc(0.375 * var(--bar-scale));
+  height: calc(2 * var(--bar-scale));
+  color: color-mix(in srgb, currentColor 65%, transparent);
+  font-size: 0.875em;
+  line-height: 1.5;
+}
+
+.result-hint kbd {
+  min-width: calc(1.25 * var(--bar-scale));
+  padding: 0 calc(0.25 * var(--bar-scale));
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-radius: calc(0.25 * var(--bar-scale));
+  font-family: inherit;
+  font-size: calc(0.75 * var(--bar-scale));
+  line-height: calc(1.125 * var(--bar-scale));
+  text-align: center;
+}
+
+/* what the bar does, one kind of thing at a time: without the road below, a plain list under the bar */
+.does {
+  display: grid;
+  gap: 2rem;
+  width: min(100%, 34rem);
+  margin-top: 3rem;
+}
+
+.does h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+.does p {
+  margin: 0.375rem 0 0;
+  color: var(--quiet);
+  font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
+  line-height: 1.45;
+  text-wrap: balance;
+}
+
+/* The roads. Where scripts run, motion is welcome and the screen is tall enough, a stage holds still while the
+   page scrolls on under it, and the distance plays what the stage shows (road.js). The scripts go by these very
+   rules: where a stage is not sticky, nothing plays. The desk's road is with the desk, in /assets/unimo.css. */
+@media (height >= 30rem) and (prefers-reduced-motion: no-preference) {
+  .js .stage {
+    position: sticky;
+    /* the stage is some 16rem tall: this stands it just above the middle of the screen, and never under the top bar */
+    top: max(calc(var(--header) + 0.75rem), calc(50svh - 9.5rem));
+    z-index: 1;
+  }
+
+  /* nothing but distance to scroll through */
+  .js .journey::after {
+    content: '';
+    display: block;
+    height: 150svh;
+  }
+
+  /* The captions take turns in one place, under the room a list of one row needs. The tallest such row is the
+     memo: two lines of it on a wide bar, four on a narrow phone's (--row-room, in the bar's em). A longer list
+     hangs over that place, and bar.js keeps the caption back until the list has narrowed. */
+  .js .does {
+    --row-room: 4.75;
+    gap: 0;
+    margin-top: calc(var(--row-room) * var(--bar-scale) + 1.5rem);
+  }
+
+  @media (width < 30rem) {
+    .js .does {
+      --row-room: 7.25;
+    }
+  }
+
+  .js .does-step {
+    grid-area: 1 / 1;
+    opacity: 0;
+    translate: 0 0.5rem;
+    transition:
+      opacity 200ms ease-out,
+      translate 200ms ease-out;
+  }
+
+  .js .does-step.is-current {
+    opacity: 1;
+    translate: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-name,
+  .brand-text,
+  .menu-button path,
+  .menu:popover-open,
+  .menu a,
+  .lang,
+  .download,
+  .platforms a,
+  .launcher-frame {
+    transition: none;
+  }
+
+  .download:active {
+    scale: 1;
+  }
+
+  .launcher-caret {
+    animation: none;
+  }
+}
+
+/* a system that paints its own colours would paint the wheel away */
+@media (forced-colors: active) {
+  .mark,
+  .rings {
+    forced-color-adjust: none;
+  }
+}
+
+/* The scenes further down, the desk's and the sealed memo's, are drawn by /assets/unimo.css, which arrives after
+   the first paint. Until it has, they are held back and their captions read as plain text. */
+.desk-scene,
+.seal-scene {
+  display: none;
+}
+
+/* On the desk a bar's parts belong to the scene, each there only while it is on. And the bar under the scene
+   changes mode: it searches everything, until it is the agent's, and then the web's. The parts of those two modes
+   say when that is, and while one of them is on, the parts of the first step aside. This is said here and not
+   with the rest of the desk, so that the parts never all show at once while that sheet is on its way. */
+.desk .launcher [data-at]:not(.on),
+.launcher:has(.in-mode.on) .in-all {
+  display: none;
 }
 </style>
+<!-- the styles of what lies below the first screen: fetched at once, but the first paint does not wait for them -->
+<link rel="stylesheet" href="/assets/unimo.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/unimo.css"></noscript>
+<script>
+/* Before first paint: mark that scripts run, name the visitor's system for the download button and the desk,
+   and, for a visitor whose language the page speaks, send for that language and hold the page until it is in. */
+(function (root) {
+  root.classList.add('js');
+
+  var ua = navigator.userAgent;
+  var isTouchMac = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1; // an iPad asking for desktop sites
+  var os = /Android/.test(ua) ? 'android'
+    : /iPhone|iPad|iPod/.test(ua) || isTouchMac ? ''
+    : /Macintosh/.test(ua) ? 'mac'
+    : /Windows/.test(ua) ? 'windows'
+    : /CrOS/.test(ua) ? ''
+    : /Linux|X11/.test(ua) ? 'linux'
+    : '';
+  if (os) root.dataset.os = os;
+  // Which Linux it is, a browser mostly keeps to itself: Firefox on Ubuntu says so, and little else does. Where it
+  // is known, the desk's laptop shows that system's own wallpaper.
+  if (os === 'linux' && /Ubuntu/.test(ua)) root.dataset.distro = 'ubuntu';
+
+  // The languages there are files for in /assets/lang/ (tools/check-i18n.mjs holds this list to them). A visitor
+  // who is going to get one waits a moment for it instead of watching the text swap, and its file is sent for
+  // now, while the scripts are still on their way. Everyone else reads English at once.
+  var translated = ['cs', 'de', 'es', 'fr', 'pl'];
+  var wanted = new URLSearchParams(location.search).get('lang') || navigator.language || '';
+  wanted = wanted.slice(0, 2).toLowerCase();
+  if (translated.indexOf(wanted) !== -1) {
+    root.classList.add('lang-wait');
+    var file = document.createElement('link');
+    file.rel = 'preload';
+    file.as = 'fetch';
+    file.crossOrigin = 'anonymous'; // the way lang.js will ask for it, so that the one answer serves both
+    file.href = '/assets/lang/' + wanted + '.json';
+    document.head.appendChild(file);
+  }
+
+  // should one of the page's own scripts break while running, the page falls back to how it reads without them
+  addEventListener('error', function (event) {
+    if (/\/assets\/[^/]*\.js/.test(event.filename || '')) root.classList.remove('js');
+  });
+})(document.documentElement);
+</script>
+<link rel="modulepreload" href="/assets/lang.js">
+<!-- the scripts of what lies further down are fetched along with the rest but run later, once the first screen is
+     painted (unimo.js) -->
+<link rel="modulepreload" href="/assets/road.js" fetchpriority="low">
+<link rel="modulepreload" href="/assets/bar.js" fetchpriority="low">
+<link rel="modulepreload" href="/assets/desk.js" fetchpriority="low">
+<link rel="modulepreload" href="/assets/spinner.js" fetchpriority="low">
+<link rel="modulepreload" href="/assets/seal.js" fetchpriority="low">
+<!-- and should the scripts fail to arrive at all, the page falls back the same way -->
+<script type="module" src="/assets/unimo.js" onerror="document.documentElement.classList.remove('js')"></script>
 </head>
 <body>
-<div id="root" class="screen"></div>
-<script>
-(()=>{
-'use strict';
+<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
 
-const detect=()=>{
-const ua=navigator.userAgent,p=navigator.platform||'';
-let os='macos';
-if(/iPhone|iPod/.test(ua)||(/iPad/.test(ua)&&navigator.maxTouchPoints>1))os='ios';
-else if(/Android/i.test(ua))os='android';
-else if(/Win/i.test(p))os='windows';
-else if(/Linux/i.test(p)&&!/Android/i.test(ua))os='linux';
-else if(/Mac/i.test(p))os='macos';
-const mobile=os==='ios'||os==='android'||/Mobi|Android|iPhone|iPad|iPod/i.test(ua)||(navigator.maxTouchPoints>0&&window.innerWidth<820);
-const raw=navigator.language||navigator.languages?.[0]||'en';
-const lang=raw.split('-')[0].toLowerCase();
-return{os,mobile,lang};
-};
+<!-- the marks of the systems unimo runs on -->
+<svg class="sprite" aria-hidden="true">
+  <symbol id="os-android" viewBox="0 0 24 24"><path d="M18.4395 5.5586c-.675 1.1664-1.352 2.3318-2.0274 3.498-.0366-.0155-.0742-.0286-.1113-.043-1.8249-.6957-3.484-.8-4.42-.787-1.8551.0185-3.3544.4643-4.2597.8203-.084-.1494-1.7526-3.021-2.0215-3.4864a1.1451 1.1451 0 0 0-.1406-.1914c-.3312-.364-.9054-.4859-1.379-.203-.475.282-.7136.9361-.3886 1.5019 1.9466 3.3696-.0966-.2158 1.9473 3.3593.0172.031-.4946.2642-1.3926 1.0177C2.8987 12.176.452 14.772 0 18.9902h24c-.119-1.1108-.3686-2.099-.7461-3.0683-.7438-1.9118-1.8435-3.2928-2.7402-4.1836a12.1048 12.1048 0 0 0-2.1309-1.6875c.6594-1.122 1.312-2.2559 1.9649-3.3848.2077-.3615.1886-.7956-.0079-1.1191a1.1001 1.1001 0 0 0-.8515-.5332c-.5225-.0536-.9392.3128-1.0488.5449zm-.0391 8.461c.3944.5926.324 1.3306-.1563 1.6503-.4799.3197-1.188.0985-1.582-.4941-.3944-.5927-.324-1.3307.1563-1.6504.4727-.315 1.1812-.1086 1.582.4941zM7.207 13.5273c.4803.3197.5506 1.0577.1563 1.6504-.394.5926-1.1038.8138-1.584.4941-.48-.3197-.5503-1.0577-.1563-1.6504.4008-.6021 1.1087-.8106 1.584-.4941z"/></symbol>
+  <symbol id="os-mac" viewBox="0 0 24 24"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></symbol>
+  <symbol id="os-windows" viewBox="0 0 24 24"><path d="M0,0H11.377V11.372H0ZM12.623,0H24V11.372H12.623ZM0,12.623H11.377V24H0Zm12.623,0H24V24H12.623"/></symbol>
+  <symbol id="os-linux" viewBox="0 0 24 24"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.529 3.405h.013c.213 0 .396.062.584.198.19.135.33.332.438.533.105.259.158.459.166.724 0-.02.006-.04.006-.06v.105a.086.086 0 01-.004-.021l-.004-.024a1.807 1.807 0 01-.15.706.953.953 0 01-.213.335.71.71 0 00-.088-.042c-.104-.045-.198-.064-.284-.133a1.312 1.312 0 00-.22-.066c.05-.06.146-.133.183-.198.053-.128.082-.264.088-.402v-.02a1.21 1.21 0 00-.061-.4c-.045-.134-.101-.2-.183-.333-.084-.066-.167-.132-.267-.132h-.016c-.093 0-.176.03-.262.132a.8.8 0 00-.205.334 1.18 1.18 0 00-.09.4v.019c.002.089.008.179.02.267-.193-.067-.438-.135-.607-.202a1.635 1.635 0 01-.018-.2v-.02a1.772 1.772 0 01.15-.768c.082-.22.232-.406.43-.533a.985.985 0 01.594-.2zm-2.962.059h.036c.142 0 .27.048.399.135.146.129.264.288.344.465.09.199.14.4.153.667v.004c.007.134.006.2-.002.266v.08c-.03.007-.056.018-.083.024-.152.055-.274.135-.393.2.012-.09.013-.18.003-.267v-.015c-.012-.133-.04-.2-.082-.333a.613.613 0 00-.166-.267.248.248 0 00-.183-.064h-.021c-.071.006-.13.04-.186.132a.552.552 0 00-.12.27.944.944 0 00-.023.33v.015c.012.135.037.2.08.334.046.134.098.2.166.268.01.009.02.018.034.024-.07.057-.117.07-.176.136a.304.304 0 01-.131.068 2.62 2.62 0 01-.275-.402 1.772 1.772 0 01-.155-.667 1.759 1.759 0 01.08-.668 1.43 1.43 0 01.283-.535c.128-.133.26-.2.418-.2zm1.37 1.706c.332 0 .733.065 1.216.399.293.2.523.269 1.052.468h.003c.255.136.405.266.478.399v-.131a.571.571 0 01.016.47c-.123.31-.516.643-1.063.842v.002c-.268.135-.501.333-.775.465-.276.135-.588.292-1.012.267a1.139 1.139 0 01-.448-.067 3.566 3.566 0 01-.322-.198c-.195-.135-.363-.332-.612-.465v-.005h-.005c-.4-.246-.616-.512-.686-.71-.07-.268-.005-.47.193-.6.224-.135.38-.271.483-.336.104-.074.143-.102.176-.131h.002v-.003c.169-.202.436-.47.839-.601.139-.036.294-.065.466-.065zm2.8 2.142c.358 1.417 1.196 3.475 1.735 4.473.286.534.855 1.659 1.102 3.024.156-.005.33.018.513.064.646-1.671-.546-3.467-1.089-3.966-.22-.2-.232-.335-.123-.335.59.534 1.365 1.572 1.646 2.757.13.535.16 1.104.021 1.67.067.028.135.06.205.067 1.032.534 1.413.938 1.23 1.537v-.043c-.06-.003-.12 0-.18 0h-.016c.151-.467-.182-.825-1.065-1.224-.915-.4-1.646-.336-1.77.465-.008.043-.013.066-.018.135-.068.023-.139.053-.209.064-.43.268-.662.669-.793 1.187-.13.533-.17 1.156-.205 1.869v.003c-.02.334-.17.838-.319 1.35-1.5 1.072-3.58 1.538-5.348.334a2.645 2.645 0 00-.402-.533 1.45 1.45 0 00-.275-.333c.182 0 .338-.03.465-.067a.615.615 0 00.314-.334c.108-.267 0-.697-.345-1.163-.345-.467-.931-.995-1.788-1.521-.63-.4-.986-.87-1.15-1.396-.165-.534-.143-1.085-.015-1.645.245-1.07.873-2.11 1.274-2.763.107-.065.037.135-.408.974-.396.751-1.14 2.497-.122 3.854a8.123 8.123 0 01.647-2.876c.564-1.278 1.743-3.504 1.836-5.268.048.036.217.135.289.202.218.133.38.333.59.465.21.201.477.335.876.335.039.003.075.006.11.006.412 0 .73-.134.997-.268.29-.134.52-.334.74-.4h.005c.467-.135.835-.402 1.044-.7zm2.185 8.958c.037.6.343 1.245.882 1.377.588.134 1.434-.333 1.791-.765l.211-.01c.315-.007.577.01.847.268l.003.003c.208.199.305.53.391.876.085.4.154.78.409 1.066.486.527.645.906.636 1.14l.003-.007v.018l-.003-.012c-.015.262-.185.396-.498.595-.63.401-1.746.712-2.457 1.57-.618.737-1.37 1.14-2.036 1.191-.664.053-1.237-.2-1.574-.898l-.005-.003c-.21-.4-.12-1.025.056-1.69.176-.668.428-1.344.463-1.897.037-.714.076-1.335.195-1.814.12-.465.308-.797.641-.984l.045-.022zm-10.814.049h.01c.053 0 .105.005.157.014.376.055.706.333 1.023.752l.91 1.664.003.003c.243.533.754 1.064 1.189 1.637.434.598.77 1.131.729 1.57v.006c-.057.744-.48 1.148-1.125 1.294-.645.135-1.52.002-2.395-.464-.968-.536-2.118-.469-2.857-.602-.369-.066-.61-.2-.723-.4-.11-.2-.113-.602.123-1.23v-.004l.002-.003c.117-.334.03-.752-.027-1.118-.055-.401-.083-.71.043-.94.16-.334.396-.4.69-.533.294-.135.64-.202.915-.47h.002v-.002c.256-.268.445-.601.668-.838.19-.201.38-.336.663-.336zm7.159-9.074c-.435.201-.945.535-1.488.535-.542 0-.97-.267-1.28-.466-.154-.134-.28-.268-.373-.335-.164-.134-.144-.333-.074-.333.109.016.129.134.199.2.096.066.215.2.36.333.292.2.68.467 1.167.467.485 0 1.053-.267 1.398-.466.195-.135.445-.334.648-.467.156-.136.149-.267.279-.267.128.016.034.134-.147.332a8.097 8.097 0 01-.69.468zm-1.082-1.583V5.64c-.006-.02.013-.042.029-.05.074-.043.18-.027.26.004.063 0 .16.067.15.135-.006.049-.085.066-.135.066-.055 0-.092-.043-.141-.068-.052-.018-.146-.008-.163-.065zm-.551 0c-.02.058-.113.049-.166.066-.047.025-.086.068-.14.068-.05 0-.13-.02-.136-.068-.01-.066.088-.133.15-.133.08-.031.184-.047.259-.005.019.009.036.03.03.05v.02h.003z"/></symbol>
+  <!-- some of the apps' own glyphs (unimo-ui-lib, Icons.tsx), for the rows of the bar's list and the desk -->
+  <symbol id="glyph-note" viewBox="0 0 24 24" fill-rule="evenodd"><path d="M6 1C4.34 1 3 2.34 3 4V20C3 21.66 4.34 23 6 23H19C20.66 23 22 21.66 22 20V10C22 9.73 21.89 9.48 21.71 9.29L13.71 1.29C13.61 1.2 13.5 1.12 13.38 1.07C13.26 1.03 13.13 1 13 1H6ZM12 3H6C5.45 3 5 3.45 5 4V20C5 20.55 5.45 21 6 21H19C19.55 21 20 20.55 20 20V11H13C12.45 11 12 10.55 12 10V3ZM18.59 9L14 4.41V9H18.59Z"/></symbol>
+  <symbol id="glyph-message" viewBox="0 0 24 24" fill-rule="evenodd"><path d="M12.5 3C7.81 3 4 6.81 4 11.5C4 13.31 4.57 14.99 5.53 16.36C5.66 16.55 5.72 16.77 5.71 16.99C5.68 17.48 5.61 18.05 5.48 18.7C5.35 19.37 5.18 19.94 5 20.43L8.84 19.41C9.05 19.35 9.26 19.36 9.46 19.44C10.4 19.8 11.43 20 12.5 20C17.19 20 21 16.19 21 11.5C21 6.81 17.19 3 12.5 3ZM2.28 21.3C2.28 21.3 2.29 21.3 2.29 21.29C2.31 21.28 2.33 21.25 2.37 21.2C2.44 21.1 2.56 20.94 2.69 20.7C2.95 20.23 3.29 19.45 3.52 18.3C3.6 17.89 3.65 17.53 3.69 17.21C2.62 15.56 2 13.6 2 11.5C2 5.7 6.7 1 12.5 1C18.3 1 23 5.7 23 11.5C23 17.3 18.3 22 12.5 22C11.29 22 10.13 21.8 9.05 21.42L3.26 22.97C2.82 23.08 2.36 22.89 2.13 22.5C1.91 22.11 1.97 21.62 2.28 21.3Z"/></symbol>
+  <symbol id="glyph-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C12.9 7.4 16.6 11.1 22 12C16.6 12.9 12.9 16.6 12 22C11.1 16.6 7.4 12.9 2 12C7.4 11.1 11.1 7.4 12 2Z"/></symbol>
+  <symbol id="glyph-search" viewBox="0 0 24 24" fill-rule="evenodd"><path d="M10 1C5.03 1 1 5.03 1 10C1 14.97 5.03 19 10 19C12.13 19 14.08 18.26 15.62 17.03L20.29 21.71C20.68 22.1 21.32 22.1 21.71 21.71C22.1 21.32 22.1 20.68 21.71 20.29L17.03 15.62C18.26 14.08 19 12.13 19 10C19 5.03 14.97 1 10 1ZM3 10C3 6.13 6.13 3 10 3C13.87 3 17 6.13 17 10C17 13.87 13.87 17 10 17C6.13 17 3 13.87 3 10Z"/></symbol>
+  <symbol id="glyph-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5L9.5 18L20 6.5"/></symbol>
+  <symbol id="glyph-apps" viewBox="0 0 24 24" fill-rule="evenodd"><path d="M3 2C2.45 2 2 2.45 2 3V10C2 10.55 2.45 11 3 11H10C10.55 11 11 10.55 11 10V3C11 2.45 10.55 2 10 2H3ZM4 9V4H9V9H4Z"/><path d="M14 2C13.45 2 13 2.45 13 3V10C13 10.55 13.45 11 14 11H21C21.55 11 22 10.55 22 10V3C22 2.45 21.55 2 21 2H14ZM15 9V4H20V9H15Z"/><path d="M13 14C13 13.45 13.45 13 14 13H21C21.55 13 22 13.45 22 14V21C22 21.55 21.55 22 21 22H14C13.45 22 13 21.55 13 21V14ZM15 15V20H20V15H15Z"/><path d="M3 13C2.45 13 2 13.45 2 14V21C2 21.55 2.45 22 3 22H10C10.55 22 11 21.55 11 21V14C11 13.45 10.55 13 10 13H3ZM4 20V15H9V20H4Z"/></symbol>
+  <symbol id="glyph-people" viewBox="0 0 24 24" fill-rule="evenodd"><path d="M9 0C5.96 0 3.5 2.46 3.5 5.5C3.5 8.54 5.96 11 9 11C12.04 11 14.5 8.54 14.5 5.5C14.5 2.46 12.04 0 9 0ZM5.5 5.5C5.5 3.57 7.07 2 9 2C10.93 2 12.5 3.57 12.5 5.5C12.5 7.43 10.93 9 9 9C7.07 9 5.5 7.43 5.5 5.5Z"/><path d="M15.5 0C14.95 0 14.5 0.45 14.5 1C14.5 1.55 14.95 2 15.5 2C17.43 2 19 3.57 19 5.5C19 7.43 17.43 9 15.5 9C14.95 9 14.5 9.45 14.5 10C14.5 10.55 14.95 11 15.5 11C18.54 11 21 8.54 21 5.5C21 2.46 18.54 0 15.5 0Z"/><path d="M19.08 14.02C19.3 13.51 19.89 13.28 20.4 13.5C22.52 14.42 24 16.54 24 19V21C24 21.55 23.55 22 23 22C22.45 22 22 21.55 22 21V19C22 17.36 21.01 15.95 19.6 15.33C19.09 15.11 18.86 14.52 19.08 14.02Z"/><path d="M6 13C2.69 13 0 15.69 0 19V21C0 21.55 0.45 22 1 22C1.55 22 2 21.55 2 21V19C2 16.79 3.79 15 6 15H12C14.21 15 16 16.79 16 19V21C16 21.55 16.45 22 17 22C17.55 22 18 21.55 18 21V19C18 15.69 15.31 13 12 13H6Z"/></symbol>
+  <symbol id="glyph-globe" viewBox="0 0 24 24" fill-rule="evenodd"><path d="M12 1.5C5.92 1.5 1 6.42 1 12.5C1 18.58 5.92 23.5 12 23.5C18.08 23.5 23 18.58 23 12.5C23 6.42 18.08 1.5 12 1.5ZM9.73 3.79C6.17 4.72 3.47 7.76 3.05 11.5H7.05C7.27 8.74 8.2 6.08 9.73 3.79ZM14.27 3.79C15.8 6.08 16.73 8.74 16.95 11.5H20.95C20.53 7.76 17.83 4.72 14.27 3.79ZM14.94 11.5C14.69 8.79 13.67 6.2 12 4.05C10.33 6.2 9.31 8.79 9.06 11.5H14.94ZM9.06 13.5H14.94C14.69 16.21 13.67 18.8 12 20.95C10.33 18.8 9.31 16.21 9.06 13.5ZM7.05 13.5H3.05C3.47 17.24 6.17 20.28 9.73 21.21C8.2 18.92 7.27 16.26 7.05 13.5ZM14.27 21.21C15.8 18.92 16.73 16.26 16.95 13.5H20.95C20.53 17.24 17.83 20.28 14.27 21.21Z"/></symbol>
+  <symbol id="glyph-image" viewBox="0 0 24 24" fill-rule="evenodd"><path d="M8 10C9.1 10 10 9.1 10 8C10 6.9 9.1 6 8 6C6.9 6 6 6.9 6 8C6 9.1 6.9 10 8 10Z"/><path d="M2 5C2 3.34 3.34 2 5 2H19C20.66 2 22 3.34 22 5V19C22 20.66 20.66 22 19 22H5C3.34 22 2 20.66 2 19V5ZM5 4C4.45 4 4 4.45 4 5V17.59L9.29 12.29C9.68 11.9 10.32 11.9 10.71 12.29L12.5 14.09L20 6.59V5C20 4.45 19.55 4 19 4H5ZM20 9.41L13.21 16.21C12.82 16.6 12.18 16.6 11.79 16.21L10 14.41L4.53 19.88C4.67 19.96 4.83 20 5 20H19C19.55 20 20 19.55 20 19V9.41Z"/></symbol>
+  <symbol id="glyph-more" viewBox="0 0 24 24" fill-rule="evenodd"><path d="M14 5C14 6.1 13.1 7 12 7C10.9 7 10 6.1 10 5C10 3.9 10.9 3 12 3C13.1 3 14 3.9 14 5Z"/><path d="M14 12C14 13.1 13.1 14 12 14C10.9 14 10 13.1 10 12C10 10.9 10.9 10 12 10C13.1 10 14 10.9 14 12Z"/><path d="M12 21C13.1 21 14 20.1 14 19C14 17.9 13.1 17 12 17C10.9 17 10 17.9 10 19C10 20.1 10.9 21 12 21Z"/></symbol>
+  <symbol id="glyph-clear" viewBox="0 0 24 24" fill-rule="evenodd"><path d="M4.71 3.29C4.32 2.9 3.68 2.9 3.29 3.29C2.9 3.68 2.9 4.32 3.29 4.71L10.59 12L3.29 19.29C2.9 19.68 2.9 20.32 3.29 20.71C3.68 21.1 4.32 21.1 4.71 20.71L12 13.41L19.29 20.71C19.68 21.1 20.32 21.1 20.71 20.71C21.1 20.32 21.1 19.68 20.71 19.29L13.41 12L20.71 4.71C21.1 4.32 21.1 3.68 20.71 3.29C20.32 2.9 19.68 2.9 19.29 3.29L12 10.59L4.71 3.29Z"/></symbol>
+</svg>
 
-const T={
-en:["We are stuck in this.","Is this the best design we deserve?","Same grid of icons since 2007.","Your apps don\u2019t talk to each other.","Your data is scattered across dozens of silos.","What if there was a better way?"],
-es:["Estamos atrapados en esto.","\u00bfEs este el mejor dise\u00f1o que merecemos?","La misma cuadr\u00edcula de iconos desde 2007.","Tus apps no se hablan entre s\u00ed.","Tus datos est\u00e1n dispersos en docenas de silos.","\u00bfY si hubiera una forma mejor?"],
-fr:["Nous sommes coinc\u00e9s l\u00e0-dedans.","Est-ce le meilleur design que nous m\u00e9ritons\u00a0?","La m\u00eame grille d\u2019ic\u00f4nes depuis 2007.","Vos apps ne se parlent pas.","Vos donn\u00e9es sont \u00e9parpill\u00e9es dans des dizaines de silos.","Et s\u2019il y avait un meilleur moyen\u00a0?"],
-de:["Wir stecken hier fest.","Ist das das beste Design, das wir verdienen?","Dasselbe Icon-Raster seit 2007.","Deine Apps reden nicht miteinander.","Deine Daten sind \u00fcber Dutzende Silos verstreut.","Was w\u00e4re, wenn es einen besseren Weg g\u00e4be?"],
-pt:["Estamos presos nisso.","\u00c9 este o melhor design que merecemos?","A mesma grade de \u00edcones desde 2007.","Seus apps n\u00e3o conversam entre si.","Seus dados est\u00e3o espalhados em dezenas de silos.","E se houvesse um jeito melhor?"],
-ru:["\u041c\u044b \u0437\u0430\u0441\u0442\u0440\u044f\u043b\u0438 \u0432 \u044d\u0442\u043e\u043c.","\u042d\u0442\u043e \u043b\u0443\u0447\u0448\u0438\u0439 \u0434\u0438\u0437\u0430\u0439\u043d, \u043a\u043e\u0442\u043e\u0440\u043e\u0433\u043e \u043c\u044b \u0437\u0430\u0441\u043b\u0443\u0436\u0438\u0432\u0430\u0435\u043c?","\u0422\u0430 \u0436\u0435 \u0441\u0435\u0442\u043a\u0430 \u0438\u043a\u043e\u043d\u043e\u043a \u0441 2007 \u0433\u043e\u0434\u0430.","\u0412\u0430\u0448\u0438 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f \u043d\u0435 \u043e\u0431\u0449\u0430\u044e\u0442\u0441\u044f \u0434\u0440\u0443\u0433 \u0441 \u0434\u0440\u0443\u0433\u043e\u043c.","\u0412\u0430\u0448\u0438 \u0434\u0430\u043d\u043d\u044b\u0435 \u0440\u0430\u0437\u0431\u0440\u043e\u0441\u0430\u043d\u044b \u043f\u043e \u0434\u0435\u0441\u044f\u0442\u043a\u0430\u043c \u0445\u0440\u0430\u043d\u0438\u043b\u0438\u0449.","\u0410 \u0435\u0441\u043b\u0438 \u0435\u0441\u0442\u044c \u0441\u043f\u043e\u0441\u043e\u0431 \u043b\u0443\u0447\u0448\u0435?"],
-zh:["\u6211\u4eec\u88ab\u56f0\u5728\u4e86\u8fd9\u91cc\u3002","\u8fd9\u662f\u6211\u4eec\u5e94\u5f97\u7684\u6700\u597d\u8bbe\u8ba1\u5417\uff1f","\u4ece2007\u5e74\u8d77\u5c31\u662f\u540c\u6837\u7684\u56fe\u6807\u7f51\u683c\u3002","\u4f60\u7684\u5e94\u7528\u4e4b\u95f4\u4e92\u4e0d\u901a\u4fe1\u3002","\u4f60\u7684\u6570\u636e\u5206\u6563\u5728\u6570\u5341\u4e2a\u5b64\u5c9b\u4e2d\u3002","\u5982\u679c\u6709\u66f4\u597d\u7684\u65b9\u6cd5\u5462\uff1f"],
-ja:["\u79c1\u305f\u3061\u306f\u3053\u3053\u306b\u56da\u308f\u308c\u3066\u3044\u308b\u3002","\u3053\u308c\u304c\u79c1\u305f\u3061\u306b\u3075\u3055\u308f\u3057\u3044\u6700\u9ad8\u306e\u30c7\u30b6\u30a4\u30f3\uff1f","2007\u5e74\u304b\u3089\u540c\u3058\u30a2\u30a4\u30b3\u30f3\u306e\u30b0\u30ea\u30c3\u30c9\u3002","\u30a2\u30d7\u30ea\u540c\u58eb\u304c\u4f1a\u8a71\u3057\u3066\u3044\u306a\u3044\u3002","\u30c7\u30fc\u30bf\u304c\u6570\u5341\u306e\u30b5\u30a4\u30ed\u306b\u6563\u3089\u3070\u3063\u3066\u3044\u308b\u3002","\u3082\u3063\u3068\u826f\u3044\u65b9\u6cd5\u304c\u3042\u308b\u3068\u3057\u305f\u3089\uff1f"],
-ko:["\uc6b0\ub9ac\ub294 \uc5ec\uae30\uc5d0 \uac07\ud600 \uc788\ub2e4.","\uc774\uac8c \uc6b0\ub9ac\uac00 \ubc1b\uc744 \uc790\uaca9\uc774 \uc788\ub294 \ucd5c\uace0\uc758 \ub514\uc790\uc778\uc778\uac00?","2007\ub144\ubd80\ud130 \uac19\uc740 \uc544\uc774\ucf58 \uadf8\ub9ac\ub4dc.","\ub2f9\uc2e0\uc758 \uc571\ub4e4\uc740 \uc11c\ub85c \ub300\ud654\ud558\uc9c0 \uc54a\ub294\ub2e4.","\ub370\uc774\ud130\uac00 \uc218\uc2ed \uac1c\uc758 \uc0ac\uc77c\ub85c\uc5d0 \ud769\uc5b4\uc838 \uc788\ub2e4.","\ub354 \ub098\uc740 \ubc29\ubc95\uc774 \uc788\ub2e4\uba74?"],
-ar:["\u0646\u062d\u0646 \u0639\u0627\u0644\u0642\u0648\u0646 \u0641\u064a \u0647\u0630\u0627.","\u0647\u0644 \u0647\u0630\u0627 \u0623\u0641\u0636\u0644 \u062a\u0635\u0645\u064a\u0645 \u0646\u0633\u062a\u062d\u0642\u0647\u061f","\u0646\u0641\u0633 \u0634\u0628\u0643\u0629 \u0627\u0644\u0623\u064a\u0642\u0648\u0646\u0627\u062a \u0645\u0646\u0630 2007.","\u062a\u0637\u0628\u064a\u0642\u0627\u062a\u0643 \u0644\u0627 \u062a\u062a\u062d\u062f\u062b \u0645\u0639 \u0628\u0639\u0636\u0647\u0627.","\u0628\u064a\u0627\u0646\u0627\u062a\u0643 \u0645\u0628\u0639\u062b\u0631\u0629 \u0639\u0628\u0631 \u0639\u0634\u0631\u0627\u062a \u0627\u0644\u0635\u0648\u0627\u0645\u0639.","\u0645\u0627\u0630\u0627 \u0644\u0648 \u0643\u0627\u0646 \u0647\u0646\u0627\u0643 \u0637\u0631\u064a\u0642\u0629 \u0623\u0641\u0636\u0644\u061f"],
-ca:["Estem atrapats en aix\u00f2.","\u00c9s aquest el millor disseny que mereixem?","La mateixa graella d\u2019icones des del 2007.","Les teves apps no es parlen entre si.","Les teves dades estan disperses en dotzenes de sitges.","I si hi hagu\u00e9s una manera millor?"],
-hi:["\u0939\u092e \u0907\u0938\u092e\u0947\u0902 \u092b\u0902\u0938\u0947 \u0939\u0941\u090f \u0939\u0948\u0902\u0964","\u0915\u094d\u092f\u093e \u092f\u0939 \u0938\u092c\u0938\u0947 \u0905\u091a\u094d\u091b\u093e \u0921\u093f\u091c\u093c\u093e\u0907\u0928 \u0939\u0948 \u091c\u093f\u0938\u0915\u0947 \u0939\u092e \u0939\u0915\u0926\u093e\u0930 \u0939\u0948\u0902?","2007 \u0938\u0947 \u0935\u0939\u0940 \u0906\u0907\u0915\u0949\u0928 \u0917\u094d\u0930\u093f\u0921\u0964","\u0906\u092a\u0915\u0947 \u0910\u092a\u094d\u0938 \u090f\u0915-\u0926\u0942\u0938\u0930\u0947 \u0938\u0947 \u092c\u093e\u0924 \u0928\u0939\u0940\u0902 \u0915\u0930\u0924\u0947\u0964","\u0906\u092a\u0915\u093e \u0921\u0947\u091f\u093e \u0926\u0930\u094d\u091c\u0928\u094b\u0902 \u0938\u093e\u0907\u0932\u094b \u092e\u0947\u0902 \u092c\u093f\u0916\u0930\u093e \u0939\u0941\u0906 \u0939\u0948\u0964","\u0905\u0917\u0930 \u0915\u094b\u0908 \u092c\u0947\u0939\u0924\u0930 \u0924\u0930\u0940\u0915\u093e \u0939\u094b\u0924\u093e \u0924\u094b?"]
-};
+<header class="top">
+  <div class="top-row">
+    <a class="brand" href="/">
+      <span class="mark" aria-hidden="true"></span>
+      <span class="brand-name"><span class="brand-text">unimo <span class="beta">// beta</span></span></span>
+    </a>
 
-const getMessages=lang=>T[lang]||T.en;
+    <!-- on a phone the links wait behind this button; on a wider screen they stand in the bar -->
+    <button class="menu-button" type="button" popovertarget="menu" aria-expanded="false" aria-label="Menu" data-i18n-attr="aria-label:nav.menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5h16"/><path d="M4 15.5h16"/></svg>
+    </button>
+    <nav class="menu" id="menu" popover>
+      <a href="#about" data-i18n="nav.about">About</a>
+      <a href="#features" data-i18n="nav.features">Features</a>
+      <a href="#pricing" data-i18n="nav.pricing">Pricing</a>
+      <div class="lang">
+        <span class="lang-name" aria-hidden="true">English</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        <!-- to add a language: an option here, its file in /assets/lang/, and its code in the list in the head -->
+        <select id="lang" aria-label="Language" data-i18n-attr="aria-label:lang.label">
+          <option value="en">English</option>
+          <option value="cs">Čeština</option>
+          <option value="de">Deutsch</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="pl">Polski</option>
+        </select>
+      </div>
+    </nav>
+  </div>
+</header>
 
-const I={
-messages:`<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>`,
-mail:`<svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`,
-calendar:`<svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>`,
-photos:`<svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>`,
-camera:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>`,
-music:`<svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55C7.79 13 6 14.79 6 17s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`,
-maps:`<svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`,
-settings:`<svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>`,
-notes:`<svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>`,
-weather:`<svg viewBox="0 0 24 24"><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79zM4 10.5H1v2h3zm9-9.95h-2V3.5h2zM19.45 3.96l-1.41-1.41-1.79 1.79 1.41 1.41zM17.24 18.16l1.79 1.8 1.41-1.41-1.8-1.79zM20 10.5v2h3v-2zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41z"/></svg>`,
-clock:`<svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>`,
-browser:`<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>`,
-phone:`<svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>`,
-contacts:`<svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`,
-store:`<svg viewBox="0 0 24 24"><path d="M18.36 9l.6 3H5.04l.6-3h12.72M20 4H4v2h16V4zm0 3H4l-1 5v2h1v6h10v-6h4v6h2v-6h1v-2l-1-5zM6 18v-4h6v4H6z"/></svg>`,
-health:`<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`,
-wallet:`<svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.1 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>`,
-files:`<svg viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>`,
-videos:`<svg viewBox="0 0 24 24"><path d="M4 6.47L5.76 10H20v8H4V6.47M22 4h-4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4z"/></svg>`,
-calculator:`<svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/><rect x="7" y="7" width="10" height="3" rx=".5" opacity=".7"/><circle cx="8.5" cy="14" r="1.2"/><circle cx="12" cy="14" r="1.2"/><circle cx="15.5" cy="14" r="1.2"/><circle cx="8.5" cy="17.5" r="1.2"/><circle cx="12" cy="17.5" r="1.2"/><circle cx="15.5" cy="17.5" r="1.2"/></svg>`,
-reminders:`<svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`,
-news:`<svg viewBox="0 0 24 24"><path d="M22 3l-1.67 1.67L18.67 3 17 4.67 15.33 3l-1.66 1.67L12 3l-1.67 1.67L8.67 3 7 4.67 5.33 3 3.67 4.67 2 3v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V3zM11 19H4v-6h7v6zm9 0h-7v-2h7v2zm0-4h-7v-2h7v2zm0-4H4V8h16v3z"/></svg>`,
-podcasts:`<svg viewBox="0 0 24 24"><path d="M12 1c-4.97 0-9 4.03-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-4v8h3c1.66 0 3-1.34 3-3v-7c0-4.97-4.03-9-9-9z"/></svg>`,
-translate:`<svg viewBox="0 0 24 24"><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>`
-};
+<main id="main">
 
-const apps=[
-{id:'messages',label:'Messages',bg:'linear-gradient(135deg,#34c759,#30a14e)',badge:47},
-{id:'mail',label:'Mail',bg:'linear-gradient(135deg,#007aff,#005ec4)',badge:1843},
-{id:'calendar',label:'Calendar',bg:'linear-gradient(135deg,#ff3b30,#d63027)',badge:8},
-{id:'photos',label:'Photos',bg:'linear-gradient(135deg,#ff9500,#ff2d55,#af52de,#5ac8fa)'},
-{id:'camera',label:'Camera',bg:'linear-gradient(135deg,#636366,#48484a)'},
-{id:'music',label:'Music',bg:'linear-gradient(135deg,#fc3c44,#d42f38)',badge:3},
-{id:'maps',label:'Maps',bg:'linear-gradient(135deg,#34c759,#30d158,#64d2ff)',badge:1},
-{id:'settings',label:'Settings',bg:'linear-gradient(135deg,#8e8e93,#636366)',badge:14},
-{id:'notes',label:'Notes',bg:'linear-gradient(135deg,#ffd60a,#ffcc00)'},
-{id:'weather',label:'Weather',bg:'linear-gradient(135deg,#64d2ff,#5ac8fa,#007aff)',badge:2},
-{id:'clock',label:'Clock',bg:'linear-gradient(135deg,#1c1c1e,#000)'},
-{id:'browser',label:'Browser',bg:'linear-gradient(135deg,#007aff,#5ac8fa)',badge:23},
-{id:'phone',label:'Phone',bg:'linear-gradient(135deg,#34c759,#30a14e)',badge:9},
-{id:'contacts',label:'Contacts',bg:'linear-gradient(135deg,#8e8e93,#aeaeb2)'},
-{id:'store',label:'Store',bg:'linear-gradient(135deg,#007aff,#5856d6)',badge:5},
-{id:'health',label:'Health',bg:'linear-gradient(135deg,#ff2d55,#ff375f)',badge:1},
-{id:'wallet',label:'Wallet',bg:'linear-gradient(135deg,#1c1c1e,#2c2c2e)'},
-{id:'reminders',label:'Reminders',bg:'linear-gradient(135deg,#007aff,#5856d6)',badge:31},
-{id:'videos',label:'Videos',bg:'linear-gradient(135deg,#5856d6,#af52de)',badge:7},
-{id:'files',label:'Files',bg:'linear-gradient(135deg,#007aff,#5ac8fa)'},
-{id:'calculator',label:'Calculator',bg:'linear-gradient(135deg,#636366,#48484a)'},
-{id:'news',label:'News',bg:'linear-gradient(135deg,#fc3c44,#ff453a)',badge:99},
-{id:'podcasts',label:'Podcasts',bg:'linear-gradient(135deg,#8944fc,#b24bf3)',badge:12},
-{id:'translate',label:'Translate',bg:'linear-gradient(135deg,#007aff,#64d2ff)'}
-];
+  <!-- The bar's road. The bar starts out under the headline, and once it has risen to its place on the screen
+       it stays there for as long as this block lasts, while scrolling types into it (bar.js). -->
+  <div class="journey">
 
-const dockApps=['phone','browser','messages','music'];
-const desktopDockApps=['files','browser','mail','messages','music','photos','settings'];
-const unimoSvg=`<svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l7 3.5v7.64l-7 3.5-7-3.5V7.68l7-3.5z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  <!-- the opening: what it is and how to get it -->
+  <section class="hero" aria-labelledby="hero-title">
+    <h1 id="hero-title">
+      <span data-i18n="h1.1">One line.</span>
+      <span data-i18n="h1.2">All your devices.</span>
+      <span data-i18n="h1.3">Private. Synced. Quiet.</span>
+    </h1>
 
-const pad=n=>String(n).padStart(2,'0');
-const timeStr=()=>{const d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes())};
-const el=(tag,cls,html)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(html)e.innerHTML=html;return e};
+    <!-- One button. The script in the head names the visitor's system, the stylesheet shows the matching
+         mark and label, and unimo.js copies the address from the list below. Without a known system the
+         button points at that list. -->
+    <a class="download" id="download" href="#platforms">
+      <svg class="os" data-for="android" aria-hidden="true"><use href="#os-android"/></svg>
+      <svg class="os" data-for="mac" aria-hidden="true"><use href="#os-mac"/></svg>
+      <svg class="os" data-for="windows" aria-hidden="true"><use href="#os-windows"/></svg>
+      <svg class="os" data-for="linux" aria-hidden="true"><use href="#os-linux"/></svg>
+      <span data-for="android" data-i18n="dl.android">Download for Android</span>
+      <span data-for="mac" data-i18n="dl.mac">Download for Mac</span>
+      <span data-for="windows" data-i18n="dl.windows">Download for Windows</span>
+      <span data-for="linux" data-i18n="dl.linux">Download for Linux</span>
+      <span data-for="any" data-i18n="dl.any">Download unimo</span>
+    </a>
 
-const buildStatusBar=os=>{
-const bar=el('div','status-bar');
-bar.innerHTML=`<span class="time">${timeStr()}</span>${os==='ios'?'<span class="notch"><span class="notch-shape"></span></span>':''}<span class="indicators"><svg width="16" height="12" viewBox="0 0 16 12" fill="white"><rect x="0" y="8" width="3" height="4" rx=".5" opacity=".4"/><rect x="4" y="5" width="3" height="7" rx=".5" opacity=".6"/><rect x="8" y="2" width="3" height="10" rx=".5" opacity=".8"/><rect x="12" y="0" width="3" height="12" rx=".5"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="white"><path d="M8 3.6c1.8 0 3.4.7 4.6 1.9l1.4-1.4C12.4 2.5 10.3 1.6 8 1.6S3.6 2.5 2 4.1l1.4 1.4C4.6 4.3 6.2 3.6 8 3.6zm-2.8 4l1.4 1.4c.4-.4.9-.6 1.4-.6s1 .2 1.4.6l1.4-1.4c-.8-.8-1.8-1.2-2.8-1.2s-2 .4-2.8 1.2z"/></svg><svg width="22" height="12" viewBox="0 0 22 12" fill="white"><rect x="1" y="1" width="18" height="10" rx="2" fill="none" stroke="white" stroke-width="1.3"/><rect x="3" y="3" width="12" height="6" rx="1"/><rect x="20" y="4" width="2" height="4" rx=".5"/></svg></span>`;
-return bar;
-};
+    <!-- The download addresses live here and nowhere else. After a release, change the version in these four. -->
+    <p class="platforms" id="platforms">
+      <span data-i18n="avail.lead">Available on</span>
+      <a data-os="android" href="https://code.nolog.cz/thinking.tools/android-unimo-app/releases/download/v0.0.5/unimo-v0.0.5.apk"><svg class="os" aria-hidden="true"><use href="#os-android"/></svg><span>Android</span></a>,
+      <a data-os="mac" href="https://code.nolog.cz/thinking.tools/unimo-desktop-app/releases/download/v0.0.9/unimo_0.0.9_universal.dmg"><svg class="os" aria-hidden="true"><use href="#os-mac"/></svg><span>Mac</span></a>,
+      <a data-os="windows" href="https://code.nolog.cz/thinking.tools/unimo-desktop-app/releases/download/v0.0.9/unimo_0.0.9_x64-setup.exe"><svg class="os" aria-hidden="true"><use href="#os-windows"/></svg><span>Windows</span></a>
+      <span data-i18n="avail.and">and</span>
+      <a data-os="linux" href="https://code.nolog.cz/thinking.tools/unimo-desktop-app/releases/download/v0.0.9/unimo_0.0.9_amd64.AppImage"><svg class="os" aria-hidden="true"><use href="#os-linux"/></svg><span>Linux</span></a>
+    </p>
+  </section>
 
-const buildMenuBar=os=>{
-const bar=el('div','menu-bar');
-const left=os==='macos'?`<span style="font-weight:700">&#63743;</span><span style="font-weight:600">Finder</span><span>File</span><span>Edit</span><span>View</span>`:os==='windows'?`<span>&#8862;</span><span>Search</span>`:`<span>Activities</span>`;
-bar.innerHTML=`${left}<span class="right"><span>${timeStr()}</span></span>`;
-return bar;
-};
+  <!-- What the bar does, shown on the bar itself. Everything it will ever show is written out here; bar.js only
+       decides how much of it shows at each point of the road. -->
+  <section class="stage">
+    <!-- The bar as the desktop app draws it: its frame, the command bar, and under it the list of results.
+         A picture of the product, not a control. -->
+    <div class="launcher" role="img" aria-label="The unimo search bar" data-i18n-attr="aria-label:bar.label">
+      <div class="launcher-frame">
+        <div class="launcher-bar">
+          <!-- the mode button: the bar is in the mode of what is being typed (the take's data-mode), and before
+               anything is, it searches everything. The same goes for the placeholders. -->
+          <span class="launcher-button"><span class="rings" data-in="all"></span><svg viewBox="0 0 24 24" data-in="apps" hidden><use href="#glyph-apps"/></svg><svg viewBox="0 0 24 24" data-in="notes" hidden><use href="#glyph-note"/></svg><svg viewBox="0 0 24 24" data-in="contacts" hidden><use href="#glyph-people"/></svg></span>
+          <span class="launcher-field"><span class="launcher-typed"></span><span class="launcher-caret"></span><span class="launcher-placeholder" data-in="all" data-i18n="bar.placeholder">Search anything…</span><span class="launcher-placeholder" data-in="apps" data-i18n="bar.placeholder.apps" hidden>Search apps…</span><span class="launcher-placeholder" data-in="notes" data-i18n="bar.placeholder.notes" hidden>Search notes…</span><span class="launcher-placeholder" data-in="contacts" data-i18n="bar.placeholder.contacts" hidden>Search contacts…</span></span>
+          <span class="launcher-button">
+            <svg class="when-empty" viewBox="0 0 24 24"><use href="#glyph-more"/></svg>
+            <svg class="when-typing" viewBox="0 0 24 24"><use href="#glyph-clear"/></svg>
+          </span>
+        </div>
+        <!-- one take at a time: what is typed, and the rows that answer it (from the second letter, unless a row says otherwise) -->
+        <div class="launcher-list" hidden>
+          <!-- The list narrows as the letters arrive: data-from and data-until are counts of letters typed,
+               so a row with from 1 and until 3 is there for "s" and "si" and gone at "sig". -->
+          <div class="take" data-caption="0" data-mode="apps" hidden>
+            <span class="take-query">sig</span>
+            <div class="result result-app" data-from="1"><span class="result-icon"><img src="/assets/apps/signal.avif" alt="" width="128" height="128" decoding="async"></span><span class="result-body"><span class="result-title">Signal</span></span><span class="result-hint"><span data-i18n="take.open">Open</span><kbd>↵</kbd></span></div>
+            <div class="result result-app" data-from="1" data-until="2"><span class="result-icon"><img src="/assets/apps/safari.avif" alt="" width="128" height="128" decoding="async"></span><span class="result-body"><span class="result-title">Safari</span></span></div>
+            <div class="result result-app" data-from="1" data-until="3"><span class="result-icon"><img src="/assets/apps/siri.avif" alt="" width="128" height="128" decoding="async"></span><span class="result-body"><span class="result-title">Siri</span></span></div>
+            <div class="result result-app" data-from="1" data-until="2"><span class="result-icon"><img src="/assets/apps/script-editor.avif" alt="" width="128" height="128" decoding="async"></span><span class="result-body"><span class="result-title">Script Editor</span></span></div>
+            <div class="result result-app" data-from="2" data-until="3"><span class="result-icon"><img src="/assets/apps/mission-control.avif" alt="" width="128" height="128" decoding="async"></span><span class="result-body"><span class="result-title">Mission Control</span></span></div>
+            <div class="result result-app" data-from="2" data-until="3"><span class="result-icon"><img src="/assets/apps/system-information.avif" alt="" width="128" height="128" decoding="async"></span><span class="result-body"><span class="result-title">System Information</span></span></div>
+          </div>
+          <div class="take" data-caption="1" data-mode="notes" hidden>
+            <span class="take-query">todo</span>
+            <div class="result"><span class="result-icon"><svg viewBox="0 0 24 24"><use href="#glyph-note"/></svg></span><span class="result-body"><span class="result-description">todo cook Gennaro's Speedy Spaghetti https://www.youtube.com/watch?v=dQw4w9WgXcQ</span></span></div>
+          </div>
+          <div class="take" data-caption="2" data-mode="contacts" hidden>
+            <!-- everyone whose name begins with the first letter, and from the second on only one of them. The
+                 first row of a list is the selected one (bar.js marks it), and only that row names what Return
+                 will do: copy the number of someone known by a phone number, open Signal for someone known
+                 there. The numbers are ones no phone can have. -->
+            <span class="take-query" data-i18n="take.person.q">mom</span>
+            <div class="result result-contact" data-from="1" data-until="2"><span class="result-icon"><img src="/assets/people/miska.avif" alt="" width="128" height="128" decoding="async"></span><span class="result-body"><span class="result-title">Miška</span><span class="result-description">+1 (555) 010-1123</span></span><span class="result-hint"><span data-i18n="take.copy">Copy phone</span><kbd>↵</kbd></span></div>
+            <div class="result result-contact" data-from="1" data-until="2"><span class="result-icon"><span class="initial">M</span></span><span class="result-body"><span class="result-title">Michal U</span><span class="result-description">+1 (555) 010-5813</span></span><span class="result-hint"><span data-i18n="take.copy">Copy phone</span><kbd>↵</kbd></span></div>
+            <div class="result result-contact" data-from="1" data-until="2"><span class="result-icon"><img src="/assets/people/mert.avif" alt="" width="128" height="128" decoding="async"></span><span class="result-body"><span class="result-title">Mert</span><span class="result-description">+1 (555) 010-2134</span></span><span class="result-hint"><span data-i18n="take.copy">Copy phone</span><kbd>↵</kbd></span></div>
+            <div class="result result-contact" data-from="1"><span class="result-icon"><img src="/assets/people/mom.avif" alt="" width="128" height="128" decoding="async"></span><span class="result-body"><span class="result-title" data-i18n="take.person.name">Beware Mom!</span></span><span class="result-hint"><span>Signal</span><kbd>↵</kbd></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-let allIcons=[];
-const fmtBadge=v=>v>999?Math.round(v/1000)+'k+':String(v);
-const buildIcon=(app,withBadge,idx)=>{
-const wrap=el('div','app-icon-wrap');
-const icon=el('div','app-icon');
-icon.style.background=app.bg;
-icon.innerHTML=I[app.id]||I.browser;
-if(withBadge&&app.badge){
-const b=el('div','badge'+(app.badge>20?' pulse':''),fmtBadge(app.badge));
-icon.appendChild(b);
-}
-icon.dataset.appIdx=idx;
-wrap.appendChild(icon);
-wrap.appendChild(el('span','app-label',app.label));
-allIcons.push(icon);
-return wrap;
-};
+    <!-- one kind of thing at a time, in the order the bar shows them -->
+    <div class="does">
+      <div class="does-step">
+        <h2 data-i18n="does.apps.t">Apps</h2>
+        <p data-i18n="does.apps.p">Type a few letters and it opens.</p>
+      </div>
+      <div class="does-step">
+        <h2 data-i18n="does.memos.t">Memos</h2>
+        <p data-i18n="does.memos.p">Jot one down on the phone. Find it at your desk.</p>
+      </div>
+      <div class="does-step">
+        <h2 data-i18n="does.people.t">Folks</h2>
+        <p data-i18n="does.people.p">Synced all contacts, on all your devices. Yes, your computers too.</p>
+      </div>
+    </div>
+  </section>
 
-const buildGrid=mobile=>{
-const grid=el('div','app-grid');
-allIcons=[];
-apps.slice(0,mobile?20:24).forEach((a,i)=>grid.appendChild(buildIcon(a,true,i)));
-return grid;
-};
+  </div>
 
-const buildDock=()=>{
-const dock=el('div','dock');
-const inner=el('div','dock-inner');
-dockApps.forEach(id=>{const a=apps.find(x=>x.id===id);if(!a)return;const ic=el('div','app-icon');ic.style.background=a.bg;ic.innerHTML=I[a.id];inner.appendChild(ic)});
-dock.appendChild(inner);return dock;
-};
+  <!-- The desk: the visitor's kind of laptop and an Android phone, and what passes between them. Under them
+       stands their caption, and under that, from the moment the question is pasted, the bar itself at life size,
+       where the question is put to the agent. The steps:
+       0 at rest · 1 a message on the phone · 2 and on the laptop · 3 copied on the phone
+       4 pasted into the laptop's bar, and the bar appears below with the same words in it
+       5 the agent is picked · 6 to 9 it thinks, while the caption says what holds meanwhile · 10 it answers
+       11 the answer is searched for on the web · 12 pictures are picked · 13 and shown.
+       The stage is held for steps 0 to 4. Then it scrolls on: the devices leave, and the caption and the bar
+       (.ask) rise with the page to a place of their own, where they are held for the steps from data-from on.
+       Each part that comes and goes says when: data-at="2" is there from step 2, data-until="4" gone again at
+       step 4. desk.js works out the step and switches the parts on; data-still is the step it shows where
+       nothing plays. Without scripts no part is on, which is the desk and the bar at rest. -->
+  <div class="desk" data-still="13">
+    <section class="desk-stage" aria-labelledby="desk-title">
+      <div class="desk-scene" aria-hidden="true">
+        <div class="laptop">
+          <div class="laptop-lid">
+            <div class="screen">
+              <!-- The wallpaper the visitor's own system ships with, by day and by night. Only the visitor's is
+                   shown (unimo.css), so only that one is ever fetched, and not before the desk is near. Any
+                   other system gets the mark's colours, which also lie under the picture until it is there. -->
+              <picture class="wallpaper" data-for="mac">
+                <source srcset="/assets/wallpapers/mac-dark.avif" media="(prefers-color-scheme: dark)">
+                <img src="/assets/wallpapers/mac-light.avif" alt="" width="1280" height="800" loading="lazy" decoding="async">
+              </picture>
+              <picture class="wallpaper" data-for="windows">
+                <source srcset="/assets/wallpapers/windows-dark.avif" media="(prefers-color-scheme: dark)">
+                <img src="/assets/wallpapers/windows-light.avif" alt="" width="1280" height="800" loading="lazy" decoding="async">
+              </picture>
+              <picture class="wallpaper" data-for="ubuntu">
+                <source srcset="/assets/wallpapers/ubuntu-dark.avif" media="(prefers-color-scheme: dark)">
+                <img src="/assets/wallpapers/ubuntu-light.avif" alt="" width="1280" height="800" loading="lazy" decoding="async">
+              </picture>
+              <!-- the system's own bar: three of its items, and at the far end unimo's icon in the tray beside
+                   the clock, which desk.js sets to the visitor's time -->
+              <div class="sysbar"><i></i><i></i><i></i><span class="tray"><span class="rings"></span><span class="clock" data-clock>9:41</span></span></div>
+              <div class="launcher">
+                <div class="launcher-frame">
+                  <div class="launcher-bar">
+                    <span class="launcher-button"><span class="rings"></span></span>
+                    <span class="launcher-field"><span class="launcher-typed" data-at="4" data-i18n="desk.question">What is the capital of Assyria?</span><span class="launcher-caret"></span><span class="launcher-placeholder" data-i18n="bar.placeholder">Search anything…</span></span>
+                    <span class="launcher-button">
+                      <svg class="when-empty" viewBox="0 0 24 24"><use href="#glyph-more"/></svg>
+                      <svg class="when-typing" viewBox="0 0 24 24"><use href="#glyph-clear"/></svg>
+                    </span>
+                  </div>
+                  <!-- what the bar offers to do with what is typed -->
+                  <div class="launcher-pills" data-at="4">
+                    <span><svg viewBox="0 0 24 24"><use href="#glyph-search"/></svg><span data-i18n="desk.pill.web">Search Web</span></span>
+                    <span><svg viewBox="0 0 24 24"><use href="#glyph-note"/></svg><span data-i18n="desk.pill.note">Add memo</span></span>
+                    <span><svg viewBox="0 0 24 24"><use href="#glyph-sparkle"/></svg><span data-i18n="desk.pill.ask">Ask agent</span></span>
+                  </div>
+                </div>
+              </div>
+              <!-- on the laptop it is unimo that shows the message, so the banner wears unimo's icon -->
+              <div class="toast" data-at="2">
+                <span class="app-tile"><span class="rings"></span></span>
+                <span class="message"><span class="message-head"><b>Brave Sir Robin</b><small data-i18n="desk.app">Messages</small></span><span data-i18n="desk.question">What is the capital of Assyria?</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="laptop-base"></div>
+        </div>
+        <div class="phone">
+          <div class="screen">
+            <div class="statusbar"><span class="clock" data-clock="brief">9:41</span><i></i></div>
+            <div class="notice" data-at="1">
+              <span class="app-tile"><svg viewBox="0 0 24 24"><use href="#glyph-message"/></svg></span>
+              <span class="message"><span class="message-head"><b>Brave Sir Robin</b><small data-i18n="desk.app">Messages</small></span><span><span class="picked" data-i18n="desk.question">What is the capital of Assyria?</span></span></span>
+              <span class="chip" data-at="3" data-until="4" data-i18n="desk.copy">Copy</span>
+            </div>
+            <div class="snack" data-at="4" data-i18n="desk.copied">Copied</div>
+            <div class="homebar"><span class="rings"></span><span data-i18n="bar.placeholder">Search anything…</span><svg viewBox="0 0 24 24"><use href="#glyph-more"/></svg></div>
+          </div>
+        </div>
+      </div>
 
-const buildDesktopDock=()=>{
-const dock=el('div','desktop-dock');
-const inner=el('div','dock-inner');
-desktopDockApps.forEach((id,i)=>{const a=apps.find(x=>x.id===id);if(!a)return;const ic=el('div','app-icon');ic.style.background=a.bg;ic.innerHTML=I[a.id];inner.appendChild(ic);if(i===3)inner.appendChild(el('div','dock-sep'))});
-dock.appendChild(inner);return dock;
-};
+      <!-- The caption, and under it the bar. They stand under the scene, and stay behind when it scrolls away. -->
+      <div class="ask" data-from="5">
+        <div class="captions">
+          <div class="caption" data-at="0" data-until="1">
+            <h2 id="desk-title" data-i18n="desk.h">Your phone and your computer, working as one.</h2>
+          </div>
+          <div class="caption" data-at="1" data-until="3">
+            <h3 data-i18n="desk.notif.h">A message or call reaches your phone. <span>Your laptop shows it too.</span></h3>
+            <p data-i18n="desk.notif.p"><b>You decide what travels.</b> Notifications have their own switch, and they are deleted after 24 hours.</p>
+          </div>
+          <div class="caption" data-at="3" data-until="5">
+            <h3 data-i18n="desk.clip.h">Copy on your phone. <span>Paste on your laptop.</span></h3>
+            <p data-i18n="desk.clip.p"><b>Text and pictures.</b> The last five things you copied are on both devices. Clipboard sharing stays off until you switch it on.</p>
+          </div>
+          <!-- The agent. Its name stays for as long as it is asked and thinks, and under the name, one at a time,
+               what holds while it does. -->
+          <h3 class="topic" data-at="5" data-until="10" data-i18n="ask.h">Private AI.</h3>
+          <div class="caption is-under-topic" data-at="5" data-until="6">
+            <h4 data-i18n="ask.start.h">Just ask.</h4>
+            <p data-i18n="ask.start.p">The bar offers what to do with what you paste. Pick the agent, and it gets to work.</p>
+          </div>
+          <div class="caption is-under-topic" data-at="6" data-until="7">
+            <h4 data-i18n="ask.kept.h">Zero data retention.</h4>
+            <p data-i18n="ask.kept.p">Your question is deleted as soon as it is answered, and never used for training. unimo keeps no record of who asked what.</p>
+          </div>
+          <div class="caption is-under-topic" data-at="7" data-until="8">
+            <h4 data-i18n="ask.law.h">Processed under EU law.</h4>
+            <p data-i18n="ask.law.p">From question to answer, European privacy law applies.</p>
+          </div>
+          <div class="caption is-under-topic" data-at="8" data-until="9">
+            <h4 data-i18n="ask.safe.h">Protected from prompt injection.</h4>
+            <p data-i18n="ask.safe.p">A web page can hide instructions meant to hijack an AI. unimo labels everything the agent reads, and when in doubt, it asks you.</p>
+          </div>
+          <div class="caption is-under-topic" data-at="9" data-until="10">
+            <h4 data-i18n="ask.checked.h">Verified across sources.</h4>
+            <p data-i18n="ask.checked.p">For a fact that matters, it reads up to three different sites before it answers.</p>
+          </div>
+          <div class="caption" data-at="10" data-until="11">
+            <h3 data-i18n="ask.done.h">Answers, double-checked. <span>Questions, forgotten.</span></h3>
+          </div>
+          <!-- and then the web: the answer is looked up, first as pages, then as pictures -->
+          <div class="caption" data-at="11" data-until="12">
+            <h3 data-i18n="web.h">You search the web. <span>It doesn’t search you.</span></h3>
+            <p data-i18n="web.p"><b>Private web search.</b> The search engines get your words, never your name, and nothing is logged.</p>
+          </div>
+          <div class="caption" data-at="12">
+            <h3 data-i18n="web.img.h">Words or pictures. <span>One tap apart.</span></h3>
+            <p data-i18n="web.img.p"><b>Images.</b> The pills under the bar turn the same search into pictures, just as privately.</p>
+          </div>
+        </div>
 
-const buildSearchBar=()=>el('div','search-bar',`<div class="search-inner"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg><span>Search</span></div>`);
+        <!-- The bar, as on its own road above, in three modes one after the other: it searches everything, then it
+             is the agent's, then it searches the web. The parts marked in-mode belong to one of the last two,
+             and while one of them is on, the parts marked in-all step aside.
+             A pill that is about to be taken shows it for a step: that is its .pick. -->
+        <div class="launcher" data-at="4" role="img" aria-label="The unimo search bar" data-i18n-attr="aria-label:bar.label">
+          <div class="launcher-frame">
+            <div class="launcher-bar">
+              <span class="launcher-button"><span class="rings in-all"></span><svg class="in-mode" data-at="6" data-until="11" viewBox="0 0 24 24"><use href="#glyph-sparkle"/></svg><svg class="in-mode" data-at="11" viewBox="0 0 24 24"><use href="#glyph-globe"/></svg></span>
+              <span class="launcher-field"><span class="launcher-typed" data-at="4" data-until="6" data-i18n="desk.question">What is the capital of Assyria?</span><span class="launcher-typed" data-at="11" data-i18n="web.q">Nineveh</span><span class="launcher-caret"></span><span class="launcher-placeholder in-all" data-i18n="bar.placeholder">Search anything…</span><span class="launcher-placeholder in-mode" data-at="6" data-until="11" data-i18n="desk.ask">Ask the agent…</span></span>
+              <span class="launcher-button">
+                <svg class="when-empty" viewBox="0 0 24 24"><use href="#glyph-more"/></svg>
+                <svg class="when-typing" viewBox="0 0 24 24"><use href="#glyph-clear"/></svg>
+              </span>
+            </div>
+            <!-- what the bar offers to do with what is typed: the third is how a question reaches the agent -->
+            <div class="launcher-pills" data-at="4" data-until="6">
+              <span><svg viewBox="0 0 24 24"><use href="#glyph-search"/></svg><span data-i18n="desk.pill.web">Search Web</span></span>
+              <span><svg viewBox="0 0 24 24"><use href="#glyph-note"/></svg><span data-i18n="desk.pill.note">Add memo</span></span>
+              <span class="is-key"><svg viewBox="0 0 24 24"><use href="#glyph-sparkle"/></svg><span data-i18n="desk.pill.ask">Ask agent</span><i class="pick" data-at="5" data-until="6"></i></span>
+            </div>
+            <!-- the agent's run: the question, then its thinking, then the answer. While it thinks, the spinner
+                 turns in the row's icon, and once it has answered a check stands there, as the app marks a run
+                 that came to an end. -->
+            <div class="launcher-list" data-at="6" data-until="11">
+              <div class="result is-selected"><span class="result-icon"><canvas class="spinner" data-at="6" data-until="10"></canvas><svg class="done" data-at="10" viewBox="0 0 24 24"><use href="#glyph-check"/></svg></span><span class="result-body"><span class="result-title" data-i18n="desk.question">What is the capital of Assyria?</span><span class="agent-status" data-at="6" data-until="10" data-i18n="desk.thinking">Thinking…</span><span class="agent-reply" data-at="10" data-i18n="desk.answer">Nineveh. Three of three sources agree.</span></span></div>
+            </div>
+            <!-- Searching the web, the bar offers more than there is room for: the pills keep their width and run
+                 off the end, as they do in the app. The second turns the search into pictures. -->
+            <div class="launcher-pills is-long" data-at="11">
+              <span><svg viewBox="0 0 24 24"><use href="#glyph-search"/></svg><span data-i18n="desk.pill.web">Search Web</span></span>
+              <span><svg viewBox="0 0 24 24"><use href="#glyph-image"/></svg><span data-i18n="desk.pill.img">Images</span><i class="pick" data-at="12" data-until="13"></i></span>
+              <span><svg viewBox="0 0 24 24"><use href="#glyph-note"/></svg><span data-i18n="desk.pill.note">Add memo</span></span>
+              <span><svg viewBox="0 0 24 24"><use href="#glyph-sparkle"/></svg><span data-i18n="desk.pill.ask">Ask agent</span></span>
+            </div>
+            <!-- pages: a row is a page's title, its address, and what it says; the list runs on below what shows -->
+            <div class="launcher-list is-long" data-at="11" data-until="13">
+              <div class="result result-web is-selected"><span class="result-icon"><svg viewBox="0 0 24 24"><use href="#glyph-globe"/></svg></span><span class="result-body"><span class="result-title" data-i18n="web.r1.t">Nineveh - Wikipedia</span><span class="result-url" data-i18n="web.r1.u">en.wikipedia.org/wiki/Nineveh</span><span class="result-description" data-i18n="web.r1.d"><b>Nineveh</b> was an ancient Assyrian city on the east bank of the Tigris, across the river from today’s Mosul.</span></span><span class="result-hint"><span data-i18n="take.open">Open</span><kbd>↵</kbd></span></div>
+              <div class="result result-web"><span class="result-icon"><svg viewBox="0 0 24 24"><use href="#glyph-globe"/></svg></span><span class="result-body"><span class="result-title">Nineveh | History, Map, &amp; Significance</span><span class="result-url">britannica.com/place/Nineveh-ancient-city-Iraq</span><span class="result-description">Capital of the Assyrian empire at its height. <b>Nineveh</b> fell in 612 BC.</span></span></div>
+              <div class="result result-web"><span class="result-icon"><svg viewBox="0 0 24 24"><use href="#glyph-globe"/></svg></span><span class="result-body"><span class="result-title">Nineveh - World History Encyclopedia</span><span class="result-url">worldhistory.org/nineveh</span><span class="result-description">One of the great cities of antiquity, ringed by twelve kilometres of wall.</span></span></div>
+            </div>
+            <!-- pictures: tiles, each the shape of its picture, laid in rows that fill the width. Under each
+                 picture lies the glyph the app shows for one that did not arrive. -->
+            <div class="launcher-list is-long is-mosaic" data-at="13">
+              <div class="result-tile" style="--ratio: 1.6"><svg viewBox="0 0 24 24"><use href="#glyph-image"/></svg><img src="/assets/found/hall.avif" alt="" width="640" height="400" loading="lazy" decoding="async"><span class="result-caption"><span class="result-host">commons.wikimedia.org</span><span class="result-hint"><span data-i18n="take.open">Open</span><kbd>↵</kbd></span></span></div>
+              <div class="result-tile" style="--ratio: 1"><svg viewBox="0 0 24 24"><use href="#glyph-image"/></svg><img src="/assets/found/bowl.avif" alt="" width="320" height="320" loading="lazy" decoding="async"></div>
+              <div class="result-tile" style="--ratio: 0.75"><svg viewBox="0 0 24 24"><use href="#glyph-image"/></svg><img src="/assets/found/relief.avif" alt="" width="300" height="400" loading="lazy" decoding="async"></div>
+              <div class="result-tile" style="--ratio: 1.7"><svg viewBox="0 0 24 24"><use href="#glyph-image"/></svg><img src="/assets/found/palaces.avif" alt="" width="680" height="400" loading="lazy" decoding="async"></div>
+              <div class="result-tile" style="--ratio: 1.3"><svg viewBox="0 0 24 24"><use href="#glyph-image"/></svg><img src="/assets/found/windows.avif" alt="" width="520" height="400" loading="lazy" decoding="async"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 
-const buildPageDots=()=>{
-const dots=el('div','page-dots');
-for(let i=0;i<3;i++)dots.appendChild(el('div','page-dot'+(i===0?' active':'')));
-return dots;
-};
+  <!-- Only yours, told as a road like the two above: the stage is held, and scrolling plays it. The steps:
+       0 the memo from the bar, on the phone; scrolling on seals it as it leaves · 1 on our server, where that is
+       all there is of it · 2 a laptop of the visitor's opens it again · 3 no password · 4 one recovery key
+       5 every device approved.
+       A part says when it is there with data-at and data-until, as on the desk, and data-still is the step shown
+       where nothing plays. The markup is that step: the memo sealed, on the server. Scripts (seal.js) seal the
+       memo afresh in the visitor's own browser, and scrolling only decides how much of the sealing shows. -->
+  <div class="seal" data-still="1">
+    <section class="seal-stage" aria-labelledby="seal-title">
+      <!-- the claim stays; under it, one at a time, what it rests on -->
+      <div class="captions">
+        <h2 class="topic" id="seal-title" data-at="0" data-i18n="seal.h">Only you can open it.</h2>
+        <div class="caption is-under-topic" data-at="0" data-until="1">
+          <h3 data-i18n="seal.not.h">We can’t.</h3>
+          <p data-i18n="seal.not.p">Everything unimo carries between your devices is encrypted on the device before it leaves. Only your devices can read it.</p>
+        </div>
+        <div class="caption is-under-topic" data-at="1" data-until="2">
+          <h3 data-i18n="seal.held.h">This is all we ever hold.</h3>
+          <p data-i18n="seal.held.p">We keep a scrambled copy that we can’t read, and neither could anyone who got into our servers. Nobody is cooking from this.</p>
+        </div>
+        <div class="caption is-under-topic" data-at="2" data-until="3">
+          <h3 data-i18n="seal.back.h">Your devices can.</h3>
+          <p data-i18n="seal.note"><b>The same idea WhatsApp and Signal use for messages.</b> unimo uses it for your memos, clipboard, notifications, contacts and history.</p>
+        </div>
+        <div class="caption is-under-topic" data-at="3" data-until="4">
+          <h3 data-i18n="seal.nopass.h">No password.</h3>
+          <p data-i18n="seal.nopass.p">Your fingerprint or screen lock opens unimo on your phone. There is nothing to forget, reuse or leak.</p>
+        </div>
+        <div class="caption is-under-topic" data-at="4" data-until="5">
+          <h3 data-i18n="seal.key.h">One recovery key.</h3>
+          <p data-i18n="seal.key.p">You get it once, when you sign up. Keep it somewhere safe. If you lose every device it is the only way back in, because we can’t reset what we can’t open.</p>
+        </div>
+        <div class="caption is-under-topic" data-at="5">
+          <h3 data-i18n="seal.device.h">You approve every device.</h3>
+          <p data-i18n="seal.device.p">A new one joins with a one-time code, and only after you say yes on a device you already use. Remove a device and its copy is wiped.</p>
+        </div>
+      </div>
 
-let nc,vignette;
+      <!-- what the words are about, one picture at a time -->
+      <div class="seal-scene" aria-hidden="true">
+        <!-- The memo, and under it where it is. Each line of the memo is written here as the server holds it,
+             sealed once for real when this page was written, one character for each of the memo's own, which
+             data-plain keeps. Two lines stand side by side where there is room, with the space between them. -->
+        <div class="seal-memo" data-at="0" data-until="3">
+          <p class="seal-text">
+            <span class="seal-line" data-plain="todo cook Gennaro's">bgwIPRFhS9R6v7+znE9</span><span class="seal-gap" data-plain=" ">C</span><span class="seal-line" data-plain="Speedy Spaghetti">0t714RtkNJuVeQI6</span>
+            <span class="seal-line is-long" data-plain="https://www.youtube.com/watch?v=dQw4w9WgXcQ">LxMKODTLlT9pDL7Ng/a7FpxxhE06TwQRBh/WUPsls2Z</span>
+          </p>
+          <!-- What the memo links to stands for it: a video on the visitor's own devices, a blob like any other on
+               our server. The outline is drawn as the server has it, and data-plain is the video's; both are the
+               same curves with other numbers, and seal.js draws what lies between them. -->
+          <div class="seal-places">
+            <span class="seal-carrier">
+              <svg class="seal-cargo" viewBox="0 0 24 24">
+                <path class="seal-cargo-shape" d="M21.2 7.35C20.58 6.76 19.78 6.34 18.98 6.09C15.99 5.15 14.57 4.67 12 3.12C9.43 1.57 5.74 2.58 3.71 4.98C3.17 5.63 2.7 6.35 2.38 7.13C1.74 8.69 1.8 10.51 2.45 12C3.1 13.49 4.05 14.57 4.58 15.75C4.84 16.35 5.04 17 5.28 17.7C6.18 20.27 9.3 22.07 12 21.35C14.7 20.62 17.38 20.31 19.55 18.4C20.15 17.89 20.64 17.26 21.05 16.58C21.87 15.22 22.43 13.66 22.63 12C22.83 10.34 22.44 8.52 21.2 7.35Z" data-plain="M23.5 6.19C23.22 5.15 22.41 4.33 21.38 4.05C19.5 3.54 12 3.54 12 3.54C12 3.54 4.5 3.54 2.62 4.05C1.59 4.33 0.78 5.15 0.5 6.19C0 8.07 0 12 0 12C0 12 0 15.93 0.5 17.81C0.78 18.85 1.59 19.67 2.62 19.95C4.5 20.45 12 20.45 12 20.45C12 20.45 19.5 20.45 21.38 19.95C22.41 19.67 23.22 18.85 23.5 17.81C24 15.93 24 12 24 12C24 12 24 8.07 23.5 6.19Z"/>
+                <path class="seal-cargo-play" d="M9.55 15.57V8.43L15.82 12z"/>
+                <path class="seal-cargo-bytes" d="M9.05 5.55h2.4v2.4h-2.4zM5.55 9.05h2.4v2.4h-2.4zM12.55 9.05h2.4v2.4h-2.4zM16.05 9.05h2.4v2.4h-2.4zM9.05 12.55h2.4v2.4h-2.4zM12.55 12.55h2.4v2.4h-2.4zM12.55 16.05h2.4v2.4h-2.4z"/>
+              </svg>
+            </span>
+            <span data-i18n="seal.phone">On your phone</span>
+            <span class="is-here" data-i18n="seal.server">On our server</span>
+            <span data-i18n="seal.laptop">On your laptop</span>
+          </div>
+          <p class="seal-real" data-at="1" data-until="2" data-i18n="seal.real">Sealed by your browser, just now. The key never left this page.</p>
+        </div>
+        <!-- no password: a fingerprint, in the mark's colours, and rings going out from it as from a finger on glass -->
+        <div class="seal-touch" data-at="3" data-until="4">
+          <svg class="seal-print" viewBox="0 0 24 24">
+            <linearGradient id="seal-print-wheel" gradientUnits="userSpaceOnUse" x1="4" y1="3" x2="20" y2="21"><stop offset="0"/><stop offset="0.35"/><stop offset="0.68"/><stop offset="1"/></linearGradient>
+            <g fill="none" stroke="url(#seal-print-wheel)" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/>
+              <path d="M14 13.12c0 2.38 0 6.38-1 8.88"/>
+              <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/>
+              <path d="M2 12a10 10 0 0 1 18-6"/>
+              <path d="M2 16h.01"/>
+              <path d="M21.8 16c.2-2 .131-5.354 0-6"/>
+              <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/>
+              <path d="M8.65 22c.21-.66.45-1.32.57-2"/>
+              <path d="M9 6.8a6 6 0 0 1 9 5.2v2"/>
+            </g>
+          </svg>
+        </div>
+        <!-- the recovery key as the app writes it, sixteen fours, most of them kept out of sight as a key's should be -->
+        <p class="seal-key" data-at="4" data-until="5">7c4e 91b0 <span>•••• ••••
+•••• •••• •••• ••••
+•••• •••• •••• ••••
+•••• ••••</span> 3aa8 9d2f</p>
+        <!-- What a device already in the account shows when another asks to join: a notification like the one on
+             the desk's laptop, with the app's own two answers. -->
+        <div class="seal-ask" data-at="5">
+          <span class="app-tile"><span class="rings"></span></span>
+          <span class="message"><b>Peter's-Macbook-Pro-xa47</b><span data-i18n="seal.join">wants to join.</span></span>
+          <span class="seal-answers"><span data-i18n="seal.block">Block</span><span class="is-picked" data-i18n="seal.enable">Enable</span></span>
+        </div>
+      </div>
+    </section>
+  </div>
 
-const fakeApps=[
-{name:'Messages',bg:'linear-gradient(135deg,#34c759,#30a14e)',svg:'messages'},
-{name:'Mail',bg:'linear-gradient(135deg,#007aff,#005ec4)',svg:'mail'},
-{name:'News',bg:'linear-gradient(135deg,#fc3c44,#ff453a)',svg:'news'},
-{name:'Phone',bg:'linear-gradient(135deg,#34c759,#30a14e)',svg:'phone'},
-{name:'Calendar',bg:'linear-gradient(135deg,#ff3b30,#d63027)',svg:'calendar'},
-{name:'Reminders',bg:'linear-gradient(135deg,#007aff,#5856d6)',svg:'reminders'},
-{name:'Health',bg:'linear-gradient(135deg,#ff2d55,#ff375f)',svg:'health'},
-{name:'Browser',bg:'linear-gradient(135deg,#007aff,#5ac8fa)',svg:'browser'}
-];
-
-const spamTexts={
-en:["You have 14 unread messages","Meeting in 5 minutes","Your storage is almost full","Update available","Verify your account now","Someone tagged you","Your subscription expires tomorrow","Weekly screen time: 6h 42m","3 missed calls","Payment declined","New sign-in from unknown device","Act now: offer expires!","Your password will expire in 3 days","Low battery mode suggested","Rate your recent purchase"],
-es:["Tienes 14 mensajes sin leer","Reuni\u00f3n en 5 minutos","Tu almacenamiento est\u00e1 casi lleno","Actualizaci\u00f3n disponible","Verifica tu cuenta ahora","Alguien te etiquet\u00f3","Tu suscripci\u00f3n expira ma\u00f1ana","Tiempo de pantalla semanal: 6h 42m","3 llamadas perdidas","Pago rechazado"],
-fr:["Vous avez 14 messages non lus","R\u00e9union dans 5 minutes","Votre stockage est presque plein","Mise \u00e0 jour disponible","V\u00e9rifiez votre compte","Quelqu'un vous a identifi\u00e9","Votre abonnement expire demain","Temps d'\u00e9cran: 6h 42m","3 appels manqu\u00e9s","Paiement refus\u00e9"],
-de:["14 ungelesene Nachrichten","Meeting in 5 Minuten","Speicher fast voll","Update verf\u00fcgbar","Konto jetzt verifizieren","Jemand hat dich markiert","Abo l\u00e4uft morgen ab","Bildschirmzeit: 6h 42m","3 verpasste Anrufe","Zahlung abgelehnt"],
-pt:["Voc\u00ea tem 14 mensagens n\u00e3o lidas","Reuni\u00e3o em 5 minutos","Armazenamento quase cheio","Atualiza\u00e7\u00e3o dispon\u00edvel","Verifique sua conta agora","Algu\u00e9m marcou voc\u00ea","Assinatura expira amanh\u00e3","Tempo de tela: 6h 42m","3 chamadas perdidas","Pagamento recusado"],
-ru:["14 \u043d\u0435\u043f\u0440\u043e\u0447\u0438\u0442\u0430\u043d\u043d\u044b\u0445 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0439","\u0412\u0441\u0442\u0440\u0435\u0447\u0430 \u0447\u0435\u0440\u0435\u0437 5 \u043c\u0438\u043d\u0443\u0442","\u041f\u0430\u043c\u044f\u0442\u044c \u043f\u043e\u0447\u0442\u0438 \u0437\u0430\u043f\u043e\u043b\u043d\u0435\u043d\u0430","\u0414\u043e\u0441\u0442\u0443\u043f\u043d\u043e \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0435","\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u0435 \u0430\u043a\u043a\u0430\u0443\u043d\u0442","\u041a\u0442\u043e-\u0442\u043e \u043e\u0442\u043c\u0435\u0442\u0438\u043b \u0432\u0430\u0441","\u041f\u043e\u0434\u043f\u0438\u0441\u043a\u0430 \u0438\u0441\u0442\u0435\u043a\u0430\u0435\u0442 \u0437\u0430\u0432\u0442\u0440\u0430","3 \u043f\u0440\u043e\u043f\u0443\u0449\u0435\u043d\u043d\u044b\u0445 \u0437\u0432\u043e\u043d\u043a\u0430","\u041f\u043b\u0430\u0442\u0451\u0436 \u043e\u0442\u043a\u043b\u043e\u043d\u0451\u043d"],
-zh:["14\u6761\u672a\u8bfb\u6d88\u606f","5\u5206\u949f\u540e\u5f00\u4f1a","\u5b58\u50a8\u7a7a\u95f4\u5373\u5c06\u6ee1","\u6709\u53ef\u7528\u66f4\u65b0","\u7acb\u5373\u9a8c\u8bc1\u4f60\u7684\u8d26\u6237","\u6709\u4eba\u6807\u8bb0\u4e86\u4f60","\u8ba2\u9605\u660e\u5929\u5230\u671f","3\u4e2a\u672a\u63a5\u6765\u7535","\u4ed8\u6b3e\u5931\u8d25"],
-ja:["14\u4ef6\u306e\u672a\u8aad\u30e1\u30c3\u30bb\u30fc\u30b8","5\u5206\u5f8c\u306b\u4f1a\u8b70","\u30b9\u30c8\u30ec\u30fc\u30b8\u304c\u307b\u307c\u6e80\u676f","\u30a2\u30c3\u30d7\u30c7\u30fc\u30c8\u3042\u308a","\u30a2\u30ab\u30a6\u30f3\u30c8\u3092\u78ba\u8a8d","\u8ab0\u304b\u304c\u30bf\u30b0\u4ed8\u3051","\u30b5\u30d6\u30b9\u30af\u304c\u660e\u65e5\u671f\u9650","3\u4ef6\u306e\u4e0d\u5728\u7740\u4fe1","\u6c7a\u6e08\u5931\u6557"],
-ko:["14\uac1c \uc77d\uc9c0 \uc54a\uc740 \uba54\uc2dc\uc9c0","5\ubd84 \ud6c4 \ud68c\uc758","\uc800\uc7a5 \uacf5\uac04 \ubd80\uc871","\uc5c5\ub370\uc774\ud2b8 \uac00\ub2a5","\uacc4\uc815 \ud655\uc778 \ud544\uc694","\ub204\uad70\uac00 \ud0dc\uadf8\ud568","\uad6c\ub3c5 \ub0b4\uc77c \ub9cc\ub8cc","3\uac74 \ubd80\uc7ac\uc911 \uc804\ud654","\uacb0\uc81c \uc2e4\ud328"],
-ar:["14 \u0631\u0633\u0627\u0644\u0629 \u063a\u064a\u0631 \u0645\u0642\u0631\u0648\u0621\u0629","\u0627\u062c\u062a\u0645\u0627\u0639 \u0628\u0639\u062f 5 \u062f\u0642\u0627\u0626\u0642","\u0627\u0644\u062a\u062e\u0632\u064a\u0646 \u0645\u0645\u062a\u0644\u0626 \u062a\u0642\u0631\u064a\u0628\u0627\u064b","\u062a\u062d\u062f\u064a\u062b \u0645\u062a\u0627\u062d","\u062a\u062d\u0642\u0642 \u0645\u0646 \u062d\u0633\u0627\u0628\u0643","\u0634\u062e\u0635 \u0645\u0627 \u0623\u0634\u0627\u0631 \u0625\u0644\u064a\u0643","3 \u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0641\u0627\u0626\u062a\u0629","\u0641\u0634\u0644 \u0627\u0644\u062f\u0641\u0639"],
-ca:["14 missatges sense llegir","Reuni\u00f3 en 5 minuts","Emmagatzematge gaireb\u00e9 ple","Actualitzaci\u00f3 disponible","Verifica el compte ara","Alg\u00fa t'ha etiquetat","Subscripci\u00f3 caduca dem\u00e0","3 trucades perdudes","Pagament rebutjat"],
-hi:["14 \u0905\u092a\u0920\u093f\u0924 \u0938\u0902\u0926\u0947\u0936","5 \u092e\u093f\u0928\u091f \u092e\u0947\u0902 \u092e\u0940\u091f\u093f\u0902\u0917","\u0938\u094d\u091f\u094b\u0930\u0947\u091c \u0932\u0917\u092d\u0917 \u092d\u0930\u093e","\u0905\u092a\u0921\u0947\u091f \u0909\u092a\u0932\u092c\u094d\u0927","\u0905\u092a\u0928\u093e \u0916\u093e\u0924\u093e \u0938\u0924\u094d\u092f\u093e\u092a\u093f\u0924 \u0915\u0930\u0947\u0902","3 \u091b\u0942\u091f\u0940 \u0939\u0941\u0908 \u0915\u0949\u0932\u094d\u0938","\u092d\u0941\u0917\u0924\u093e\u0928 \u0905\u0938\u094d\u0935\u0940\u0915\u0943\u0924"]
-};
-const getSpam=lang=>(spamTexts[lang]||spamTexts.en);
-
-const showNotif=(text,appInfo)=>{
-const fa=appInfo||{name:'Unimo',bg:'linear-gradient(135deg,#6366f1,#8b5cf6)',svg:null};
-const iconHtml=fa.svg?I[fa.svg]||unimoSvg:unimoSvg;
-const iconBg=fa.bg;
-const n=el('div','notif',`<div class="notif-icon" style="background:${iconBg}">${iconHtml}</div><div class="notif-body"><div class="notif-header"><span class="notif-app">${fa.name}</span><span class="notif-time">now</span></div><div class="notif-text">${text}</div></div>`);
-if(nc.children.length>=6){const o=nc.firstElementChild;if(o)dismiss(o)}
-nc.appendChild(n);
-// shake screen on every 3rd notification
-if(nc.children.length%3===0){
-const root=document.getElementById('root');
-root.classList.add('shake');
-setTimeout(()=>root.classList.remove('shake'),300);
-}
-setTimeout(()=>dismiss(n),6000);
-};
-
-const dismiss=n=>{
-if(!n?.parentNode)return;
-n.classList.add('out');
-const rm=()=>{if(n.parentNode)n.remove()};
-n.addEventListener('animationend',rm,{once:true});
-setTimeout(rm,400);
-};
-
-const render=()=>{
-const{os,mobile,lang}=detect();
-const root=document.getElementById('root');
-root.className=`screen wp-${os} ${mobile?'mobile':'desktop'}`;
-root.innerHTML='';
-document.documentElement.lang=lang;
-
-if(mobile){
-root.appendChild(buildStatusBar(os));
-const gw=el('div','app-grid-wrap');gw.appendChild(buildGrid(true));root.appendChild(gw);
-root.appendChild(buildPageDots());
-root.appendChild(buildDock());
-}else{
-root.appendChild(buildMenuBar(os));
-root.appendChild(buildSearchBar());
-const gw=el('div','app-grid-wrap');gw.appendChild(buildGrid(false));root.appendChild(gw);
-root.appendChild(buildDesktopDock());
-}
-
-nc=el('div','notif-container');root.appendChild(nc);
-
-// anxiety vignette overlay
-vignette=el('div','anxiety-vignette');root.appendChild(vignette);
-setTimeout(()=>vignette.classList.add('active'),8000);
-
-// Hero CTA translations
-const heroL10n={
-en:{h:"We reimagined new ways for focus and clarity.",s:"No more noise. No more silos. One seamless experience across all your devices.",b:"Get early access"},
-es:{h:"Reimaginamos nuevas formas de enfoque y claridad.",s:"Sin m\u00e1s ruido. Sin m\u00e1s silos. Una experiencia fluida en todos tus dispositivos.",b:"Acceso anticipado"},
-fr:{h:"Nous avons r\u00e9invent\u00e9 de nouvelles fa\u00e7ons de se concentrer.",s:"Plus de bruit. Plus de silos. Une exp\u00e9rience fluide sur tous vos appareils.",b:"Acc\u00e8s anticip\u00e9"},
-de:{h:"Wir haben neue Wege f\u00fcr Fokus und Klarheit entwickelt.",s:"Kein L\u00e4rm mehr. Keine Silos mehr. Ein nahtloses Erlebnis auf allen Ger\u00e4ten.",b:"Jetzt dabei sein"},
-pt:{h:"Reimaginamos novas formas de foco e clareza.",s:"Sem mais ru\u00eddo. Sem mais silos. Uma experi\u00eancia integrada em todos os seus dispositivos.",b:"Acesso antecipado"},
-ru:{h:"\u041c\u044b \u043f\u0440\u0438\u0434\u0443\u043c\u0430\u043b\u0438 \u043d\u043e\u0432\u044b\u0435 \u043f\u0443\u0442\u0438 \u043a \u0444\u043e\u043a\u0443\u0441\u0443 \u0438 \u044f\u0441\u043d\u043e\u0441\u0442\u0438.",s:"\u041d\u0438\u043a\u0430\u043a\u043e\u0433\u043e \u0448\u0443\u043c\u0430. \u041d\u0438\u043a\u0430\u043a\u0438\u0445 \u0441\u0438\u043b\u043e\u0441\u043e\u0432. \u0415\u0434\u0438\u043d\u044b\u0439 \u043e\u043f\u044b\u0442 \u043d\u0430 \u0432\u0441\u0435\u0445 \u0443\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432\u0430\u0445.",b:"\u0420\u0430\u043d\u043d\u0438\u0439 \u0434\u043e\u0441\u0442\u0443\u043f"},
-zh:{h:"\u6211\u4eec\u91cd\u65b0\u6784\u60f3\u4e86\u4e13\u6ce8\u4e0e\u6e05\u6670\u7684\u65b0\u65b9\u5f0f\u3002",s:"\u4e0d\u518d\u6709\u566a\u97f3\u3002\u4e0d\u518d\u6709\u5b64\u5c9b\u3002\u6240\u6709\u8bbe\u5907\u4e0a\u7684\u65e0\u7f1d\u4f53\u9a8c\u3002",b:"\u62a2\u5148\u4f53\u9a8c"},
-ja:{h:"\u96c6\u4e2d\u3068\u660e\u6670\u3055\u306e\u305f\u3081\u306e\u65b0\u3057\u3044\u65b9\u6cd5\u3092\u518d\u69cb\u7bc9\u3057\u307e\u3057\u305f\u3002",s:"\u30ce\u30a4\u30ba\u306a\u3057\u3002\u30b5\u30a4\u30ed\u306a\u3057\u3002\u3059\u3079\u3066\u306e\u30c7\u30d0\u30a4\u30b9\u3067\u30b7\u30fc\u30e0\u30ec\u30b9\u306a\u4f53\u9a13\u3002",b:"\u5148\u884c\u30a2\u30af\u30bb\u30b9"},
-ko:{h:"\uc9d1\uc911\uacfc \uba85\ub8cc\ud568\uc744 \uc704\ud55c \uc0c8\ub85c\uc6b4 \ubc29\ubc95\uc744 \uc7ac\uad6c\uc0c1\ud588\uc2b5\ub2c8\ub2e4.",s:"\ub354 \uc774\uc0c1 \uc18c\uc74c \uc5c6\uc774. \ub354 \uc774\uc0c1 \uc0ac\uc77c\ub85c \uc5c6\uc774. \ubaa8\ub4e0 \uae30\uae30\uc5d0\uc11c \ud558\ub098\uc758 \uacbd\ud5d8.",b:"\uba3c\uc800 \uacbd\ud5d8\ud558\uae30"},
-ar:{h:"\u0623\u0639\u062f\u0646\u0627 \u062a\u062e\u064a\u0644 \u0637\u0631\u0642 \u062c\u062f\u064a\u062f\u0629 \u0644\u0644\u062a\u0631\u0643\u064a\u0632 \u0648\u0627\u0644\u0648\u0636\u0648\u062d.",s:"\u0644\u0627 \u0645\u0632\u064a\u062f \u0645\u0646 \u0627\u0644\u0636\u0648\u0636\u0627\u0621. \u0644\u0627 \u0645\u0632\u064a\u062f \u0645\u0646 \u0627\u0644\u0635\u0648\u0627\u0645\u0639. \u062a\u062c\u0631\u0628\u0629 \u0633\u0644\u0633\u0629 \u0639\u0628\u0631 \u062c\u0645\u064a\u0639 \u0623\u062c\u0647\u0632\u062a\u0643.",b:"\u0633\u062c\u0651\u0644 \u0627\u0644\u0622\u0646"},
-ca:{h:"Hem reimaginat noves maneres d\u2019enfocament i claredat.",s:"Sense m\u00e9s soroll. Sense m\u00e9s sitges. Una experi\u00e8ncia fluid en tots els teus dispositius.",b:"Acc\u00e9s anticipat"},
-hi:{h:"\u0939\u092e\u0928\u0947 \u092b\u094b\u0915\u0938 \u0914\u0930 \u0938\u094d\u092a\u0937\u094d\u091f\u0924\u093e \u0915\u0947 \u0928\u090f \u0924\u0930\u0940\u0915\u0947 \u0916\u094b\u091c\u0947 \u0939\u0948\u0902\u0964",s:"\u0915\u094b\u0908 \u0936\u094b\u0930 \u0928\u0939\u0940\u0902\u0964 \u0915\u094b\u0908 \u0938\u093e\u0907\u0932\u094b \u0928\u0939\u0940\u0902\u0964 \u0938\u092d\u0940 \u0921\u093f\u0935\u093e\u0907\u0938\u094b\u0902 \u092a\u0930 \u090f\u0915 \u0938\u0940\u092e\u0932\u0947\u0938 \u0905\u0928\u0941\u092d\u0935\u0964",b:"\u091c\u0932\u094d\u0926\u0940 \u090f\u0915\u094d\u0938\u0947\u0938 \u092a\u093e\u090f\u0902"}
-};
-const getHero=lang=>heroL10n[lang]||heroL10n.en;
-
-// Hero overlay element
-const hero=el('div','hero-overlay');
-const hl=getHero(lang);
-hero.innerHTML=`<div class="hero-content"><h1 class="hero-headline">${hl.h}</h1><p class="hero-sub">${hl.s}</p><a class="hero-btn" href="https://cryptpad.cz/form/#/2/form/view/AFFelSJl-3PlekPX2HlFIw4hnW0kToTcIHHDkV6xy9Y/">${hl.b}</a></div>`;
-root.appendChild(hero);
-
-// Transition: fade to hero on interaction or timeout
-let transitioned=false;
-const timers=[];
-const triggerHero=()=>{
-if(transitioned)return;
-transitioned=true;
-timers.forEach(clearTimeout);
-hero.classList.add('active');
-};
-const autoTimer=setTimeout(triggerHero,10000);
-timers.push(autoTimer);
-const evts=['click','touchstart','wheel','scroll','keydown'];
-const handler=()=>{if(!transitioned){triggerHero();evts.forEach(e=>window.removeEventListener(e,handler))}};
-evts.forEach(e=>window.addEventListener(e,handler,{passive:true}));
-
-const msgs=getMessages(lang);
-const spam=getSpam(lang);
-
-// Phase 1: Unimo philosophical notifications (first 20s)
-const unimoDelays=[2000,6500,12000,18000,26000,35000];
-msgs.forEach((m,i)=>{const t=setTimeout(()=>showNotif(m),unimoDelays[i]||(35000+(i-5)*7000));timers.push(t)});
-
-// Phase 2: Spam notifications from fake apps start at 4s, accelerate
-let spamIdx=0;
-let spamInterval=3500;
-const spamTick=()=>{
-if(transitioned)return;
-const fa=fakeApps[(Math.random()*fakeApps.length)|0];
-const txt=spam[spamIdx%spam.length];
-spamIdx++;
-showNotif(txt,fa);
-spamInterval=Math.max(1200,spamInterval-200);
-const t=setTimeout(spamTick,spamInterval);timers.push(t);
-};
-timers.push(setTimeout(spamTick,4000));
-
-// Badge anxiety: spawn new badges and grow existing ones aggressively
-const spawnBadge=()=>{
-if(!allIcons.length)return;
-const pick=allIcons[(Math.random()*allIcons.length)|0];
-const existing=pick.querySelector('.badge');
-if(existing){
-let v=parseInt(existing.textContent)||1;
-const jump=((Math.random()*20)|0)+1;
-v+=jump;
-existing.textContent=fmtBadge(v);
-existing.style.animation='none';
-void existing.offsetWidth;
-existing.style.animation='';
-if(v>15)existing.classList.add('pulse');
-}else{
-const b=el('div','badge',String(((Math.random()*30)|0)+1));
-pick.appendChild(b);
-}
-};
-let bInterval=2000;
-const bTick=()=>{
-if(transitioned)return;
-spawnBadge();
-if(Math.random()>.6)spawnBadge();
-bInterval=Math.max(400,bInterval-100);
-const t=setTimeout(bTick,bInterval);timers.push(t);
-};
-timers.push(setTimeout(bTick,2500));
-
-setInterval(()=>{
-const t=timeStr();
-const sb=root.querySelector('.status-bar .time');if(sb)sb.textContent=t;
-const mb=root.querySelector('.menu-bar .right span');if(mb)mb.textContent=t;
-},30000);
-};
-
-document.readyState==='loading'?document.addEventListener('DOMContentLoaded',render):render();
-})();
-</script>
+</main>
 </body>
 </html>

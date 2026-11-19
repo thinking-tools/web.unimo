@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0a">
+<meta name="description" content="Open apps, find people and memos, search the web and ask questions from one bar. Works across Android, Mac, Windows and Linux. Only your devices can read what it keeps.">
+<meta property="og:title" content="unimo: one private search bar for your phone and computer">
+<meta property="og:description" content="Open apps, find people and memos, search the web and ask questions from one bar. Only your devices can read what it keeps.">
+<meta property="og:url" content="https://unimo.app/">
+<meta property="og:site_name" content="unimo">
+<title data-i18n="title">unimo: one private search bar for your phone and computer</title>
+<link rel="canonical" href="https://unimo.app/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="stylesheet" href="/assets/site.css">
+<script>
+/* Before first paint: mark that scripts run, and hold the page a moment for visitors whose language is not English. */
+(function (root) {
+  root.classList.add('js');
+  var wanted = new URLSearchParams(location.search).get('lang') || navigator.language || 'en';
+  if (!/^en\b/i.test(wanted)) root.classList.add('lang-wait');
+})(document.documentElement);
+</script>
+<link rel="modulepreload" href="/assets/i18n.js">
+<link rel="modulepreload" href="/assets/bar-demo.js">
+<link rel="modulepreload" href="/assets/stages.js">
+<script type="module" src="/assets/main.js"></script>
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+
+<header class="top">
+  <div class="shell">
+    <a class="brand" href="/"><span class="mark" aria-hidden="true"></span>unimo</a>
+    <nav aria-label="Site">
+      <a href="#private" data-i18n="nav.privacy">Privacy</a>
+      <a href="#price" data-i18n="nav.price">Pricing</a>
+      <a href="#about" data-i18n="nav.about">About</a>
+    </nav>
+    <a class="btn" href="https://cryptpad.cz/form/#/2/form/view/AFFelSJl-3PlekPX2HlFIw4hnW0kToTcIHHDkV6xy9Y/" rel="noopener" data-i18n="cta">Join early access</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- opening: what it is, and the product itself -->
+  <section class="hero" aria-labelledby="h-open">
+    <div class="shell split">
+      <div>
+        <h1 id="h-open" data-i18n="h1">One line.<br>All your devices.<br>Private and quiet.</h1>
+        <p class="lede" data-i18n="hero.lede">unimo is one search bar for your phone and your computer. Type a few letters to open an app, reach a person, save a memo, search the web or ask a question. What it keeps is encrypted, and only your devices can read it.</p>
+        <div class="cta">
+          <a class="btn big" href="https://cryptpad.cz/form/#/2/form/view/AFFelSJl-3PlekPX2HlFIw4hnW0kToTcIHHDkV6xy9Y/" rel="noopener" data-i18n="cta">Join early access</a>
+          <a class="link" href="#private" data-i18n="nav.privacy">Privacy</a>
+        </div>
+        <p class="small plats-line">
+          <span class="plats" role="img" aria-label="For Android, Mac, Windows and Linux" data-i18n-attr="aria-label:a11y.plats">
+            <svg class="plat" data-os="android" aria-hidden="true"><use href="/assets/icons.svg#android"/></svg>
+            <svg class="plat" data-os="apple" aria-hidden="true"><use href="/assets/icons.svg#apple"/></svg>
+            <svg class="plat" data-os="windows" aria-hidden="true"><use href="/assets/icons.svg#windows"/></svg>
+            <svg class="plat" data-os="linux" aria-hidden="true"><use href="/assets/icons.svg#linux"/></svg>
+          </span>
+          <span data-i18n="hero.small">Free to start. Hosted in the EU.</span>
+        </p>
+      </div>
+
+      <div class="demo" id="demo">
+        <p class="small demo-caption" data-i18n="demo.cap">This is the whole interface. <span class="demo-hint">Click in and type.</span></p>
+        <div class="demo-stage">
+          <div class="bar-shell">
+            <div class="bar-panel">
+              <div class="bar-row" id="bar-row">
+                <button class="ibtn mode-btn" id="mode" type="button" aria-label="Search in: All">
+                  <span class="mi" id="mode-icon" aria-hidden="true"><span class="mark"></span></span>
+                  <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <input id="q" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"
+                  placeholder="Search anything…" value="mom" aria-label="Try the unimo bar" data-i18n-attr="aria-label:a11y.try">
+                <span class="bar-caret" id="bar-caret" aria-hidden="true"></span>
+                <button class="ibtn" id="clear" type="button" aria-label="Clear" data-i18n-attr="aria-label:a11y.clear" hidden>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                </button>
+              </div>
+              <!-- a still frame for visitors without scripts; the demo redraws these rows -->
+              <ul class="results" id="results">
+                <li class="row sel"><span class="tile round" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.3 3.6-5.5 8-5.5s8 2.2 8 5.5v.5H4V20z"/></svg></span><span class="txt"><span class="t">Mom</span><span class="sub">+1 (555) 010-4321</span></span><span class="hint" aria-hidden="true">Call<kbd>↵</kbd></span></li>
+                <li class="row"><span class="tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span><span class="txt"><span class="desc">mom’s birthday, Saturday</span></span></li>
+                <li class="row"><span class="tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></svg></span><span class="txt"><span class="t">Search the web for “mom”</span></span><span class="hint" aria-hidden="true">Open<kbd>↵</kbd></span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- the whole picture, before the parts: everything unimo holds for you -->
+  <section class="sec" id="what" aria-labelledby="h-what">
+    <div class="shell">
+      <div class="split">
+        <h2 id="h-what" data-i18n="big.h2">Your phone and your computer, working as one.</h2>
+        <p class="lede" data-i18n="big.lede">Devices from a single maker already do this for each other. unimo does it for an Android phone and a Mac, Windows or Linux computer, and keeps what passes between them private.</p>
+      </div>
+      <div class="points things gap-top">
+        <div><h3 data-i18n="big.t.0">People</h3><p data-i18n="big.p.0">Your phone’s contacts, on your computer too.</p></div>
+        <div><h3 data-i18n="big.t.1">Memos</h3><p data-i18n="big.p.1">Jot one down on the phone. Find it at your desk.</p></div>
+        <div><h3 data-i18n="big.t.2">Apps</h3><p data-i18n="big.p.2">Type a few letters and it opens.</p></div>
+        <div><h3 data-i18n="big.t.3">Web searches</h3><p data-i18n="big.p.3">The search engine never learns they were yours.</p></div>
+        <div><h3 data-i18n="big.t.4">AI conversations</h3><p data-i18n="big.p.4">The AI answers and keeps nothing.</p></div>
+        <div><h3 data-i18n="big.t.5">Clipboard</h3><p data-i18n="big.p.5">Copy on your phone, paste on your computer.</p></div>
+        <div><h3 data-i18n="big.t.6">Notifications</h3><p data-i18n="big.p.6">What reaches your phone shows on your computer.</p></div>
+        <div><h3 data-i18n="big.t.7">Calls</h3><p data-i18n="big.p.7">Your computer tells you who’s calling.</p></div>
+        <div><h3><span data-i18n="big.t.8">Files and photos</span> <span class="soon" data-i18n="big.soon">Coming soon</span></h3><p data-i18n="big.p.8">Encrypted like everything else, and on all your devices.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- From here, one feature to a screen. Each stage is a scene written in markup: see assets/devices-stage.js. -->
+
+  <section class="feat" id="clipboard" aria-labelledby="h-clip">
+    <div class="shell">
+      <h2 id="h-clip" data-i18n="f.clip.h">Copy on your phone. <span>Paste on your laptop.</span></h2>
+      <div class="frame">
+        <div class="stage" data-scene="clip" aria-hidden="true">
+          <div class="lane"><span class="packet" data-go="4">a9·3f·e1·7c</span><span class="lane-note" data-i18n="st.enc">encrypted</span></div>
+          <div class="phone">
+            <i class="halo" data-at="1" data-until="5"></i>
+            <div class="phone-screen">
+              <div class="phone-status"><span>8:41</span><i></i></div>
+              <div class="view">
+                <div class="chat-head"><i class="av">A</i>Anna</div>
+                <div class="bubble"><i class="sk"></i><i class="sk" style="--w:62%"></i></div>
+                <div class="bubble picked">
+                  <span class="sel" data-at="1">Krymská 12, Praha 10</span>
+                  <span class="chip" data-at="2" data-until="3" data-i18n="demo.copy">Copy</span>
+                  <i class="tap" data-at="3" data-until="4"></i>
+                </div>
+                <div class="snack" data-at="3" data-until="5" data-i18n="demo.copied">Copied</div>
+              </div>
+            </div>
+          </div>
+          <div class="laptop">
+            <i class="halo" data-at="5"></i>
+            <div class="laptop-screen">
+              <div class="window">
+                <div class="window-bar"><i></i><i></i><i></i></div>
+                <div class="window-body">
+                  <i class="sk title" style="--w:38%"></i>
+                  <i class="sk" style="--w:94%"></i>
+                  <i class="sk" style="--w:81%"></i>
+                  <p class="pasted-line"><i class="sk" style="--w:7em"></i><span class="paste" data-at="6">Krymská 12, Praha 10</span><i class="caret"></i></p>
+                  <i class="sk" style="--w:66%"></i>
+                </div>
+              </div>
+              <div class="keys" data-at="5" data-until="6"><kbd class="paste-key" data-i18n="st.ctrl">Ctrl</kbd><kbd>V</kbd></div>
+            </div>
+            <div class="laptop-base"></div>
+          </div>
+        </div>
+        <button class="stage-toggle" type="button" aria-pressed="false" aria-label="Pause the demonstration" hidden>
+          <svg class="pause" viewBox="0 0 24 24" aria-hidden="true"><use href="#pause-icon"/></svg>
+          <svg class="play" viewBox="0 0 24 24" aria-hidden="true"><use href="#play-icon"/></svg>
+        </button>
+      </div>
+      <p class="feat-note" data-i18n="f.clip.note"><b>Text and pictures.</b> The last five things you copied are on both devices. Clipboard sharing stays off until you switch it on.</p>
+    </div>
+  </section>
+
+  <section class="feat" id="notifications" aria-labelledby="h-notif">
+    <div class="shell">
+      <h2 id="h-notif" data-i18n="f.notif.h">A message reaches your phone. <span>Your laptop shows it too.</span></h2>
+      <div class="frame">
+        <div class="stage" data-scene="notif" aria-hidden="true">
+          <div class="lane"><span class="packet" data-go="2">a9·3f·e1·7c</span><span class="lane-note" data-i18n="st.enc">encrypted</span></div>
+          <div class="phone">
+            <i class="halo" data-at="1" data-until="3"></i>
+            <div class="phone-screen">
+              <div class="phone-status"><span>8:41</span><i></i></div>
+              <div class="view v-lock">
+                <div class="clock">8:41</div>
+                <div class="notice" data-at="1">
+                  <i class="app-icon"></i>
+                  <div><small data-i18n="card.t">Messages</small><b>Anna</b><p data-i18n="st.msg">Running late. Start without me.</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="laptop">
+            <i class="halo" data-at="3"></i>
+            <div class="laptop-screen">
+              <div class="window">
+                <div class="window-bar"><i></i><i></i><i></i></div>
+                <div class="window-body">
+                  <i class="sk title" style="--w:38%"></i>
+                  <i class="sk" style="--w:94%"></i>
+                  <i class="sk" style="--w:81%"></i>
+                  <i class="sk" style="--w:66%"></i>
+                </div>
+              </div>
+              <div class="toast" data-at="3">
+                <i class="app-icon"></i>
+                <div><b><span data-i18n="card.t">Messages</span>: Anna</b><p data-i18n="st.msg">Running late. Start without me.</p></div>
+              </div>
+            </div>
+            <div class="laptop-base"></div>
+          </div>
+        </div>
+        <button class="stage-toggle" type="button" aria-pressed="false" aria-label="Pause the demonstration" hidden>
+          <svg class="pause" viewBox="0 0 24 24" aria-hidden="true"><use href="#pause-icon"/></svg>
+          <svg class="play" viewBox="0 0 24 24" aria-hidden="true"><use href="#play-icon"/></svg>
+        </button>
+      </div>
+      <p class="feat-note" data-i18n="f.notif.note"><b>You decide what travels.</b> Notifications have their own switch, and they are deleted after 24 hours.</p>
+    </div>
+  </section>
+
+  <section class="feat" id="calls" aria-labelledby="h-call">
+    <div class="shell">
+      <h2 id="h-call" data-i18n="f.call.h">Your phone rings in your bag. <span>Your laptop tells you who’s calling.</span></h2>
+      <div class="frame">
+        <div class="stage" data-scene="call" aria-hidden="true">
+          <div class="lane"><span class="packet" data-go="2">a9·3f·e1·7c</span><span class="lane-note" data-i18n="st.enc">encrypted</span></div>
+          <div class="phone">
+            <i class="halo" data-at="1"></i>
+            <div class="phone-screen">
+              <div class="phone-status"><span>8:41</span><i></i></div>
+              <div class="view v-call">
+                <i class="av">A</i>
+                <b class="who">Anna</b>
+                <span class="what" data-i18n="st.call">Incoming call</span>
+                <div class="call-buttons">
+                  <i class="decline"><svg viewBox="0 0 24 24"><use href="#handset"/></svg></i>
+                  <i class="answer"><svg viewBox="0 0 24 24"><use href="#handset"/></svg></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="laptop">
+            <i class="halo" data-at="3"></i>
+            <div class="laptop-screen">
+              <div class="window">
+                <div class="window-bar"><i></i><i></i><i></i></div>
+                <div class="window-body">
+                  <i class="sk title" style="--w:38%"></i>
+                  <i class="sk" style="--w:94%"></i>
+                  <i class="sk" style="--w:81%"></i>
+                  <i class="sk" style="--w:66%"></i>
+                </div>
+              </div>
+              <div class="toast" data-at="3">
+                <i class="av">A</i>
+                <div><b>Anna</b><p data-i18n="st.call">Incoming call</p></div>
+                <span class="sound"><i></i><i></i><i></i></span>
+              </div>
+            </div>
+            <div class="laptop-base"></div>
+          </div>
+        </div>
+        <button class="stage-toggle" type="button" aria-pressed="false" aria-label="Pause the demonstration" hidden>
+          <svg class="pause" viewBox="0 0 24 24" aria-hidden="true"><use href="#pause-icon"/></svg>
+          <svg class="play" viewBox="0 0 24 24" aria-hidden="true"><use href="#play-icon"/></svg>
+        </button>
+      </div>
+      <p class="feat-note" data-i18n="f.call.note"><b>Know who it is before you dig for the phone.</b> The laptop shows the caller and rings briefly. You answer on the phone.</p>
+    </div>
+  </section>
+
+  <section class="feat" id="ask" aria-labelledby="h-ask">
+    <div class="shell">
+      <h2 id="h-ask" data-i18n="f.ask.h">Search the web without leaving a trail. <span>unimo asks for you.</span></h2>
+      <div class="frame">
+        <div class="stage" data-scene="ask" aria-hidden="true">
+          <div class="lane to-hub"><span class="packet" data-go="2">a9·3f·e1·7c</span></div>
+          <div class="lane to-card"><span class="packet plain" data-go="4" data-i18n="demo.trains">Night trains to Vienna</span></div>
+          <div class="phone">
+            <i class="halo" data-at="1" data-until="3"></i>
+            <div class="phone-screen">
+              <div class="phone-status"><span>8:41</span><i></i></div>
+              <div class="view v-ask">
+                <div class="prow" data-at="6"><i class="ptile"></i><div><b data-i18n="demo.trains">Night trains to Vienna</b><small data-i18n="demo.trainsub">results from the web</small></div></div>
+                <div class="prow" data-at="6"><i class="ptile"></i><div><i class="sk" style="--w:72%"></i><i class="sk" style="--w:46%"></i></div></div>
+                <div class="pbar"><i class="mark"></i><span class="pq" data-at="1" data-i18n="demo.trains">Night trains to Vienna</span><i class="caret"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="hub">
+            <div class="hub-ring"><i class="halo" data-at="3" data-until="5"></i><i class="mark"></i></div>
+            <span>unimo</span>
+          </div>
+          <div class="seen">
+            <i class="halo" data-at="5"></i>
+            <div class="seen-card">
+              <b class="seen-title" data-i18n="ask.seen">What Brave Search receives</b>
+              <dl>
+                <div><dt data-i18n="ask.s.q">Question</dt><dd data-at="5" data-i18n="demo.trains">Night trains to Vienna</dd></div>
+                <div><dt data-i18n="ask.s.from">Asked by</dt><dd data-at="5">unimo</dd></div>
+                <div><dt data-i18n="ask.s.name">Your name</dt><dd class="none">—</dd></div>
+                <div><dt data-i18n="ask.s.addr">Your network address</dt><dd class="none">—</dd></div>
+                <div><dt data-i18n="ask.s.hist">Yesterday’s questions</dt><dd class="none">—</dd></div>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <button class="stage-toggle" type="button" aria-pressed="false" aria-label="Pause the demonstration" hidden>
+          <svg class="pause" viewBox="0 0 24 24" aria-hidden="true"><use href="#pause-icon"/></svg>
+          <svg class="play" viewBox="0 0 24 24" aria-hidden="true"><use href="#play-icon"/></svg>
+        </button>
+      </div>
+      <p class="feat-note" data-i18n="f.ask.note"><b>Web results come from Brave Search.</b> unimo asks through Brave’s API, so Brave gets the question from unimo and nothing about you.</p>
+      <p class="small frame-hint" data-i18n="f.ask.more">unimo passes the question on and keeps no record of who asked what.</p>
+    </div>
+  </section>
+
+  <section class="feat" id="ai" aria-labelledby="h-ai">
+    <div class="shell">
+      <h2 id="h-ai" data-i18n="f.ai.h">Ask AI anything. <span>It keeps nothing.</span></h2>
+      <div class="frame">
+        <div class="stage" data-scene="ai" aria-hidden="true">
+          <div class="lane to-hub"><span class="packet" data-go="2">a9·3f·e1·7c</span></div>
+          <div class="lane to-card"><span class="packet plain" data-go="4" data-i18n="demo.q.rice">how long does cooked rice keep</span></div>
+          <div class="phone">
+            <i class="halo" data-at="1" data-until="3"></i>
+            <div class="phone-screen">
+              <div class="phone-status"><span>8:41</span><i></i></div>
+              <div class="view v-ask">
+                <div class="prow" data-at="6"><i class="ptile"></i><div><b data-i18n="demo.rice">3 to 4 days in the fridge.</b><small data-i18n="ai.sub">answered by AI</small></div></div>
+                <div class="pbar"><i class="mark"></i><span class="pq" data-at="1" data-i18n="demo.q.rice">how long does cooked rice keep</span><i class="caret"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="hub">
+            <div class="hub-ring"><i class="halo" data-at="3" data-until="5"></i><i class="mark"></i></div>
+            <span>unimo</span>
+          </div>
+          <div class="seen">
+            <i class="halo" data-at="5"></i>
+            <div class="seen-card">
+              <b class="seen-title" data-i18n="ai.seen">What the AI model gets</b>
+              <dl>
+                <div><dt data-i18n="ask.s.q">Question</dt><dd data-at="5" data-i18n="demo.q.rice">how long does cooked rice keep</dd></div>
+                <div><dt data-i18n="ask.s.from">Asked by</dt><dd data-at="5">unimo</dd></div>
+                <div><dt data-i18n="ask.s.name">Your name</dt><dd class="none">—</dd></div>
+                <div><dt data-i18n="ai.s.kept">Kept after answering</dt><dd class="none">—</dd></div>
+                <div><dt data-i18n="ai.s.train">Used for training</dt><dd class="none">—</dd></div>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <button class="stage-toggle" type="button" aria-pressed="false" aria-label="Pause the demonstration" hidden>
+          <svg class="pause" viewBox="0 0 24 24" aria-hidden="true"><use href="#pause-icon"/></svg>
+          <svg class="play" viewBox="0 0 24 24" aria-hidden="true"><use href="#play-icon"/></svg>
+        </button>
+      </div>
+      <div class="points">
+        <div><h3 data-i18n="ai.t.0">Open models.</h3><p data-i18n="ai.p.0">unimo uses open-weight models. Their workings are published for anyone to examine, not sealed inside one company.</p></div>
+        <div><h3 data-i18n="ai.t.1">Nothing is kept.</h3><p data-i18n="ai.p.1">They run with zero data retention: your question is deleted as soon as it is answered and never used for training. unimo passes it on and keeps no record of who asked what.</p></div>
+        <div><h3 data-i18n="ai.t.2">Hard to trick.</h3><p data-i18n="ai.p.2">A web page can hide instructions meant to hijack an AI, a trick called prompt injection. unimo labels everything the AI reads with where it came from and checks those labels before anything is sent or done. When in doubt, it asks you.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feat" id="private" aria-labelledby="h-private">
+    <div class="shell">
+      <h2 id="h-private" data-i18n="f.seal.h">Only you can open it. <span>We can’t.</span></h2>
+      <div class="frame padded">
+        <div class="seal">
+          <div class="seal-box mine">
+            <label class="label" for="memo" data-i18n="band.mine">On your phone</label>
+            <input id="memo" type="text" value="buy oat milk" maxlength="48" autocomplete="off" spellcheck="false" data-i18n-attr="value:st.memo">
+          </div>
+          <div class="seal-box ours">
+            <span class="label" data-i18n="band.ours">On our server</span>
+            <output id="cipher" for="memo">nCJXQ9fI6uwLzvd6m3ogfnfsn3Hu3nYyUeAF9WVP9EsRppcXfvRN8sHSwXs8s3AZAGyPBHTnmRBSHrKD4UYcDg==</output>
+          </div>
+          <div class="seal-box mine again">
+            <span class="label" data-i18n="f.seal.yours">On your laptop</span>
+            <output id="memo-copy" for="memo" data-i18n="st.memo">buy oat milk</output>
+          </div>
+        </div>
+      </div>
+      <p class="small frame-hint" data-i18n="f.seal.try">Type in the first box. Your browser scrambles it the way unimo does on your phone. The middle box is all we would ever hold.</p>
+      <p class="feat-note" data-i18n="f.seal.note"><b>The same idea WhatsApp and Signal use for messages.</b> unimo uses it for your memos, clipboard, notifications, contacts and history.</p>
+    </div>
+  </section>
+
+  <!-- the proof for the claim just made, and whose work this stands on -->
+  <section class="sec" id="open" aria-labelledby="h-code">
+    <div class="shell">
+      <div class="split">
+        <h2 id="h-code" data-i18n="open.h2">The code is public. Anyone can check what unimo does.</h2>
+        <div>
+          <p class="lede" data-i18n="open.lede">Every app is built from code, the written instructions it follows. Ours is published, so anyone who can read code can check that unimo does what this page says. This is called open source.</p>
+          <p class="more"><a class="link" href="https://code.nolog.cz/thinking.tools" rel="noopener" data-i18n="open.link">Read the code</a></p>
+        </div>
+      </div>
+      <div class="points gap-top">
+        <div><h3 data-i18n="open.t.0">Run your own server.</h3><p data-i18n="open.p.0">If you know how, you can run the server yourself and point unimo at it instead of ours in the EU.</p></div>
+        <div><h3 data-i18n="open.t.1">If we close down.</h3><p data-i18n="open.p.1">Anyone is allowed to copy the code and keep unimo running without us.</p></div>
+        <div><h3 data-i18n="open.t.2">Built on others’ work.</h3><p data-i18n="open.p.2">The Android app is our modified version of KISS, a home screen for Android that Neamar and its contributors share openly. We share ours the same way.</p></div>
+      </div>
+      <p class="small note" data-i18n="open.thanks">Also built with Tauri, SolidJS, Hono and noble-post-quantum, among others. Thank you.</p>
+    </div>
+  </section>
+
+  <!-- what you actually do -->
+  <section class="sec" id="use" aria-labelledby="h-use">
+    <div class="shell">
+      <h2 id="h-use" data-i18n="use.h2">How you use it</h2>
+      <ol class="steps">
+        <li><span class="t" data-i18n="use.t.0">On your phone, press Home and type.</span><span class="d" data-i18n="use.d.0">unimo becomes your Android home screen. To switch back, open Settings, search for “home app” and pick your old one. It takes two taps.</span></li>
+        <li><span class="t" data-i18n="use.t.1">On your computer, press the shortcut and type.</span><span class="d" data-i18n="use.d.1">The same line opens on a Mac, Windows or Linux computer.</span></li>
+        <li><span class="t" data-i18n="use.t.2">Add a device with a one-time code.</span><span class="d" data-i18n="use.d.2">It joins only after you say yes on a device you already use. Remove a device and its copy is wiped.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- quiet -->
+  <section class="sec" id="about" aria-labelledby="h-quiet">
+    <div class="shell split">
+      <h2 id="h-quiet" class="stick" data-i18n="quiet.h2">Quiet, on purpose.</h2>
+      <div>
+        <p class="lede" data-i18n="quiet.lede">No ads. No feed. No streaks, no badges, no “you might also like”. No profile of you, because we never had the data to build one. It stays out of the way until you press Home.</p>
+        <figure class="founder">
+          <blockquote data-i18n="quote">I built unimo because I was tired of the compromise. Mindful tools that respect my privacy, or tools I actually enjoy using. Choose one. Sound familiar? And honestly, I was a bit jealous of what Big Tech’s devices can do together. Turns out we don’t have to choose.</blockquote>
+          <figcaption data-i18n="cite">Peter Jensen, founder</figcaption>
+        </figure>
+        <p class="origin" data-i18n="origin">Made in Prague by a small team.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- price -->
+  <section class="sec" id="price" aria-labelledby="h-price">
+    <div class="shell split">
+      <h2 id="h-price" class="stick" data-i18n="price.h2">Free to start. Pay if you search a lot.</h2>
+      <div>
+        <table class="plans">
+          <thead><tr><th scope="col" data-i18n="price.th.0">Plan</th><th scope="col" data-i18n="price.th.1">Searches and answers</th><th scope="col" data-i18n="price.th.2">Space</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Free</td><td class="limits" data-i18n="price.f">200 web searches to start, then 5 a day. 50 AI answers in total.</td><td class="space">1 GB</td></tr>
+            <tr><td class="name">Core</td><td class="limits" data-i18n="price.c">1,500 searches and 500 answers a month.</td><td class="space">20 GB</td></tr>
+            <tr><td class="name">Tinkerer</td><td class="limits" data-i18n="price.t">5,000 searches and 2,000 answers a month, plus 150 answers from the big model.</td><td class="space">100 GB</td></tr>
+          </tbody>
+        </table>
+        <p class="small note" data-i18n="price.small">Everything that happens on your devices is free and has no limit: apps, contacts, memos, the calculator, the clipboard. Weekly billing on both paid plans. Prices arrive with launch.</p>
+        <p class="why" data-i18n="price.why">Why isn’t all of it free? Every web search and every answer costs us money. We would rather charge a fair price than earn it from your attention.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- questions -->
+  <section class="sec" id="faq" aria-labelledby="h-faq">
+    <div class="shell split">
+      <h2 id="h-faq" class="stick" data-i18n="faq.h2">Questions</h2>
+      <div class="faq">
+        <details><summary data-i18n="faq.q.1">Do I have to give up my home screen?</summary><p data-i18n="faq.a.1">On Android, unimo is the home screen. Try it for a day. To switch back, open Settings, search for “home app” and pick your old one. Nothing is lost.</p></details>
+        <details><summary data-i18n="faq.q.2">Can you read my memos?</summary><p data-i18n="faq.a.2">No. They are scrambled on your phone with a key we never get.</p></details>
+        <details><summary data-i18n="faq.q.5">What if I lose my phone?</summary><p data-i18n="faq.a.5">Sign in on a new one with your recovery key, then remove the lost phone from your account. Its copy is wiped the next time it connects.</p></details>
+        <details><summary data-i18n="faq.q.6">And if I lose the recovery key too?</summary><p data-i18n="faq.a.6">As long as one of your devices is still signed in, nothing is lost. Without any device and without the key, nobody can open your account, including us. That is what “only you” means.</p></details>
+        <details><summary data-i18n="faq.q.7">Which devices?</summary><p data-i18n="faq.a.7">Android phones, and Mac, Windows and Linux computers. iPhone is on the list.</p></details>
+        <details><summary data-i18n="faq.q.9">How do you make money?</summary><p data-i18n="faq.a.9">Subscriptions. No ads, no data sales.</p></details>
+        <details><summary data-i18n="faq.q.10">What happens to my things if unimo shuts down?</summary><p data-i18n="faq.a.10">The code is open and the server can be run by anyone.</p></details>
+        <details><summary data-i18n="faq.q.11">Who is behind it?</summary><p data-i18n="faq.a.11">thinking.tools, a small company in Prague.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- get it -->
+  <section class="sec" id="get" aria-labelledby="h-get">
+    <div class="shell get-end">
+      <div>
+        <h2 id="h-get" data-i18n="get.h2">Early access is open.</h2>
+        <p data-i18n="get.note">Downloads for Android, Mac, Windows and Linux appear here on launch day. The form is hosted on CryptPad.</p>
+      </div>
+      <a class="btn big" href="https://cryptpad.cz/form/#/2/form/view/AFFelSJl-3PlekPX2HlFIw4hnW0kToTcIHHDkV6xy9Y/" rel="noopener" data-i18n="cta">Join early access</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="shell">
+    <a class="brand" href="/"><span class="mark" aria-hidden="true"></span>unimo</a>
+    <div class="footer-links">
+      <a href="#private" data-i18n="nav.privacy">Privacy</a>
+      <a href="#price" data-i18n="nav.price">Pricing</a>
+      <a href="#faq" data-i18n="nav.faq">Questions</a>
+      <a href="https://thinking.tools" rel="me">thinking.tools</a>
+    </div>
+    <label class="lang">
+      <span class="vh" data-i18n="lang.label">Language</span>
+      <select id="lang">
+        <option value="en">English</option>
+        <option value="cs">Čeština</option>
+        <option value="de">Deutsch</option>
+        <option value="es">Español</option>
+        <option value="fr">Français</option>
+        <option value="pl">Polski</option>
+      </select>
+    </label>
+    <p class="fine" data-i18n="foot.fine">unimo is made by thinking.tools, Prague. This page set no cookies and loaded nothing from anyone but us.</p>
+  </div>
+</footer>
+
+<!-- shapes the stage reuses -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="handset" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></symbol>
+  <symbol id="pause-icon" viewBox="0 0 24 24"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></symbol>
+  <symbol id="play-icon" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z"/></symbol>
+</svg>
+
+<!-- English for the text that scripts draw. Every other language is a file in /i18n/. -->
+<script type="application/json" id="strings">
+{
+  "demo.modes.all": "All",
+  "demo.modes.web": "Web",
+  "demo.modes.notes": "Notes",
+  "demo.modes.apps": "Apps",
+  "demo.searchin": "Search in: {x}",
+  "demo.ph.all": "Search anything…",
+  "demo.ph.web": "Search the web…",
+  "demo.ph.notes": "Search notes…",
+  "demo.ph.apps": "Search apps…",
+  "demo.open": "Open",
+  "demo.fail": "Copy failed",
+  "demo.spotify": "Spotify",
+  "demo.spaghetti": "spaghetti with lemon, 12 minutes",
+  "demo.websearch": "Search the web for “{q}”",
+  "demo.savedsub": "It’s on your laptop too.",
+  "demo.wifi": "Wi-Fi",
+  "demo.wifisub": "settings",
+  "demo.ricesub": "from the web",
+    "demo.memo": "mom’s birthday, Saturday",
+  "persona.query": "mom",
+  "persona.name": "Mom",
+  "persona.phone": "+1 (555) 010-4321",
+  "demo.call": "Call",
+  "demo.saved": "Saved as a memo",
+  "st.pause": "Pause the demonstration",
+  "st.play": "Play the demonstration"
+}
+</script>
+</body>
+</html>
